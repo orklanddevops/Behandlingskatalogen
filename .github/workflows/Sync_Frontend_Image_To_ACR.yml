@@ -1,4 +1,4 @@
-name: Sync Image to ACR
+name: Sync Frontend Image to ACR
 on:
   workflow_run:
     workflows: ["Push Frontend Image"]
