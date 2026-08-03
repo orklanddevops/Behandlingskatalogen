@@ -85,7 +85,7 @@ spec:
       external:
         - host: {{teamcat_ingress}}
         - host: {{termcat_ingress}}
-        - host: kodeverk-api.nav.no
+        - host: func-polly-codelist-9f6a0df4.azurewebsites.net
         - host: slack.com
   envFrom:
     - configmap: behandlingskatalogcfg

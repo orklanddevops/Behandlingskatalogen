@@ -10,7 +10,8 @@ data:
   BIGQUERY_AAREG_DATASETNAME: aareg_avtaler
   BIGQUERY_AAREG_PROJECTID: teamcrm-prod-31a7
   BIGQUERY_AAREG_TABLENAME: aareg_avtaler_for_tilgang
-  CLIENT_COMMON_CODE_NAV_URL: https://kodeverk-api.nav.no/api
+  CLIENT_COMMON_CODE_NAV_TOKEN_ENABLED: "false"
+  CLIENT_COMMON_CODE_NAV_URL: https://func-polly-codelist-9f6a0df4.azurewebsites.net/api
   CLIENT_TEAMCAT_URL: https://teamkatalog-api.intern.nav.no
   CLIENT_TERM_CATALOG_URL: https://begrepskatalog-api.intern.nav.no/api/dcat
   ENVIRONMENT_CLASS: prod
