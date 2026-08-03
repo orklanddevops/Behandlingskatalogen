@@ -1,6 +1,7 @@
 name: Create Frontend Image package
 on:
   workflow_dispatch: # run manually from the "Actions" tab
+  workflow_call:
 
 jobs:
   build-and-push:

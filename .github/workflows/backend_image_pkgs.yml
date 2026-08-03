@@ -1,6 +1,7 @@
 name: Create Backend Image package
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   build-and-push:

@@ -1,16 +1,16 @@
 name: Sync Frontend Image to ACR
 on:
   workflow_run:
-    workflows: ["Push Frontend Image"]
+    workflows: ["Create Frontend Image package"]
     types:
       - completed
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   promote-to-azure:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
-    
+    if: ${{ github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -29,7 +29,7 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Sync Image (Direct Copy)
+      - name: Sync Frontend Image
         run: |
           docker buildx imagetools create \
             --tag pollyorkla-cab5fee3chhye4f8.azurecr.io/polly-frontend:latest \
