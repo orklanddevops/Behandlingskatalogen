@@ -1,0 +1,19 @@
+{
+  "name": "behandlingskatalogen-codelist-function",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Azure Functions app for Behandlingskatalogen codelist and country code responses.",
+  "main": "src/functions/*.js",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "scripts": {
+    "start": "func start",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.7.3"
+  },
+  "devDependencies": {}
+}
+
