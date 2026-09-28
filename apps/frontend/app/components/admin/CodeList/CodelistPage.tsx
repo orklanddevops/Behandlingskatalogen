@@ -1,0 +1,135 @@
+'use client'
+
+import { PlusIcon } from '@navikt/aksel-icons'
+import { Button, Heading, Loader, Select } from '@navikt/ds-react'
+import { useParams } from 'next/navigation'
+import { ChangeEvent, useContext, useEffect, useState } from 'react'
+import { ICode, IMakeIdLabelForAllCodeListsProps } from '@/constants/codelistConstant'
+import { CodelistContext } from '@/provider/kodeverkProvider'
+import { IUserContext, UserContext } from '@/provider/userProvider'
+import { TNavigateFunction, useNavigate } from '@/util/router'
+import { createCodelist } from '../../../api/GetAllApi'
+import { ICodeListFormValues } from '../../../constants'
+import CodeListTable from './CodeListStyledTable'
+import CreateCodeListModal from './ModalCreateCodeList'
+
+const CodeListPage = () => {
+  const params: Readonly<
+    Partial<{
+      listname?: string
+    }>
+  > = useParams<{ listname?: string }>()
+  const navigate: TNavigateFunction = useNavigate()
+  const codelist = useContext(CodelistContext)
+  const user: IUserContext = useContext(UserContext)
+
+  const [loading, setLoading] = useState(true)
+  const [listname, setListname] = useState(params.listname)
+  const [createCodeListModal, setCreateCodeListModal] = useState(false)
+  const [errorOnResponse, setErrorOnResponse] = useState(null)
+
+  const currentCodelist: ICode[] | undefined =
+    codelist.lists && listname ? codelist.lists?.codelist[listname] : undefined
+
+  const handleCreateCodelist = async (values: ICodeListFormValues): Promise<void> => {
+    setLoading(true)
+    try {
+      await createCodelist({ ...values } as ICode)
+      await codelist.utils.fetchData(true)
+      setCreateCodeListModal(false)
+    } catch (error: any) {
+      setCreateCodeListModal(true)
+      setErrorOnResponse(error.message)
+    }
+    setLoading(false)
+  }
+
+  const update = async (): Promise<void> => {
+    await codelist.utils.fetchData(true)
+  }
+
+  useEffect(() => {
+    if (listname && listname !== params.listname) {
+      navigate(`/admin/codelist/${listname}`, { replace: true })
+    }
+  }, [listname, codelist.lists])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(!codelist.utils.isLoaded())
+    })()
+  }, [codelist.lists])
+
+  return (
+    <>
+      {!codelist.lists && (
+        <div role='main' className='flex w-full justify-center'>
+          <Loader size='3xlarge' title='Venter...' />
+        </div>
+      )}
+      {user.isAdmin() && codelist.lists && (
+        <div role='main'>
+          <Heading size='large' level='1'>
+            Administrering av kodeverk
+          </Heading>
+          {loading && (
+            <div className='flex w-full justify-center'>
+              <Loader size='3xlarge' />
+            </div>
+          )}
+          {!loading && (
+            <div className='flex justify-between w-full'>
+              <Select
+                label='Velg kodeverk'
+                hideLabel
+                onChange={(event: ChangeEvent<HTMLSelectElement>) =>
+                  setListname(event.target.value)
+                }
+              >
+                <option value=''>Velg kodeverk</option>
+                {codelist.utils
+                  .makeIdLabelForAllCodeLists()
+                  .map((value: IMakeIdLabelForAllCodeListsProps) => (
+                    <option key={value.id} value={value.id}>
+                      {value.label}
+                    </option>
+                  ))}
+              </Select>
+              {listname && (
+                <div>
+                  <Button
+                    icon={<PlusIcon aria-hidden />}
+                    variant='tertiary'
+                    onClick={() => setCreateCodeListModal(!createCodeListModal)}
+                  >
+                    Opprett ny kode
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+          {!loading && currentCodelist && (
+            <div className='mt-4'>
+              <CodeListTable tableData={currentCodelist || []} refresh={update} />
+            </div>
+          )}
+          {listname && (
+            <CreateCodeListModal
+              title='Ny kode'
+              list={listname}
+              isOpen={createCodeListModal}
+              errorOnCreate={errorOnResponse}
+              onClose={() => {
+                setCreateCodeListModal(false)
+                setErrorOnResponse(null)
+              }}
+              submit={handleCreateCodelist}
+            />
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
+export default CodeListPage

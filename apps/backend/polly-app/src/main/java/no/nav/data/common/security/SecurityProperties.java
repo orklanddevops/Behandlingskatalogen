@@ -1,15 +1,16 @@
 package no.nav.data.common.security;
 
-import lombok.Data;
-import no.nav.data.Constants;
+import static no.nav.data.common.utils.StreamUtils.safeStream;
+import static no.nav.data.common.utils.StreamUtils.tryFind;
+
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
-import static no.nav.data.common.utils.StreamUtils.safeStream;
-import static no.nav.data.common.utils.StreamUtils.tryFind;
+import lombok.Data;
+import no.nav.data.Constants;
 
 @Data
 @Configuration

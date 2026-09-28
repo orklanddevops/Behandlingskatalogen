@@ -1,0 +1,99 @@
+'use client'
+
+import { PlusCircleIcon } from '@navikt/aksel-icons'
+import { Heading, Loader } from '@navikt/ds-react'
+import { useContext, useEffect, useState } from 'react'
+import { createDpProcess, dpProcessToFormValues, getAllDpProcesses } from '@/api/DpProcessApi'
+import { IDpProcess, IDpProcessFormValues } from '@/constants'
+import { IUserContext, UserContext } from '@/provider/userProvider'
+import { useNavigate } from '@/util/router'
+import DpProcessModal from '../DpProcess/DpProcessModal'
+import DpProcessTable from '../DpProcess/DpProcessTable'
+import Button from '../common/Button/CustomButton'
+
+const DpProcessPage = () => {
+  const user: IUserContext = useContext(UserContext)
+
+  const [showModal, setShowModal] = useState(false)
+  const [createDpProcessModalKey, setCreateDpProcessModalKey] = useState(0)
+  const [errorDpProcessModal, setErrorDpProcessModal] = useState<string>('')
+  const [dpProcesses, setDpProcesses] = useState<IDpProcess[]>([])
+  const [isLoading, setLoading] = useState<boolean>(true)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      const processes = await getAllDpProcesses()
+      if (processes) {
+        setDpProcesses(processes)
+      }
+      setLoading(false)
+    })()
+  }, [])
+
+  const handleCreateDpProcess = async (dpProcess: IDpProcessFormValues) => {
+    if (!dpProcess) return
+    try {
+      const response = await createDpProcess(dpProcess)
+      setErrorDpProcessModal('')
+      navigate(`/dpprocess/${response.id}`)
+      setShowModal(false)
+    } catch (error: any) {
+      if (error.response.data.message.includes('already exists')) {
+        setErrorDpProcessModal('Databehandlingen eksisterer allerede')
+        return
+      }
+      setErrorDpProcessModal(error.response.data.message)
+    }
+  }
+
+  return (
+    <>
+      <div className='flex justify-between mb-4'>
+        <Heading size='large'>Behandlinger hvor Nav er databehandler</Heading>
+        <div>
+          {user.canWrite() /*!env.disableDpProcess &&*/ && (
+            <Button
+              kind='outline'
+              icon={
+                <span className='flex items-center leading-none'>
+                  <PlusCircleIcon aria-hidden className='block' />
+                </span>
+              }
+              onClick={() => {
+                setErrorDpProcessModal('')
+                setCreateDpProcessModalKey((k) => k + 1)
+                setShowModal(true)
+              }}
+            >
+              Opprett ny behandling
+            </Button>
+          )}
+        </div>
+      </div>
+      {showModal && (
+        <DpProcessModal
+          key={createDpProcessModalKey}
+          isOpen={showModal}
+          onClose={() => {
+            setErrorDpProcessModal('')
+            setShowModal(false)
+          }}
+          initialValues={dpProcessToFormValues({})}
+          submit={handleCreateDpProcess}
+          errorOnCreate={errorDpProcessModal}
+        />
+      )}
+      {!isLoading ? (
+        <DpProcessTable dpProcesses={dpProcesses} />
+      ) : (
+        <div className='flex w-full justify-center'>
+          <Loader size='3xlarge' />
+        </div>
+      )}
+    </>
+  )
+}
+
+export default DpProcessPage

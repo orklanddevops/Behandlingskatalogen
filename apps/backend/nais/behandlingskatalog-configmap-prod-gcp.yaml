@@ -13,7 +13,7 @@ data:
   CLIENT_COMMON_CODE_NAV_TOKEN_ENABLED: "false"
   CLIENT_COMMON_CODE_NAV_URL: https://func-polly-codelist-9f6a0df4.azurewebsites.net/api
   CLIENT_TEAMCAT_URL: https://teamkatalog-api.intern.nav.no
-  CLIENT_TERM_CATALOG_URL: https://begrepskatalog-api.intern.nav.no/api/dcat
+  CLIENT_TERM_CATALOG_URL: https://begrepskatalog-api.intern.nav.no/api/terms
   ENVIRONMENT_CLASS: prod
   GOOGLE_APPLICATION_CREDENTIALS: /var/run/secrets/polly_aareg_integration_key.json
   POLLY_SECURITY_REDIRECT_URIS: https://behandlingskatalog.intern.nav.no, https://behandlingskatalog.ansatt.nav.no

@@ -1,0 +1,261 @@
+import { InformationSquareIcon } from '@navikt/aksel-icons'
+import { BodyLong, InfoCard } from '@navikt/ds-react'
+import { TNavigateFunction, useNavigate } from '@/util/router'
+import {
+  EProcessField,
+  EProcessState,
+  EProcessStatusFilter,
+  IAllDashCount,
+  IDepartmentDashCount,
+  IProductAreaDashCount,
+  ISeksjonDashCount,
+} from '../../constants'
+import { clickOnPieChartSlice } from '../../util/dashboard'
+import { chartColor } from '../../util/theme'
+import { useIsDark } from '../../util/themeMode'
+import RouteLink from '../common/RouteLink'
+import { ESection } from '../mainPages/ProcessPage'
+import { Chart } from './Chart'
+import TriChart from './TriChart'
+
+const chartSize = 80
+
+type TChartsProps = {
+  chartData: IProductAreaDashCount | IDepartmentDashCount | IAllDashCount | ISeksjonDashCount
+  processStatus: EProcessStatusFilter
+  type?: ESection
+  departmentCode?: string
+  productAreaId?: string
+  seksjonId?: string
+}
+
+const Charts = (props: TChartsProps) => {
+  const { chartData, processStatus, type, departmentCode, productAreaId, seksjonId } = props
+  const navigate: TNavigateFunction = useNavigate()
+  const isDark = useIsDark()
+
+  const link = (
+    processField: EProcessField,
+    processState: EProcessState = EProcessState.UNKNOWN
+  ): string => {
+    if (!type) return `/dashboard/${processField}/${processState}/${processStatus}`
+    else if (type === ESection.department)
+      return departmentCode
+        ? `/dashboard/${processField}/${processState}/${processStatus}?department=${departmentCode}`
+        : `/dashboard/${processField}/${processState}/${processStatus}?noDepartment=true`
+    else if (type === ESection.seksjon)
+      return `/dashboard/${processField}/${processState}/${processStatus}?seksjon=${seksjonId}${departmentCode ? `&department=${departmentCode}` : ''}`
+    else
+      return `/dashboard/${processField}/${processState}/${processStatus}?productarea=${productAreaId}`
+  }
+
+  const handleClickPieChartSlice = (
+    processField: EProcessField,
+    processState: EProcessState,
+    processStatus: EProcessStatusFilter
+  ) => {
+    if (!type) return clickOnPieChartSlice({ processField, processState, processStatus, navigate })
+    else if (type === ESection.department)
+      return departmentCode
+        ? clickOnPieChartSlice({
+            processField,
+            processState,
+            processStatus,
+            navigate,
+            type,
+            id: departmentCode,
+          })
+        : clickOnPieChartSlice({
+            processField,
+            processState,
+            processStatus,
+            navigate,
+            noDepartment: true,
+          })
+    else if (type === ESection.seksjon)
+      return clickOnPieChartSlice({
+        processField,
+        processState,
+        processStatus,
+        navigate,
+        type,
+        id: seksjonId,
+        departmentCode,
+      })
+    else
+      return clickOnPieChartSlice({
+        processField,
+        processState,
+        processStatus,
+        navigate,
+        type,
+        id: productAreaId,
+      })
+  }
+
+  const all = chartData as IAllDashCount
+  const chartCardStyle = `p-4 rounded-lg shadow-[0px_0px_6px_3px_rgba(0,0,0,0.08)] ${isDark ? 'bg-[#1e2433]' : 'bg-white'}`
+
+  return (
+    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full gap-4 ml-4'>
+      <div className={chartCardStyle}>
+        <TriChart
+          counter={chartData.dpia}
+          title='Behov for PVK'
+          processStatus={processStatus}
+          processField={EProcessField.DPIA}
+          onClickPieChartSlice={handleClickPieChartSlice}
+        />
+        <BodyLong size='small'>
+          Ref. til PVK ikke angitt:{' '}
+          <RouteLink href={link(EProcessField.DPIA_REFERENCE_MISSING, EProcessState.YES)}>
+            {chartData.dpiaReferenceMissing}
+          </RouteLink>
+        </BodyLong>
+      </div>
+
+      <div className={chartCardStyle}>
+        <TriChart
+          counter={chartData.profiling}
+          title='Profilering'
+          processStatus={processStatus}
+          processField={EProcessField.PROFILING}
+          onClickPieChartSlice={handleClickPieChartSlice}
+        />
+      </div>
+
+      <div className={chartCardStyle}>
+        <TriChart
+          counter={chartData.automation}
+          title='Helautomatisk behandling'
+          processStatus={processStatus}
+          processField={EProcessField.AUTOMATION}
+          onClickPieChartSlice={handleClickPieChartSlice}
+        />
+      </div>
+
+      <div className={chartCardStyle}>
+        <Chart
+          chartTitle='Ufullstendig behandlingsgrunnlag'
+          size={chartSize}
+          hidePercent
+          type='bar'
+          data={[
+            {
+              label: 'Rettslig grunnlag uavklart',
+              size: chartData.processesMissingLegalBases,
+              color: chartColor.generalRed,
+              onClick: handleClickPieChartSlice(
+                EProcessField.MISSING_LEGAL_BASIS,
+                EProcessState.YES,
+                processStatus
+              ),
+            },
+            {
+              label: 'Artikkel 6 mangler',
+              size: chartData.processesMissingArt6,
+              color: chartColor.generalMustard,
+              onClick: handleClickPieChartSlice(
+                EProcessField.MISSING_ARTICLE_6,
+                EProcessState.YES,
+                processStatus
+              ),
+            },
+            {
+              label: 'Artikkel 9 mangler',
+              size: chartData.processesMissingArt9,
+              color: chartColor.generalBlue,
+              onClick: handleClickPieChartSlice(
+                EProcessField.MISSING_ARTICLE_9,
+                EProcessState.YES,
+                processStatus
+              ),
+            },
+          ]}
+        />
+      </div>
+
+      <div className={chartCardStyle}>
+        <TriChart
+          counter={chartData.retention}
+          processStatus={processStatus}
+          title='Omfattes av NAVs bevarings- og kassasjonsvedtak'
+          processField={EProcessField.RETENTION}
+          onClickPieChartSlice={handleClickPieChartSlice}
+        />
+        <BodyLong>
+          Behandlinger omfattet av NAVs bevarings- og kassasjonsvedtak uten registrert lagringstid:{' '}
+          <RouteLink href={link(EProcessField.RETENTION_DATA)}>
+            {chartData.retentionDataIncomplete}
+          </RouteLink>
+        </BodyLong>
+      </div>
+
+      <div className={chartCardStyle}>
+        <TriChart
+          counter={chartData.dataProcessor}
+          processStatus={processStatus}
+          title='Benyttes databehandler(e)?'
+          processField={EProcessField.DATA_PROCESSOR}
+          onClickPieChartSlice={handleClickPieChartSlice}
+        />
+      </div>
+
+      <div className={chartCardStyle}>
+        <TriChart
+          counter={chartData.aiUsage}
+          processStatus={processStatus}
+          title='KI systemer benyttes'
+          processField={EProcessField.AIUSAGE}
+          onClickPieChartSlice={handleClickPieChartSlice}
+        />
+      </div>
+
+      {all.disclosures !== undefined && (
+        <div className={chartCardStyle}>
+          <Chart
+            chartTitle='Utleveringer behandlingsgrunnlag'
+            data={[
+              {
+                label: 'Utfylt',
+                size: all.disclosures - all.disclosuresIncomplete,
+                color: chartColor.generalBlue,
+                onClick: () => navigate('/disclosure?filter=legalbases'),
+              },
+              {
+                label: 'Ufullstendig',
+                size: all.disclosuresIncomplete,
+                color: chartColor.generalRed,
+                onClick: () => navigate('/disclosure?filter=emptylegalbases'),
+              },
+            ]}
+            size={chartSize}
+          />
+          <BodyLong size='small'>
+            Utleveringer: <RouteLink href={'/disclosure'}>{all.disclosures}</RouteLink>
+          </BodyLong>
+        </div>
+      )}
+
+      <InfoCard data-color='info' className='h-full'>
+        <InfoCard.Header icon={<InformationSquareIcon aria-hidden />}>
+          <InfoCard.Title as='h3'>Annen informasjon</InfoCard.Title>
+        </InfoCard.Header>
+        <InfoCard.Content>
+          <BodyLong size='small' className='text-lg'>
+            Behandlinger hvor NAV er felles behandlingsansvarlig med ekstern part:{' '}
+            <RouteLink href={link(EProcessField.COMMON_EXTERNAL_PROCESSOR, EProcessState.YES)}>
+              {chartData.commonExternalProcessResponsible}
+            </RouteLink>
+          </BodyLong>
+          <BodyLong size='small' className='text-lg'>
+            Behandlinger hvor Nav er databehandler:{' '}
+            <RouteLink href={'/dpprocess'}>{chartData.dpProcesses}</RouteLink>
+          </BodyLong>
+        </InfoCard.Content>
+      </InfoCard>
+    </div>
+  )
+}
+
+export default Charts

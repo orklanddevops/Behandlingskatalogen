@@ -187,10 +187,14 @@ public class ProcessRepositoryImpl implements ProcessRepositoryCustom {
             case AIUSAGE -> " data #> '{aiUsageDescription,aiUsage}' %s ";
             case AUTOMATION -> " data #> '{automaticProcessing}' %s ";
             case RETENTION -> " data #> '{retention,retentionPlan}' %s ";
-            case RETENTION_DATA -> " data #> '{retention,retentionStart}' %1$s or data #> '{retention,retentionMonths}' %1$s ";
             case DATA_PROCESSOR -> " data #> '{dataProcessing,dataProcessor}' %s ";
 
             // UNKNOWN counts empty, YES/NO doesnt make sense and will always return false
+            // Covered by the retention plan, but no retention period (years/months) registered
+            case RETENTION_DATA -> {
+                processState = ProcessState.UNKNOWN;
+                yield " data #> '{retention,retentionPlan}' = 'true'::jsonb and coalesce((data #>> '{retention,retentionMonths}')::int, 0) = 0 ";
+            }
             case DPIA_REFERENCE_MISSING -> {
                 processState = ProcessState.UNKNOWN;
                 yield " data #> '{dpia,needForDpia}' = 'true'::jsonb and data #> '{dpia,refToDpia}' %s ";

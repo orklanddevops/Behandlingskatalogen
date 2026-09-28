@@ -1,0 +1,98 @@
+'use client'
+
+import { Heading } from '@navikt/ds-react'
+import { useContext, useEffect, useState } from 'react'
+import { getDashboard } from '@/api/DashboardApi'
+import { getSettings } from '@/api/SettingsApi'
+import { EProcessStatusFilter, IDashboardData, ISettings } from '@/constants'
+import { IUserContext, UserContext } from '@/provider/userProvider'
+import { LastEvents } from '../admin/audit/LastEvents'
+import { RecentEditsByUser } from '../admin/audit/RecentEditsByUser'
+import { Markdown } from '../common/Markdown'
+import { ShortcutNav } from '../main/shortcutNav'
+
+export const MainPage = () => {
+  const user: IUserContext = useContext(UserContext)
+  const [settings, setSettings] = useState<ISettings>()
+  const [isLoading, setLoading] = useState(true)
+  const [dashboardData, setDashboardData] = useState<IDashboardData>()
+
+  useEffect(() => {
+    ;(async () => {
+      setSettings(await getSettings())
+      setLoading(false)
+      for (const key in localStorage) {
+        if (key.indexOf('Yposition') === 0) {
+          localStorage.removeItem(key)
+        }
+      }
+    })()
+  }, [])
+
+  useEffect(() => {
+    getDashboard(EProcessStatusFilter.All).then(setDashboardData)
+  }, [])
+
+  return (
+    <div className='flex flex-wrap' role='main'>
+      {!isLoading && dashboardData && (
+        <>
+          <div className='w-full flex flex-col'>
+            <div className='flex justify-center mb-10'>
+              <Heading size='xlarge' level='1'>
+                Hva vil du gjøre?
+              </Heading>
+            </div>
+            <ShortcutNav />
+          </div>
+
+          <div className='w-full flex justify-center mt-12 mb-10'>
+            <Heading size='large' level='2'>
+              Hva har endret seg i det siste?
+            </Heading>
+          </div>
+
+          <div className='@container w-full flex mb-6 flex-wrap gap-6'>
+            <div
+              className='@container flex w-full @min-[640px]:w-[calc(50%-0.75rem)] min-w-0'
+              style={{ minHeight: '550px' }}
+            >
+              <div className='bg-white p-4 rounded-lg shadow-[0px_0px_6px_3px_rgba(0,0,0,0.08)] w-full min-w-0'>
+                {user.isLoggedIn() ? (
+                  <RecentEditsByUser />
+                ) : (
+                  <div className='h-full flex flex-col'>
+                    <Heading size='medium' level='2' className='mb-6'>
+                      Mine siste endringer
+                    </Heading>
+                    <div className='flex-1 flex items-center justify-center text-center px-4'>
+                      <p>
+                        Du er logget ut og kan ikke se dine siste endringer.
+                        <br />
+                        Logg inn på nytt for å se dine siste endringer.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div
+              className='@container flex w-full @min-[640px]:w-[calc(50%-0.75rem)] min-w-0'
+              style={{ minHeight: '550px' }}
+            >
+              <div className='bg-white p-4 rounded-lg shadow-[0px_0px_6px_3px_rgba(0,0,0,0.08)] w-full min-w-0'>
+                <LastEvents />
+              </div>
+            </div>
+
+            <div className='w-full mt-2 mb-0.5' style={{ minHeight: '550px' }}>
+              <div className='bg-white p-4 rounded-lg shadow-[0px_0px_6px_3px_rgba(0,0,0,0.08)]'>
+                <Markdown source={settings?.frontpageMessage} escapeHtml={false} />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}

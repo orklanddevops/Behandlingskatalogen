@@ -1,0 +1,70 @@
+import { UNSAFE_Combobox } from '@navikt/ds-react'
+import { Field, FieldProps } from 'formik'
+import { useContext, useMemo, useState } from 'react'
+import { EListName } from '@/constants/codelistConstant'
+import { CodelistContext } from '@/provider/kodeverkProvider'
+import { IProcessFormValues } from '../../../constants'
+
+interface IFieldCommonExternalProcessResponsibleProps {
+  thirdParty?: string
+  hideSelect: () => void
+}
+
+const FieldCommonExternalProcessResponsible = (
+  props: IFieldCommonExternalProcessResponsibleProps
+) => {
+  const { thirdParty, hideSelect } = props
+  const { utils: codelistUtils } = useContext(CodelistContext)
+
+  const [selected, setSelected] = useState<{ label: string; value: string }[]>(
+    thirdParty
+      ? [
+          {
+            value: thirdParty,
+            label: codelistUtils.getShortname(EListName.THIRD_PARTY, thirdParty),
+          },
+        ]
+      : []
+  )
+
+  const comboboxOptions = useMemo(
+    () =>
+      codelistUtils.getParsedOptions(EListName.THIRD_PARTY).map((o: any) => ({
+        label: o.label,
+        value: o.id,
+      })),
+    [codelistUtils]
+  )
+
+  return (
+    <Field name='commonExternalProcessResponsible'>
+      {({ form }: FieldProps<IProcessFormValues>) => (
+        <div className='w-full'>
+          <UNSAFE_Combobox
+            label='Felles behandlingsansvarlig'
+            hideLabel
+            options={comboboxOptions}
+            filteredOptions={comboboxOptions}
+            selectedOptions={selected}
+            onToggleSelected={(optionValue, isSelected) => {
+              if (!isSelected) {
+                hideSelect()
+                setSelected([])
+                form.setFieldValue('commonExternalProcessResponsible', '')
+                return
+              }
+
+              const option = comboboxOptions.find((o) => o.value === optionValue)
+              if (option) {
+                setSelected([option])
+                form.setFieldValue('commonExternalProcessResponsible', option.value)
+              }
+            }}
+          />
+        </div>
+      )}
+    </Field>
+  )
+}
+
+export default FieldCommonExternalProcessResponsible

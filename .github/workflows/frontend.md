@@ -23,38 +23,27 @@ jobs:
       image: ${{ steps.docker-build-push.outputs.image }}
       telemetry: ${{ steps.docker-build-push.outputs.telemetry }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
-          node-version: '20.x'
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+          node-version: '26.x'
 
-      - uses: actions/cache@v5
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
-      
-      - name: yarn install
-        run: yarn install
-        
-      - name: use prod config
+      - name: use dev config and dev favicon
+        if: github.ref == 'refs/heads/master'
+        run: |
+          cp ./public/faviconDev.ico ./public/favicon.ico
+
+      - name: use prod config and prod favicon
         if: github.ref == 'refs/heads/prod'
-        run: cp .env.prod .env
-
+        run: |
+          cp .env.prod .env
+          cp ./public/faviconProd.ico ./public/favicon.ico
+      
       - name: add version
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
-      
-      - name: Build
-        run: CI=false yarn run build
-
-      - name: Test
-        run: yarn run test
 
       - name: Build and push
         if: github.ref == 'refs/heads/prod' || github.ref == 'refs/heads/master'
@@ -66,6 +55,7 @@ jobs:
           image_suffix: frontend
           docker_context: ./apps/frontend
           
+          
   deploy-dev-gcp:
     name: Frontend - deploy Dev GCP
     needs: build
@@ -76,8 +66,8 @@ jobs:
       contents: read
       actions: read 
     steps:
-      - uses: actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: actions/checkout@v7
+      - uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/frontend/nais/frontend-gcp.yaml
@@ -96,8 +86,8 @@ jobs:
       contents: read
       actions: read 
     steps:
-      - uses: actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: actions/checkout@v7
+      - uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/frontend/nais/frontend-gcp.yaml

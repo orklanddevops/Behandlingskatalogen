@@ -23,17 +23,17 @@ jobs:
       image: ${{ steps.docker-build-push.outputs.image }}
       telemetry: ${{ steps.docker-build-push.outputs.telemetry }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/cache@v5
+      - uses: actions/checkout@v7
+      - uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
         with:
           distribution: "temurin"
-          java-version: "21"
+          java-version: "25"
 
       - name: Build, Test and Package
         run: mvn verify --no-transfer-progress
@@ -57,8 +57,8 @@ jobs:
       contents: read
       actions: read
     steps:
-      - uses: actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: actions/checkout@v7
+      - uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/behandlingskatalog-configmap-dev-gcp.yaml,apps/backend/nais/backend-gcp.yaml
@@ -68,7 +68,7 @@ jobs:
           TELEMETRY: ${{ needs.build.outputs.telemetry }}
 
       - name: deploy alerts to dev-gcp
-        uses: nais/deploy/actions/deploy@v2
+        uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/alerts.yaml
@@ -83,9 +83,9 @@ jobs:
       contents: read
       actions: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/backend/nais/behandlingskatalog-configmap-prod-gcp.yaml,apps/backend/nais/backend-gcp.yaml
@@ -95,7 +95,7 @@ jobs:
           TELEMETRY: ${{ needs.build.outputs.telemetry }}
 
       - name: deploy alerts to prod-gcp
-        uses: nais/deploy/actions/deploy@v2
+        uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/backend/nais/alerts.yaml

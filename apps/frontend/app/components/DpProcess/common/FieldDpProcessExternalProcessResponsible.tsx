@@ -1,0 +1,47 @@
+'use client'
+
+import { Select } from '@navikt/ds-react'
+import { Field, FieldProps } from 'formik'
+import { useContext, useState } from 'react'
+import { EListName } from '@/constants/codelistConstant'
+import { CodelistContext } from '@/provider/kodeverkProvider'
+import { IDpProcessFormValues } from '../../../constants'
+
+interface IFieldDpProcessExternalProcessResponsible {
+  thirdParty?: string
+}
+
+const FieldDpProcessExternalProcessResponsible = (
+  props: IFieldDpProcessExternalProcessResponsible
+) => {
+  const { thirdParty } = props
+  const { utils: codelistUtils } = useContext(CodelistContext)
+  const [value, setValue] = useState<string>(thirdParty ? thirdParty : '')
+
+  return (
+    <Field name='externalProcessResponsible'>
+      {({ form }: FieldProps<IDpProcessFormValues>) => (
+        <div className='w-full'>
+          <Select
+            label=''
+            hideLabel
+            value={value}
+            onChange={(event) => {
+              setValue(event.target.value)
+              form.setFieldValue('externalProcessResponsible', event.target.value)
+            }}
+          >
+            <option value=''>Velg behandlingsansvarlig</option>
+            {codelistUtils.getParsedOptions(EListName.THIRD_PARTY).map((code) => (
+              <option key={code.id} value={code.id}>
+                {code.label}
+              </option>
+            ))}
+          </Select>
+        </div>
+      )}
+    </Field>
+  )
+}
+
+export default FieldDpProcessExternalProcessResponsible

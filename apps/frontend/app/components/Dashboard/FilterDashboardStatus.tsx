@@ -1,0 +1,46 @@
+'use client'
+
+import { Label, Select } from '@navikt/ds-react'
+import { useParams } from 'next/navigation'
+import { ChangeEvent, useState } from 'react'
+import { TNavigateFunction, useNavigate } from '@/util/router'
+import { EProcessStatusFilter } from '../../constants'
+
+interface IFilterDashboardStatusProps {
+  setFilter: React.Dispatch<React.SetStateAction<EProcessStatusFilter>>
+}
+
+export const FilterDashboardStatus = (props: IFilterDashboardStatusProps) => {
+  const { setFilter } = props
+  const navigate: TNavigateFunction = useNavigate()
+  const { processStatus } = useParams<{ processStatus: EProcessStatusFilter }>()
+  const [selectValue, setSelectValue] = useState<string>(
+    processStatus ? (processStatus as EProcessStatusFilter) : EProcessStatusFilter.All
+  )
+
+  return (
+    <div className='w-full flex flex-row gap-4 mt-4'>
+      <div className='self-center'>
+        <Label className='mr-4'>Filtrer på status</Label>
+      </div>
+      <div className='w-60'>
+        <Select
+          value={selectValue}
+          label='Filtrer på status'
+          hideLabel
+          onChange={(event: ChangeEvent<HTMLSelectElement>) => {
+            const value = event.target.value
+            navigate(`/dashboard/${value}`)
+            setFilter(value as EProcessStatusFilter)
+            setSelectValue(value)
+          }}
+        >
+          <option value={EProcessStatusFilter.All}>Alle</option>
+          <option value={EProcessStatusFilter.IN_PROGRESS}>Under arbeid</option>
+          <option value={EProcessStatusFilter.NEEDS_REVISION}>Trenger revidering</option>
+          <option value={EProcessStatusFilter.COMPLETED}>Fullført</option>
+        </Select>
+      </div>
+    </div>
+  )
+}
