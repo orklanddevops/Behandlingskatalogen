@@ -2,14 +2,14 @@ package no.nav.data.polly.teams;
 
 import no.nav.data.polly.teams.domain.ProductArea;
 import no.nav.data.polly.teams.domain.Team;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@ConditionalOnMissingBean(TeamService.class)
+@ConditionalOnProperty(name = "client.teamcat-team.enabled", havingValue = "false", matchIfMissing = true)
 public class TeamStub implements TeamService {
 
     @Override

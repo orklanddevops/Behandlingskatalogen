@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const run = (command, args, stdio = 'inherit') =>
   spawnSync(command, args, {
@@ -30,8 +31,9 @@ const dependencyFiles = new Set([
   'package-lock.json',
   'pnpm-lock.yaml',
 ])
-const hasDependencyFileChanges = stagedFiles.some((file) =>
-  dependencyFiles.has(path.posix.basename(file))
+const hasDependencyFileChanges = stagedFiles.some(
+  (file) =>
+    path.posix.dirname(file) === 'apps/frontend' && dependencyFiles.has(path.posix.basename(file))
 )
 
 if (!hasDependencyFileChanges) {
@@ -45,8 +47,8 @@ process.stdout.write(
   'Dependency manifest changes detected. Running prettier, eslint, tsconfig, jest, build and knip...\n'
 )
 
-const yarnCommand = process.platform === 'win32' ? 'yarn.cmd' : 'yarn'
-const verification = run(yarnCommand, ['run', 'verify:deps-upgrade'])
+const yarnPath = new URL('../.yarn/releases/yarn-4.16.0.cjs', import.meta.url)
+const verification = run(process.execPath, [fileURLToPath(yarnPath), 'run', 'verify:deps-upgrade'])
 
 if (verification.error) {
   process.stderr.write(`${verification.error.message}\n`)

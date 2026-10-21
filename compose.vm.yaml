@@ -1,0 +1,94 @@
+name: behandlingskatalogen-vm
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: polly
+      POSTGRES_USER: polly
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run bash setup.sh first}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U polly -d polly"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  codelists:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    volumes:
+      - ./deploy/vm/codelists.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./azure_function/data/kodeverk:/usr/share/nginx/html:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/api/v1/kodeverk/Landkoder/koder/betydninger"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.vm
+      args:
+        VM_CA_SHA256: ${VM_CA_SHA256:-none}
+      secrets:
+        - vm_ca
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_MAIN_CLOUD_PLATFORM: NONE
+      DB_HOST: postgres
+      DB_DATABASE: polly
+      DB_USERNAME: polly
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Run bash setup.sh first}
+      APP_NAME: polly-vm
+      APP_SCOPE_KODEVERK: local
+      CLIENT_ETTERLEVELSE_URL: https://etterlevelse.ansatt.dev.nav.no
+      CLIENT_TERM_CATALOG_ENABLED: "false"
+      CLIENT_TEAMCAT_RESOURCE_ENABLED: "false"
+      CLIENT_TEAMCAT_TEAM_ENABLED: "false"
+      CLIENT_COMMON_CODE_NAV_URL: http://codelists/api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      codelists:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/internal/health > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 20
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      args:
+        VM_CA_SHA256: ${VM_CA_SHA256:-none}
+      secrets:
+        - vm_ca
+    restart: unless-stopped
+    environment:
+      POLLY_BACKEND_URL: http://backend:8080
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "${VM_BIND_ADDRESS:-127.0.0.1}:${VM_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 20
+
+volumes:
+  postgres:
+
+secrets:
+  vm_ca:
+    file: ./.vm-ca.pem

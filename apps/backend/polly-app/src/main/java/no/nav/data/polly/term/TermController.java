@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -65,7 +66,7 @@ public class TermController {
         if (searchString.length() < 3) {
             throw new ValidationException("Search term must be at least 3 characters");
         }
-        List<PollyTerm> terms = termService.searchTerms(searchString);
+        List<PollyTerm> terms = new ArrayList<>(termService.searchTerms(searchString));
         terms.sort(comparing(t -> t.getName() + t.getDescription(), startsWith(searchString)));
         log.info("Returned {} terms", terms.size());
         return new ResponseEntity<>(new RestResponsePage<>(convert(terms, PollyTerm::convertToResponse)), HttpStatus.OK);

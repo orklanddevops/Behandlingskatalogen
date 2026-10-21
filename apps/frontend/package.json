@@ -16,11 +16,12 @@
     "knip:test": "yarn knip --max-show-issues 5",
     "knip:cachetest": "yarn knip --cache --max-issues=0",
     "verify:deps-upgrade": "yarn run prettier:check && yarn run eslint:check && yarn run type-check && yarn run jest && yarn run build && yarn knip:test && yarn knip:cachetest",
+    "pre-commit:lint": "lint-staged",
     "pre-commit:deps-check": "node scripts/precommit-deps-check.mjs",
     "format": "prettier --write \"./app\"",
     "prettier": "prettier --write \"./app\"",
     "prepare": "cd ../../ && husky apps/frontend/.husky",
-    "type-check": "tsc --project tsconfig.json --noEmit --skipLibCheck false --incremental false"
+    "type-check": "next typegen && tsc --project tsconfig.json --noEmit --skipLibCheck false --incremental false"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,mts}": [

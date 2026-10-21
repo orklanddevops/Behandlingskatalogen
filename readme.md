@@ -1,3 +1,8 @@
+## Ubuntu development VM
+
+For a fresh VM, clone this repository and run `bash setup.sh`.
+See [VM setup and short deployment commands](deploy/vm/README.md).
+
 [![CodeQL](https://github.com/navikt/polly/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master)](https://github.com/navikt/polly/actions/workflows/github-code-scanning/codeql)
 
 [![Dependabot Updates](https://github.com/navikt/polly/actions/workflows/dependabot/dependabot-updates/badge.svg?branch=master)](https://github.com/navikt/polly/actions/workflows/dependabot/dependabot-updates)

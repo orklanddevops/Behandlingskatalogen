@@ -1,0 +1,28 @@
+# Build from source: a fresh clone does not contain a prebuilt JAR.
+FROM maven:3.9-eclipse-temurin-25 AS builder
+WORKDIR /src
+ARG VM_CA_SHA256=none
+# Import only the public CA bundle explicitly supplied by the operator.
+RUN --mount=type=secret,id=vm_ca \
+    if [ -s /run/secrets/vm_ca ]; then \
+      awk '/-----BEGIN CERTIFICATE-----/{n++} n{print > ("/tmp/vm-ca-" n ".crt")}' /run/secrets/vm_ca; \
+      for cert in /tmp/vm-ca-*.crt; do \
+        keytool -importcert -noprompt -trustcacerts -cacerts -storepass changeit -alias "$(basename "$cert")" -file "$cert" || exit 1; \
+      done; \
+      rm -f /tmp/vm-ca-*.crt; \
+    fi
+COPY pom.xml .
+COPY polly-app ./polly-app
+COPY polly-test ./polly-test
+RUN --mount=type=cache,target=/root/.m2 mvn --batch-mode --no-transfer-progress -pl polly-app -am -Dmaven.test.skip=true package
+
+FROM eclipse-temurin:25-jre
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --system --uid 10001 --create-home polly
+# Retain the explicitly supplied public CA for outbound runtime HTTPS.
+COPY --from=builder /opt/java/openjdk/lib/security/cacerts /opt/java/openjdk/lib/security/cacerts
+WORKDIR /application
+COPY --from=builder /src/polly-app/target/app-exec.jar app.jar
+USER polly
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70", "-jar", "app.jar"]

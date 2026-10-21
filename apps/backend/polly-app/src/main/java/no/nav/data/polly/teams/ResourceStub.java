@@ -2,7 +2,7 @@ package no.nav.data.polly.teams;
 
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.polly.teams.dto.Resource;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-@ConditionalOnMissingBean(ResourceService.class)
+@ConditionalOnProperty(name = "client.teamcat-resource.enabled", havingValue = "false", matchIfMissing = true)
 public class ResourceStub implements ResourceService {
 
     @Override

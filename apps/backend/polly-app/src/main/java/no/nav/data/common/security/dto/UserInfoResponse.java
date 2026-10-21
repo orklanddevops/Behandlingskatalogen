@@ -42,7 +42,7 @@ public class UserInfoResponse {
 
         public UserInfoResponseBuilder appRole(AppRole appRole) {
             this.groups.add(appRole.name());
-            return this;
+            return groups(this.groups);
         }
     }
 }

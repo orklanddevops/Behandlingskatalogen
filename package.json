@@ -1,0 +1,19 @@
+{
+  "name": "behandlingskatalogen",
+  "private": true,
+  "scripts": {
+    "setup": "bash setup.sh",
+    "deploy": "bash scripts/vm.sh deploy",
+    "update": "bash scripts/vm.sh update",
+    "start": "bash scripts/vm.sh start",
+    "stop": "bash scripts/vm.sh stop",
+    "restart": "bash scripts/vm.sh restart",
+    "status": "bash scripts/vm.sh status",
+    "logs": "bash scripts/vm.sh logs",
+    "logs:backend": "bash scripts/vm.sh logs backend",
+    "logs:frontend": "bash scripts/vm.sh logs frontend",
+    "config:vm": "bash scripts/vm.sh config",
+    "test:vm": "python3 scripts/test-vm.py",
+    "test:deployment": "node scripts/test-deployment.mjs"
+  }
+}

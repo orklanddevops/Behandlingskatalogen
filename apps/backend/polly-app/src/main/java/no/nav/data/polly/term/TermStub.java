@@ -1,14 +1,14 @@
 package no.nav.data.polly.term;
 
 import no.nav.data.polly.term.domain.PollyTerm;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
-@ConditionalOnMissingBean(TermService.class)
+@ConditionalOnProperty(name = "client.term-catalog.enabled", havingValue = "false", matchIfMissing = true)
 public class TermStub implements TermService {
 
     @Override
