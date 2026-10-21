@@ -89,9 +89,9 @@ export const AddBatchInformationTypesModal = (props: TAddBatchInformationTypesPr
               <Modal.Body>
                 <div className='w-187.5 px-8'>
                   <div className=' flex w-full mt-4 flex-row'>
-                    <ModalLabel label='Master i Nav' />
+                    <ModalLabel label='Master i Orkland kommune' />
                     <Select
-                      label='Master i Nav'
+                      label='Master i Orkland kommune'
                       hideLabel
                       value={system}
                       onChange={(event) => {

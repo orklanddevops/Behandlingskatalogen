@@ -9,19 +9,19 @@ const primitives = {
 } as const
 
 export const chartColor = {
-  generalBlue: '#409FDD',
+  generalBlue: '#345b3b',
   generalRed: '#FF7983',
   generalMustard: '#FFCC40',
 
-  lightGreen: '#C9EA95',
+  lightGreen: '#cbe1cf',
   orange: '#FFAB66',
-  darkGreen: '#408DA0',
+  darkGreen: '#477b50',
 }
 
 export const searchResultColor = {
   informationTypeBackground: '#E0DAE7',
-  purposeBackground: '#E0F5FB',
-  processBackground: '#CCEAD8',
+  purposeBackground: '#e5f0e7',
+  processBackground: '#cbe1cf',
   dpProcessBackground: '#FFCC40',
   teamBackground: '#FFE9CC',
   productAreaBackground: '#F5DBEB',

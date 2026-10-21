@@ -40,7 +40,7 @@ export const DashboardPage = () => {
       {dashboardData && (
         <div className='w-full mt-6'>
           <Heading size='medium' className='mb-4'>
-            Behandlingsstatistikk (ikke inkludert NAV som databehandler)
+            Behandlingsstatistikk (ikke inkludert Orkland kommune som databehandler)
           </Heading>
           <Charts chartData={dashboardData.all} processStatus={dashboardStatus} />
         </div>

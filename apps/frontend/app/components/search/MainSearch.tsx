@@ -36,7 +36,7 @@ const mainSearchSelectOverrides = {
     ({
       ...(selectOverrides as any).control(base),
       backgroundColor: 'var(--ax-bg-default)',
-      border: '1px solid #D9DBE0',
+      border: '1px solid var(--orkland-border)',
       color: 'var(--ax-text-neutral)',
     }) as CSSObjectWithLabel,
   input: (base: CSSObjectWithLabel) =>
@@ -48,7 +48,7 @@ const mainSearchSelectOverrides = {
   placeholder: (base: CSSObjectWithLabel) =>
     ({
       ...(selectOverrides as any).placeholder(base),
-      color: 'var(--ax-neutral-1000)',
+      color: 'var(--orkland-text)',
     }) as CSSObjectWithLabel,
   singleValue: (base: CSSObjectWithLabel) =>
     ({
@@ -334,7 +334,7 @@ const MainSearch = () => {
                   return {
                     id: content.id,
                     sortKey: content.name,
-                    typeName: 'Nav som databehandler',
+                    typeName: 'Orkland kommune som databehandler',
                     tagColor: searchResultColor.dpProcessBackground,
                     label: content.name,
                     type: EObjectType.DP_PROCESS,
@@ -406,6 +406,7 @@ const MainSearch = () => {
     <div className='w-full min-w-0'>
       <div className='flex items-center w-full max-w-182.5 min-w-0'>
         <AsyncSelect
+          classNamePrefix='polly-mainsearch'
           className='w-full'
           aria-label='Søk'
           placeholder='Søk'
@@ -431,7 +432,7 @@ const MainSearch = () => {
             onClick={() => setFilter(!filter)}
             icon={
               <span className='flex items-center leading-none'>
-                <FilterIcon aria-hidden className='block text-[#D9DBE0]' />
+                <FilterIcon aria-hidden className='block' />
               </span>
             }
             size='xsmall'

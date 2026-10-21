@@ -153,7 +153,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
     <Modal
       open={isOpen}
       onClose={onClose}
-      header={{ heading: 'Behandlinger hvor Nav er databehandler' }}
+      header={{ heading: 'Behandlinger hvor Orkland kommune er databehandler' }}
       width='960px'
     >
       <Formik
@@ -204,7 +204,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
                 <CustomizedModalBlock>
                   <ModalLabel
                     label='Beskrivelse'
-                    tooltip='Beskriv behandlingen Nav gjør på vegne av den behandlingsansvarlige, f.eks. innsamling og lagring av personopplysninger.'
+                    tooltip='Beskriv behandlingen Orkland kommune gjør på vegne av den behandlingsansvarlige, f.eks. innsamling og lagring av personopplysninger.'
                   />
                   <div className='w-full' id={fieldId('description')} tabIndex={-1}>
                     <FieldDescription />

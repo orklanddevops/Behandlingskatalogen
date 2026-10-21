@@ -78,7 +78,7 @@ const flattenFormikErrors = (
 
 const errorSummaryFieldLabels: Record<string, string> = {
   name: 'Navn',
-  orgMaster: 'Master i NAV',
+  orgMaster: 'Master i Orkland kommune',
   term: 'Begrepsdefinisjon',
   sources: 'Kilder',
   keywords: 'Søkeord',
@@ -308,7 +308,7 @@ const InformationtypeForm = ({ formInitialValues, submit }: TFormProps) => {
                     {({ form }: FieldProps<IInformationtypeFormValues>) => (
                       <div className='mb-4'>
                         <div className='mb-2 self-center'>
-                          <Label>Master i NAV</Label>
+                          <Label>Master i Orkland kommune</Label>
                         </div>
 
                         {(() => {

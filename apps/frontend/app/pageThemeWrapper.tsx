@@ -42,7 +42,7 @@ const PageThemeWrapper: FunctionComponent<TProps> = ({ children, origin }) => {
 
           <div className='flex w-full flex-1'>
             <div className='min-w-60'>
-              <SideBar />
+              <SideBar themeMode={themeMode} />
             </div>
 
             <div className='mb-48 w-full min-w-0 px-7 py-7'>{children}</div>

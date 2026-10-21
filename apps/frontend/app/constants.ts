@@ -569,7 +569,6 @@ export interface ITeam {
   name: string
   description: string
   productAreaId?: string
-  slackChannel?: string
   tags: string[]
   members: IMember[]
 }

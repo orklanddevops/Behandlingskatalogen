@@ -186,8 +186,13 @@ const Header = ({ themeMode, onThemeModeChange, origin }: IHeaderProps) => {
   const canUsePermissionOverrides = user.hasGroup(EGroup.ADMIN) || user.hasGroup(EGroup.SUPER)
 
   return (
-    <InternalHeader className='polly-white-internalheader'>
-      <InternalHeader.Title href='/'>Behandlingskatalog</InternalHeader.Title>
+    <InternalHeader className='polly-white-internalheader' data-orkland-theme={themeMode}>
+      <InternalHeader.Title href='/'>
+        <span className='orkland-header-title'>
+          <span>Behandlingskatalog</span>
+          <span className='orkland-header-organization'>Orkland kommune</span>
+        </span>
+      </InternalHeader.Title>
       <div className='polly-header-search flex items-center justify-center py-2 min-w-35 basis-0 grow-6 shrink'>
         <MainSearch />
       </div>

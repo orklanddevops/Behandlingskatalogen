@@ -285,7 +285,7 @@ const DpProcessView = () => {
                 ).length !== 0 &&
                   dpProcess.affiliation.navKontorer.length !== 0 && (
                     <div className='mt-2'>
-                      <span>Nav-kontor: </span>
+                      <span>kommunal enhet: </span>
                       <ul className='list-disc list-inside'>
                         {dpProcess.affiliation.navKontorer.map((kontor: INomData) => (
                           <li key={kontor.nomId}>{kontor.nomName}</li>

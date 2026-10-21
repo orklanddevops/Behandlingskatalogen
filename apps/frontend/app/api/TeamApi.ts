@@ -11,7 +11,6 @@ const defaultTeam = (teamId: string): ITeam => ({
   name: teamId,
   description: '',
   productAreaId: undefined,
-  slackChannel: undefined,
   tags: [],
   members: [],
 })

@@ -131,7 +131,7 @@ export const StartDate = () => {
                 label={
                   <LabelWithToolTip
                     label='Velg fra og med dato'
-                    tooltip='Fra og med-dato er preutfylt med den datoen Nav ble opprettet. For behandlinger med senere fom-dato, må denne endres. Datoen kan også settes frem i tid.'
+                    tooltip='Fra og med-dato er forhåndsutfylt. Endre datoen slik at den viser når behandlingen startet. Datoen kan også settes frem i tid.'
                     noMarginBottom
                   />
                 }

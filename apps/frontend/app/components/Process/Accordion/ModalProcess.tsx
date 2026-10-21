@@ -94,7 +94,7 @@ const errorSummaryFieldLabels: Record<string, string> = {
   purposes: 'Overordnet behandlingsaktivitet',
   description: 'Formål med behandlingen',
   additionalDescription: 'Ytterligere beskrivelse',
-  'dpia.processImplemented': 'Er behandlingen innført i Nav?',
+  'dpia.processImplemented': 'Er behandlingen innført i Orkland kommune?',
   legalBasesOpen: 'Behandlingsgrunnlag',
   affiliation: 'Organisering',
 }
@@ -252,7 +252,7 @@ const ModalProcess = ({
                   <Error fieldName='additionalDescription' />
 
                   <CustomizedModalBlock>
-                    <ModalLabel label='Er behandlingen innført i Nav?' />
+                    <ModalLabel label='Er behandlingen innført i Orkland kommune?' />
                     <div>
                       <BoolField
                         value={formikBag.values.dpia?.processImplemented}
@@ -351,7 +351,7 @@ const ModalProcess = ({
                             <ModalLabel
                               fullwidth
                               label='Felles behandlingsansvarlig'
-                              tooltip='Er Nav behandlingsansvarlig sammen med annen virksomhet?'
+                              tooltip='Er Orkland kommune behandlingsansvarlig sammen med annen virksomhet?'
                             />
                             <div className='mt-2 mb-4'>
                               <RadioBoolButton
@@ -543,7 +543,7 @@ const ModalProcess = ({
                           <ModalLabel
                             fullwidth
                             label='Benyttes databehandler(e)'
-                            tooltip='En databehandler er en virksomhet som behandler personopplysninger på vegne av Nav.'
+                            tooltip='En databehandler er en virksomhet som behandler personopplysninger på vegne av Orkland kommune.'
                           />
                           <div className='mt-2'>
                             <BoolField

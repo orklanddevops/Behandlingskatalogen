@@ -55,7 +55,7 @@ public class NomController {
         return ResponseEntity.ok(response.get());
     }
 
-    @Operation(summary = "Search nav kontor")
+    @Operation(summary = "Søk etter kommunal enhet")
     @ApiResponse(description = "ok")
     @GetMapping("/nav-kontor/{searchTerm}")
     public ResponseEntity<List<OrgEnhet>> searchNavKontor(@PathVariable String searchTerm) {

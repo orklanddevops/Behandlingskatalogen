@@ -243,13 +243,13 @@ const Charts = (props: TChartsProps) => {
         </InfoCard.Header>
         <InfoCard.Content>
           <BodyLong size='small' className='text-lg'>
-            Behandlinger hvor NAV er felles behandlingsansvarlig med ekstern part:{' '}
+            Behandlinger hvor Orkland kommune er felles behandlingsansvarlig med ekstern part:{' '}
             <RouteLink href={link(EProcessField.COMMON_EXTERNAL_PROCESSOR, EProcessState.YES)}>
               {chartData.commonExternalProcessResponsible}
             </RouteLink>
           </BodyLong>
           <BodyLong size='small' className='text-lg'>
-            Behandlinger hvor Nav er databehandler:{' '}
+            Behandlinger hvor Orkland kommune er databehandler:{' '}
             <RouteLink href={'/dpprocess'}>{chartData.dpProcesses}</RouteLink>
           </BodyLong>
         </InfoCard.Content>

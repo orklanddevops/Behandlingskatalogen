@@ -21,11 +21,16 @@ const checkCurrentLocationIsTheSameAsSideBarItem = (
 
 const NavItem = (props: INavItemProps) => {
   const isActive = checkCurrentLocationIsTheSameAsSideBarItem(useLocation().pathname, props.to)
-  const textColor = isActive ? '#ffffff' : '#E0E1E5'
+  const textColor = 'inherit'
 
   return (
-    <RouteLink href={props.to} style={{ textDecoration: 'none' }} className='block w-full'>
-      <div className='flex items-center h-8.75'>
+    <RouteLink
+      href={props.to}
+      style={{ textDecoration: 'none' }}
+      className='orkland-nav-item block w-full'
+      aria-current={isActive ? 'page' : undefined}
+    >
+      <div className='flex min-h-10 items-center py-2'>
         {props.tooltip ? (
           <Tooltip content={props.tooltip} maxChar={200}>
             <BodyShort

@@ -44,7 +44,7 @@ const FieldDpProcessSubDataProcessor = (props: TFieldDpProcessSubDataProcessorPr
       <div className='w-full'>
         <ModalLabel
           label='Benyttes underdatabehandler(e)?'
-          tooltip='En underdatabehandler er en virksomhet som behandler personopplysninger på vegne av NAV når NAV selv opptrer som databehandler.'
+          tooltip='En underdatabehandler er en virksomhet som behandler personopplysninger på vegne av Orkland kommune når Orkland kommune selv opptrer som databehandler.'
           fullwidth
         />
         <div className='mt-2'>

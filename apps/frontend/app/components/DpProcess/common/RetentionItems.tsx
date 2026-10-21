@@ -35,8 +35,8 @@ const RetentionItems = (props: IRetentionItemsProps) => {
     <>
       <div className='w-full mt-4'>
         <ModalLabel
-          label='Lagringsbehov for NAV'
-          tooltip='Oppgi lagringstiden NAV er forpliktet til å overholde. Denne skal fremgå av databehandleravtalen med den behandlingsansvarlige.'
+          label='Lagringsbehov for Orkland kommune'
+          tooltip='Oppgi lagringstiden Orkland kommune er forpliktet til å overholde. Denne skal fremgå av databehandleravtalen med den behandlingsansvarlige.'
           fullwidth
         />
         <Field name='retention.retentionMonths'>

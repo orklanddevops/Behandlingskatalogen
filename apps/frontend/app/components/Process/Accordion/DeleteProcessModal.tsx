@@ -1,6 +1,6 @@
 'use client'
 
-import { BodyShort, Button, Heading, Link, List, Modal } from '@navikt/ds-react'
+import { BodyShort, Button, Heading, List, Modal } from '@navikt/ds-react'
 import { useContext } from 'react'
 import { IUserContext, UserContext } from '@/provider/userProvider'
 import { IDisclosure, IProcess } from '../../../constants'
@@ -28,11 +28,7 @@ export const DeleteProcessModal = (props: IDeleteProcessProps) => {
 
         {!user.isAdmin() && (
           <BodyShort>
-            For å slette behandlingen, kontakt oss på{' '}
-            <Link target='_blank' href='https://nav-it.slack.com/archives/CR1B19E6L'>
-              slack
-            </Link>
-            .
+            Kontakt en administrator i Orkland kommune for å slette behandlingen.
           </BodyShort>
         )}
 

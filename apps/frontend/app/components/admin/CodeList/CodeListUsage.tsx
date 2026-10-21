@@ -50,7 +50,9 @@ const UsageTable = (props: IProps) => {
           {informationTypes && <Table.ColumnHeader>Opplysningstype</Table.ColumnHeader>}
           {processes && <Table.ColumnHeader>Behandling</Table.ColumnHeader>}
           {processors && <Table.ColumnHeader>Databehandlere</Table.ColumnHeader>}
-          {dpProcesses && <Table.ColumnHeader>NAV som databehandler</Table.ColumnHeader>}
+          {dpProcesses && (
+            <Table.ColumnHeader>Orkland kommune som databehandler</Table.ColumnHeader>
+          )}
           {policies && <Table.ColumnHeader>Polis</Table.ColumnHeader>}
           {disclosures && <Table.ColumnHeader>Utleveringer</Table.ColumnHeader>}
           {documents && <Table.ColumnHeader>Dokumenter</Table.ColumnHeader>}

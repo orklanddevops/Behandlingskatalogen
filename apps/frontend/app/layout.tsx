@@ -19,9 +19,15 @@ const Main: FunctionComponent<TProps> = async ({ children }) => {
   return (
     <html lang='nb'>
       <head>
-        <link rel='icon' href='/favicon.ico' type='image/x-icon' />
+        <link rel='icon' href='/orkland-kommune-logo-light.svg' type='image/svg+xml' />
+        <link rel='manifest' href='/manifest.json' />
+        <meta name='theme-color' content='#DDEBD7' />
         <meta charSet='utf-8' />
-        <title>Behandlingskatalog</title>
+        <title>Behandlingskatalog – Orkland kommune</title>
+        <meta
+          name='description'
+          content='Oversikt over behandling av personopplysninger i Orkland kommune.'
+        />
       </head>
       <body>
         <UserProvider>

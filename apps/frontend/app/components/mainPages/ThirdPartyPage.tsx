@@ -217,7 +217,7 @@ const ThirdPartyPage = () => {
                 open={expandedAccordion === 'dpprocess'}
                 onOpenChange={(open: boolean) => handleOnOpenChange(open, 'dpprocess')}
               >
-                <Accordion.Header>{`Nav er databehandler for ${codelistUtils.getShortname(EListName.THIRD_PARTY, params.thirdPartyCode)} i følgende behandlinger (${dpProcesses?.length || 0})`}</Accordion.Header>
+                <Accordion.Header>{`Orkland kommune er databehandler for ${codelistUtils.getShortname(EListName.THIRD_PARTY, params.thirdPartyCode)} i følgende behandlinger (${dpProcesses?.length || 0})`}</Accordion.Header>
                 <Accordion.Content>
                   <ThirdPartiesDpProcessTable dpProcesses={dpProcesses || []} />
                 </Accordion.Content>
@@ -228,7 +228,7 @@ const ThirdPartyPage = () => {
               open={expandedAccordion === 'process'}
               onOpenChange={(open: boolean) => handleOnOpenChange(open, 'process')}
             >
-              <Accordion.Header>{`Felles behandlingsansvarlig med Nav (${processListCount})`}</Accordion.Header>
+              <Accordion.Header>{`Felles behandlingsansvarlig med Orkland kommune (${processListCount})`}</Accordion.Header>
               <Accordion.Content>
                 {params.thirdPartyCode && (
                   <ProcessList

@@ -127,15 +127,15 @@ const FieldSubDepartments = (props: IFieldSubDepartmentsProps) => {
 
       {formikBag.values.affiliation.subDepartments.includes('NAVKONTORSTAT') && (
         <div className='mt-3'>
-          <ModalLabel label='Kontor' tooltip='Angi Nav kontor.' />
+          <ModalLabel label='Kontor' tooltip='Angi kommunal enhet.' />
 
           <FieldArray name='affiliation.navKontorer'>
             {(fieldArrayRenderProps: FieldArrayRenderProps) => (
               <div className='w-full'>
                 <div className='w-full'>
                   <CustomSearchSelect
-                    ariaLabel='Søk etter Nav kontor'
-                    placeholder='Søk etter Nav kontor'
+                    ariaLabel='Søk etter kommunal enhet'
+                    placeholder='Søk etter kommunal enhet'
                     loadOptions={searchNavKontorOptions}
                     onChange={async (event: any) => {
                       if (event) {

@@ -28,18 +28,18 @@
 </p>
   <p>
     Dersom det er andre enn deg som bør oppdatere behandlingen, må du ta kontakt med
-    riktig person. Har du behov for bistand kan du kontakte oss på #behandlingskatalogen på Slack.
+    riktig person. Har du behov for bistand, kontakt systemansvarlig i Orkland kommune.
   </p>
 
 <div style="margin-top: 50px;">
   <hr/>
   <p>
-    Du kan ikke svare på denne eposten. Kontakt oss på <a href="slack://channel?team=T5LNAMWNA&id=CR1B19E6L">#behandlingskatalogen</a>
+    Du kan ikke svare på denne eposten. Kontakt systemansvarlig i Orkland kommune dersom du trenger hjelp.
   </p>
   <p>
     Hilsen
     <br/>
-    Behandlingskatalogen / Team Datajegerne
+    Behandlingskatalogen / Orkland kommune
   </p>
 </div>
 

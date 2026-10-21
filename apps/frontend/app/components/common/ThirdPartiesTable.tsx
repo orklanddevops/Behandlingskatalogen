@@ -20,7 +20,11 @@ const ThirdPartiesTable = ({ informationTypes, sortName }: TTableInformationType
       headers={
         <>
           <HeadCell title='Navn' column='name' tableState={[table, sortColumn]} />
-          <HeadCell title='Master i Nav' column={'orgMaster'} tableState={[table, sortColumn]} />
+          <HeadCell
+            title='Master i Orkland kommune'
+            column={'orgMaster'}
+            tableState={[table, sortColumn]}
+          />
         </>
       }
     >

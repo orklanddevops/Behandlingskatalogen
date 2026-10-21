@@ -40,47 +40,18 @@ export const Chart = (props: IChartProps) => {
   const totalFraction = total !== undefined ? total : totSize
 
   const colorsBase = [
-    '#a6cee3',
-    '#1f78b4',
-    '#b2df8a',
-    '#33a02c',
-    '#fb9a99',
-    '#e31a1c',
-    '#fdbf6f',
-    '#ff7f00',
-    '#cab2d6',
-    '#6a3d9a',
-    '#ffff99',
-    '#b15928',
-
-    // original palette
-    // '#2196f3',
-    // '#03a9f4',
-    // '#00bcd4',
-    // '#009688',
-    // '#4caf50',
-    // '#8bc34a',
-    // '#cddc39',
-    // '#ffeb3b',
-    // '#ffc107',
-    // '#ff9800',
-    // '#ff5722',
-    // '#f44336',
-    // '#e91e63',
-    // '#9c27b0',
-    // '#673ab7',
-    // '#3f51b5',
-    // '#795548',
-
-    // Nav farger
-    // '#C30000',
-    // '#FF9100',
-    // '#A2AD00',
-    // '#06893A',
-    // '#634689',
-    // '#005B82',
-    // '#0067C5',
-    // '#66CBEC',
+    '#345b3b',
+    '#74af7f',
+    '#b5d4ba',
+    '#477b50',
+    '#cbe1cf',
+    '#84b88e',
+    '#7b6f3f',
+    '#bca970',
+    '#526b5b',
+    '#a4cbab',
+    '#6b7f42',
+    '#c5cda4',
   ]
 
   const [splice] = useState<number>(() => Math.floor(Math.random() * colorsBase.length))
@@ -155,7 +126,10 @@ const Visualization = (props: TVisualizationProps) => {
           )}
         </Tooltip>
       </Button>
-      <div className='p-4 rounded' style={{ backgroundColor: isDark ? '#1e2433' : '#ffffff' }}>
+      <div
+        className='p-4 rounded'
+        style={{ backgroundColor: isDark ? 'var(--ax-bg-raised)' : '#ffffff' }}
+      >
         <div onMouseLeave={() => setHover(-1)}>
           <div
             className={`flex items-center ${leftLegend ? 'flex-row-reverse' : 'flex-row'} max-w-fit flex-wrap`}
@@ -193,10 +167,10 @@ const Visualization = (props: TVisualizationProps) => {
                         backgroundColor:
                           index === hover
                             ? isDark
-                              ? '#3b4252'
-                              : '#EFF3FE'
+                              ? 'var(--ax-bg-accent-moderate)'
+                              : 'var(--ax-bg-accent-soft)'
                             : isDark
-                              ? '#1e2433'
+                              ? 'var(--ax-bg-raised)'
                               : '#ffffff',
                       }}
                     >

@@ -169,7 +169,7 @@ const ProcessData = (props: IProcessDataProps) => {
         </>
       )}
 
-      <DataText label='Er behandlingen innført i NAV?' text={''}>
+      <DataText label='Er behandlingen innført i Orkland kommune?' text={''}>
         {process.dpia?.processImplemented ? 'Ja' : 'Nei'}
       </DataText>
 
@@ -272,7 +272,7 @@ const ProcessData = (props: IProcessDataProps) => {
               .length !== 0 &&
               process.affiliation.navKontorer.length !== 0 && (
                 <div className='flex gap-1'>
-                  <span>Nav-kontor: </span>
+                  <span>kommunal enhet: </span>
                   <span>
                     <div className='inline'>
                       {process.affiliation.navKontorer.map((kontor: INomData, index) => (
@@ -428,16 +428,23 @@ const ProcessData = (props: IProcessDataProps) => {
         {pvkDokumenter.length !== 0 &&
           pvkDokumenter.map((pvkDokument: IPvkDokumentShort) => (
             <div key={pvkDokument.etterlevelseDokumentasjonId}>
-              <Link
-                href={
-                  env.etterlevelseUrl + 'dokumentasjon/' + pvkDokument.etterlevelseDokumentasjonId
-                }
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                E{pvkDokument.etterlevelseNummer}.{pvkDokument.etterlevelseDokumentVersjon}{' '}
-                {pvkDokument.title}
-              </Link>
+              {env.etterlevelseUrl ? (
+                <Link
+                  href={
+                    env.etterlevelseUrl + 'dokumentasjon/' + pvkDokument.etterlevelseDokumentasjonId
+                  }
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  E{pvkDokument.etterlevelseNummer}.{pvkDokument.etterlevelseDokumentVersjon}{' '}
+                  {pvkDokument.title}
+                </Link>
+              ) : (
+                <BodyLong>
+                  E{pvkDokument.etterlevelseNummer}.{pvkDokument.etterlevelseDokumentVersjon}{' '}
+                  {pvkDokument.title}
+                </BodyLong>
+              )}
               <BodyLong className='mb-3'>
                 {pvkVurderingToText(pvkDokument.pvkVurdering)}
                 {pvkDokument.pvkVurdering !== EPvkVurdering.ALLEREDE_UTFORT &&
@@ -535,7 +542,7 @@ const Completeness = (props: ICompletenessProps) => {
     if (!completeness.profiling) content += 'Profilering, '
     if (!completeness.automation) content += 'Automatisering og profilering, '
     if (!completeness.retention) content += 'Lagringsbehov, '
-    if (!completeness.retentionTime) content += 'Lagringsbehov for NAV, '
+    if (!completeness.retentionTime) content += 'Lagringsbehov for Orkland kommune, '
     if (!completeness.dataProcessor) content += 'Databehandler, '
     if (!completeness.dataProcessors) content += 'Ref. til databehandleravtale, '
     if (!completeness.policies) content += 'Opplysningstyper, '

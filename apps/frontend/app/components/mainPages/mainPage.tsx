@@ -1,6 +1,6 @@
 'use client'
 
-import { Heading } from '@navikt/ds-react'
+import { BodyLong, Heading } from '@navikt/ds-react'
 import { useContext, useEffect, useState } from 'react'
 import { getDashboard } from '@/api/DashboardApi'
 import { getSettings } from '@/api/SettingsApi'
@@ -35,17 +35,20 @@ export const MainPage = () => {
 
   return (
     <div className='flex flex-wrap' role='main'>
+      <div className='orkland-home-intro mb-8 w-full rounded-lg p-7'>
+        <Heading size='xlarge' level='1' className='mb-3'>
+          Orkland kommunes behandlingskatalog
+        </Heading>
+        <BodyLong>Dokumenter og følg opp hvordan kommunen behandler personopplysninger.</BodyLong>
+      </div>
+      <div className='mb-8 flex w-full flex-col'>
+        <Heading size='large' level='2' className='mb-4'>
+          Hva vil du gjøre?
+        </Heading>
+        <ShortcutNav />
+      </div>
       {!isLoading && dashboardData && (
         <>
-          <div className='w-full flex flex-col'>
-            <div className='flex justify-center mb-10'>
-              <Heading size='xlarge' level='1'>
-                Hva vil du gjøre?
-              </Heading>
-            </div>
-            <ShortcutNav />
-          </div>
-
           <div className='w-full flex justify-center mt-12 mb-10'>
             <Heading size='large' level='2'>
               Hva har endret seg i det siste?

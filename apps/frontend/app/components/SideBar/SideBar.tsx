@@ -1,96 +1,72 @@
-import { BodyShort, Link } from '@navikt/ds-react'
 import Image from 'next/image'
-import { datajegerSlackLink } from '../../util/config'
+import { TThemeMode } from '@/util/themeMode'
 import NavItem from './NavItem'
 
-const SideBar = () => (
-  <div
-    className='h-full w-60 bg-black! flex flex-col'
-    style={{ backgroundColor: '#1B232F' }}
-    role='navigation'
-  >
-    <div className='sticky top-0 h-screen flex flex-col'>
-      <div className='flex-1 min-h-0 pl-3 pr-3 pt-6 overflow-y-auto'>
+const SideBar = ({ themeMode }: { themeMode: TThemeMode }) => (
+  <nav className='orkland-sidebar flex h-full w-60 flex-col' aria-label='Hovedmeny'>
+    <div className='sticky top-0 flex h-[calc(100dvh-4.5rem)] flex-col'>
+      <div className='min-h-0 flex-1 overflow-y-auto px-3 pt-6'>
         <NavItem
           to='/process'
           text='Behandlinger'
-          tooltip='En aktivitet du gjør på personopplysninger for å oppnå et formål. Eks. på behandling: Saksbehandling av alderspensjon'
+          tooltip='En aktivitet du gjør på personopplysninger for å oppnå et formål. For eksempel saksbehandling av kommunale tjenester.'
         />
-        <NavItem to='/dpprocess' text='Nav som databehandler' noWrap />
+        <NavItem to='/dpprocess' text='Orkland kommune som databehandler' />
         <NavItem
           to='/informationtype'
           text='Opplysningstyper'
-          tooltip='Personopplysninger som f.eks. kjønn, sivilstand, pensjonsopptjening.'
+          tooltip='Personopplysninger som for eksempel navn, kontaktinformasjon og sivilstand.'
         />
         <NavItem
           to='/document'
           text='Dokumenter'
-          tooltip='En samling av opplysningstyper. Sykmelding og inntektsmelding er eksempler på dokumenter som inneholder flere opplysningstyper.'
+          tooltip='En samling av opplysningstyper. Søknader og vedtak er eksempler på dokumenter som inneholder flere opplysningstyper.'
         />
         <NavItem
           to='/disclosure'
           text='Utleveringer'
-          tooltip='En samling av utleveringer av persondata fra Nav til eksterne bedrifter eller etater'
+          tooltip='Utleveringer av personopplysninger fra Orkland kommune til eksterne virksomheter eller etater.'
         />
         <NavItem
           to='/thirdparty'
           text='Eksterne parter'
-          tooltip='Parter utenfor Nav som vi samhandler med. Eksempler er Folkeregisteret, Lånekassen, brukere, arbeidsgivere'
+          tooltip='Parter utenfor Orkland kommune som vi samhandler med, for eksempel innbyggere, leverandører og offentlige etater.'
         />
         <NavItem
           to='/system'
           text='Systemer'
-          tooltip='En samling av beslektede applikasjoner som sammen løser et forretningsbehov. F.eks. Pesys, Modia, Aa-reg'
+          tooltip='Applikasjoner og fagsystemer som brukes i kommunens tjenester.'
         />
         <NavItem to='/processor' text='Databehandlere' />
         <NavItem
           to='/dashboard'
           text='Dashboard'
-          tooltip='Oversikt og statistikk over behandlinger og andre samlinger i behandlingskatalogen'
+          tooltip='Oversikt og statistikk over behandlinger i behandlingskatalogen.'
         />
-        <Link
-          href='//navikt.github.io/naka/behandlingskatalog'
-          target='_blank'
-          rel='noreferrer'
-          className='flex items-center h-8.75'
-          style={{ color: '#E0E1E5' }}
-        >
-          Veileder
-        </Link>
+        <NavItem to='/veileder' text='Veileder' />
       </div>
-
-      <div className='max-w-62 mt-auto pt-6 pb-22'>
-        <div className='flex justify-center'>
-          <div className='pb-4 w-[40%]'>
-            <Image
-              src='/navlogo.svg'
-              alt='Nav logo'
-              width={120}
-              height={44}
-              loading='eager'
-              style={{ width: '100%', height: 'auto' }}
-            />
-          </div>
-        </div>
-
-        <a href={datajegerSlackLink} style={{ textDecoration: 'none' }}>
-          <div className='flex justify-center items-center'>
-            <Image
-              src='/Slack_Monochrome_White.svg'
-              width={60}
-              height={60}
-              loading='eager'
-              alt='slack logo'
-              style={{ width: 60, height: 60 }}
-            />
-            <BodyShort size='small' style={{ color: '#E0E1E5' }}>
-              #behandlingskatalogen
-            </BodyShort>
-          </div>
+      <div className='mt-auto px-5 pb-8 pt-6'>
+        <a
+          href='https://www.orkland.kommune.no/'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='orkland-sidebar-logo'
+          aria-label='Orkland kommune – åpnes i ny fane'
+        >
+          <Image
+            src={
+              themeMode === 'dark' ? '/orkland-kommune-logo.svg' : '/orkland-kommune-logo-light.svg'
+            }
+            alt='Orkland kommune'
+            width={1684}
+            height={720}
+            loading='eager'
+            style={{ width: '100%', height: 'auto' }}
+          />
         </a>
       </div>
     </div>
-  </div>
+  </nav>
 )
 
 export default SideBar

@@ -1,14 +1,13 @@
 'use client'
 
-import { ExternalLinkIcon, ShieldIcon } from '@navikt/aksel-icons'
-import { BodyLong, Link } from '@navikt/ds-react'
+import { ShieldIcon } from '@navikt/aksel-icons'
+import { BodyLong } from '@navikt/ds-react'
 import { useEffect, useState } from 'react'
 import { EListName, ICode } from '@/constants/codelistConstant'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
 import { theme } from '@/util/theme'
 import { getTerm, mapTermToOption } from '../../../api/GetAllApi'
 import { IInformationType, ITerm } from '../../../constants'
-import { termUrl } from '../../../util/config'
 import { DotTags } from '../../common/DotTag'
 import { Markdown } from '../../common/Markdown'
 import RouteLink, { urlForObject } from '../../common/RouteLink'
@@ -52,11 +51,6 @@ const DescriptionData = (props: IDescriptionDataProps) => {
           text={term || 'Ingen begrepsdefinisjon oppgitt'}
           error={termError ? 'Kunne ikke finne begrepsdefinisjon' : undefined}
         />
-        {termId && (
-          <Link target='_blank' rel='noopener noreferrer' href={termUrl(termId)}>
-            <ExternalLinkIcon aria-hidden className='block' />
-          </Link>
-        )}
       </div>
       <div>
         <TextWithLabel
@@ -102,7 +96,7 @@ const PropertyData = (props: IPropertDataProps) => {
   return (
     <div className='flex flex-col' style={{ gap: theme.sizing.scale800 }}>
       <div>
-        <TextWithLabel label='Master i NAV'>
+        <TextWithLabel label='Master i Orkland kommune'>
           <DotTags
             list={EListName.SYSTEM}
             codes={orgMaster ? [orgMaster] : []}

@@ -47,8 +47,8 @@ const RetentionItems = (props: IProps) => {
           <div className='w-full mt-4'>
             <ModalLabel
               fullwidth
-              label='Lagringsbehov for Nav'
-              tooltip='Det er hvor lenge Nav har behov for tilgang til opplysningene vi ønsker svar på her. Når den tiden nås skal opplysningene enten kasseres eller gjøres klar for avlevering til Arkivverket.'
+              label='Lagringsbehov for Orkland kommune'
+              tooltip='Det er hvor lenge Orkland kommune har behov for tilgang til opplysningene vi ønsker svar på her. Når den tiden nås skal opplysningene enten kasseres eller gjøres klar for avlevering til Arkivverket.'
             />
             <Field name='retention.retentionMonths'>
               {() => (

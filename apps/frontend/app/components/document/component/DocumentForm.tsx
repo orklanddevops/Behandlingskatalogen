@@ -1,6 +1,6 @@
 'use client'
 
-import { Alert, Label, Link, Loader, Select, TextField, Textarea } from '@navikt/ds-react'
+import { Alert, Label, Loader, Select, TextField, Textarea } from '@navikt/ds-react'
 import {
   Field,
   FieldArray,
@@ -113,20 +113,7 @@ const DocumentForm = (props: TDocumentFormProps) => {
                   <div className='my-4'>
                     <ModalLabel
                       label='Datatilgangsklasse'
-                      description={
-                        <div>
-                          Mer informasjon finner du{' '}
-                          <Link
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            href={
-                              'https://confluence.adeo.no/pages/viewpage.action?pageId=245389995'
-                            }
-                          >
-                            her (åpnes i ny fane)
-                          </Link>
-                        </div>
-                      }
+                      description='Velg tilgangsklasse i tråd med Orkland kommunes interne retningslinjer. Kontakt systemansvarlig hvis du er usikker.'
                     />
                   </div>
                   <Select
