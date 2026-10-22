@@ -14,6 +14,8 @@
     "logs:frontend": "bash scripts/vm.sh logs frontend",
     "config:vm": "bash scripts/vm.sh config",
     "test:vm": "python3 scripts/test-vm.py",
-    "test:deployment": "node scripts/test-deployment.mjs"
+    "test:deployment": "node scripts/test-deployment.mjs",
+    "certificate": "bash scripts/vm.sh certificate",
+    "test:certificate": "node --test scripts/test-vm-certificate.mjs"
   }
 }

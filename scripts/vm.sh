@@ -3,8 +3,8 @@ set -Eeuo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 action=${1:-deploy}
 case "$action" in
-  deploy|update|start|stop|restart|status|logs|config) ;;
-  *) echo "Usage: bash scripts/vm.sh {deploy|update|start|stop|restart|status|logs|config}" >&2; exit 2 ;;
+  deploy|update|start|stop|restart|status|logs|config|certificate|reload-https) ;;
+  *) echo "Usage: bash scripts/vm.sh {deploy|update|start|stop|restart|status|logs|config|certificate|reload-https}" >&2; exit 2 ;;
 esac
 shift || true
 command -v docker >/dev/null || { echo "Docker is missing. Run: bash setup.sh" >&2; exit 1; }
@@ -54,7 +54,8 @@ case "$action" in
   deploy)
     "${compose[@]}" up -d --build --wait --wait-timeout 300
     "${compose[@]}" ps
-    echo "Deployment ready. Default URL inside the VM: http://localhost:3000 (see .env.vm for overrides)."
+    echo "Deployment ready. Local HTTP: http://localhost:3000 (see .env.vm for overrides)."
+    echo "With COMPOSE_PROFILES=https: https://behandlingskatalogen.orkland.kommune.no (see deploy/vm/README.md)."
     ;;
   update)
     if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
@@ -70,4 +71,17 @@ case "$action" in
   status) "${compose[@]}" ps -a ;;
   logs) "${compose[@]}" logs --follow --tail 100 "$@" ;;
   config) "${compose[@]}" config --quiet ;;
+  certificate)
+    tls_dir=$("${compose[@]}" --profile https config --format json |
+      node -e 'let s="";process.stdin.on("data",c=>s+=c);process.stdin.on("end",()=>console.log(JSON.parse(s).services.https.volumes.find(v=>v.target==="/etc/nginx/tls").source))')
+    node scripts/vm-certificate.mjs --tls-dir "$tls_dir" --reload "$@"
+    ;;
+  reload-https)
+    if [[ -n "$("${compose[@]}" --profile https ps --status running -q https)" ]]; then
+      "${compose[@]}" --profile https exec -T https nginx -t
+      "${compose[@]}" --profile https exec -T https nginx -s reload
+    else
+      echo "HTTPS gateway is not running; the certificate will be loaded on the next HTTPS deploy."
+    fi
+    ;;
 esac

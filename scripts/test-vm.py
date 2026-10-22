@@ -31,10 +31,19 @@ with open(os.environ["VM_TEST_LOG"], "a") as log:
     log.write(json.dumps([name] + args) + "\\n")
 if name == "git" and args[:1] == ["status"]:
     print(os.environ.get("VM_TEST_DIRTY", ""), end="")
+if name == "docker" and "--format" in args and "json" in args:
+    print(json.dumps({"services": {"https": {"volumes": [{"target": "/etc/nginx/tls", "source": os.environ.get("VM_TEST_TLS_DIR", "/tmp/test-tls")}]}}}))
+if name == "docker" and "ps" in args:
+    print(os.environ.get("VM_TEST_HTTPS_ID", ""), end="")
+if name == "docker" and args[-2:] == ["nginx", "-t"]:
+    sys.exit(int(os.environ.get("VM_TEST_NGINX_TEST_EXIT", "0")))
+if name == "node" and args[:1] == ["-e"]:
+    config = json.load(sys.stdin)
+    print(config["services"]["https"]["volumes"][0]["source"])
 if name == "docker" and "up" in args:
     sys.exit(int(os.environ.get("VM_TEST_UP_EXIT", "0")))
 """
-        for command in ("docker", "git"):
+        for command in ("docker", "git", "node"):
             path = self.bin / command
             path.write_text(fake)
             path.chmod(0o755)
@@ -105,6 +114,35 @@ if name == "docker" and "up" in args:
     def test_config_does_not_print_secrets(self):
         self.assertEqual(self.run_vm("config").returncode, 0)
         self.assertEqual(self.calls()[-1][-2:], ["config", "--quiet"])
+
+    def test_certificate_uses_configured_tls_directory(self):
+        self.env["VM_TEST_TLS_DIR"] = "/custom/certificate directory"
+        url = "https://stjernecert.vault.azure.net/certificates/renewed-name"
+        result = self.run_vm("certificate", "--certificate-url", url)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(["node", "scripts/vm-certificate.mjs", "--tls-dir",
+                       "/custom/certificate directory", "--reload", "--certificate-url", url], self.calls())
+
+    def test_reload_checks_nginx_before_reloading(self):
+        self.env["VM_TEST_HTTPS_ID"] = "gateway-id"
+        result = self.run_vm("reload-https")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        calls = self.calls()
+        check = next(i for i, call in enumerate(calls) if call[-2:] == ["nginx", "-t"])
+        reload = next(i for i, call in enumerate(calls) if call[-3:] == ["nginx", "-s", "reload"])
+        self.assertLess(check, reload)
+
+    def test_reload_refuses_invalid_nginx_configuration(self):
+        self.env["VM_TEST_HTTPS_ID"] = "gateway-id"
+        self.env["VM_TEST_NGINX_TEST_EXIT"] = "1"
+        self.assertNotEqual(self.run_vm("reload-https").returncode, 0)
+        self.assertFalse(any(call[-3:] == ["nginx", "-s", "reload"] for call in self.calls()))
+
+    def test_reload_without_running_gateway_waits_for_deploy(self):
+        result = self.run_vm("reload-https")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("next HTTPS deploy", result.stdout)
+        self.assertFalse(any("exec" in call for call in self.calls()))
 
     def test_invalid_action_does_not_create_credentials(self):
         self.assertEqual(self.run_vm("invalid").returncode, 2)

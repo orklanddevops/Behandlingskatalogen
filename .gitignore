@@ -10,3 +10,6 @@
 # Local VM configuration (generated credentials)
 .env.vm
 .vm-ca.pem
+
+# VM HTTPS certificate and private key (installed on the VM only)
+.vm-tls/
