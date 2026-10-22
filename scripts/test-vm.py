@@ -144,6 +144,11 @@ if name == "docker" and "up" in args:
         self.assertIn("next HTTPS deploy", result.stdout)
         self.assertFalse(any("exec" in call for call in self.calls()))
 
+    def test_commands_include_generated_auth_override(self):
+        (self.root / ".vm-auth.compose.json").write_text('{"services":{}}')
+        self.assertEqual(self.run_vm("config").returncode, 0)
+        self.assertIn(".vm-auth.compose.json", self.calls()[-1])
+
     def test_invalid_action_does_not_create_credentials(self):
         self.assertEqual(self.run_vm("invalid").returncode, 2)
         self.assertFalse((self.root / ".env.vm").exists())

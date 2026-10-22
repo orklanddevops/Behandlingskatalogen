@@ -10,4 +10,5 @@ import org.springframework.context.annotation.Configuration;
 public class NomGraphQlProperties {
 
     private String url;
+    private boolean enabled = true;
 }

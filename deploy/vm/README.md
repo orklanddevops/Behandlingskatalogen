@@ -30,13 +30,13 @@ Do not expose this unauthenticated instance to an untrusted network.
 
 ## Internal HTTPS on port 443
 
-For `https://behandlingskatalogen.orkland.kommune.no`, the optional Nginx gateway
+For `https://digikatalogen.orkland.kommune.no`, the optional Nginx gateway
 terminates TLS on VM port 443 and forwards requests to the frontend on its internal
 port 3000. The frontend still proxies API requests to `http://backend:8080`.
 No backend URL change is needed. Port 80 is not required; use the HTTPS URL directly.
 
 1. Have the network administrator create a DNS record for
-   `behandlingskatalogen.orkland.kommune.no` pointing to the VM's stable LAN IP and
+   `digikatalogen.orkland.kommune.no` pointing to the VM's stable LAN IP and
    permit TCP 443 from ansatt-nettet to that VM. The `*.orkland.kommune.no`
    certificate covers this full hostname, not the short name `behandlingskatalogen`.
 2. Install the certificate chain and matching private key **on the VM**, in PEM
@@ -59,7 +59,12 @@ No backend URL change is needed. Port 80 is not required; use the HTTPS URL dire
    COMPOSE_PROFILES=https
    VM_BIND_ADDRESS=127.0.0.1
    VM_PORT=3000
+   VM_PUBLIC_URL=https://digikatalogen.orkland.kommune.no
    ```
+
+   `VM_PUBLIC_URL` sets the backend’s allowed sign-in redirect origin. The backend
+   trusts the proxy’s forwarded HTTPS headers; its port stays internal to Docker.
+   This URL does not by itself configure Entra credentials or enable authentication.
 
    This keeps direct HTTP access local to the VM while HTTPS listens on all VM
    IPv4 interfaces. Optional settings: `VM_HTTPS_BIND_ADDRESS` (default `0.0.0.0`),
@@ -76,12 +81,12 @@ No backend URL change is needed. Port 80 is not required; use the HTTPS URL dire
    `bash scripts/vm.sh logs https`; missing, invalid, or mismatched PEM files will
    prevent Nginx from starting.
 5. From a computer on ansatt-nettet, open
-   `https://behandlingskatalogen.orkland.kommune.no`. Confirm the browser trusts the
+   `https://digikatalogen.orkland.kommune.no`. Confirm the browser trusts the
    certificate and you can load application data. You can also run:
 
    ```sh
-   curl --fail --show-error https://behandlingskatalogen.orkland.kommune.no/ > /dev/null
-   VM_URL=https://behandlingskatalogen.orkland.kommune.no npm run test:deployment
+   curl --fail --show-error https://digikatalogen.orkland.kommune.no/ > /dev/null
+   VM_URL=https://digikatalogen.orkland.kommune.no npm run test:deployment
    ```
 
    The local gateway health check only checks that its TLS listener responds;
@@ -228,7 +233,8 @@ refuses tracked local changes. No command resets local work or deletes the datab
   in the NAV Kodeverk format. The Azure Functions deployment is not required.
   The bundled data currently includes Norway only.
 
-Team catalogue and term catalogue integrations are disabled for this VM.
+Team catalogue, term catalogue, and NAV NOM organisation integrations are disabled for this VM.
+NOM lists are empty; stored organisation IDs remain available as fallback labels in exports.
 Other NAV integrations/links can still require NAV access. The backend currently
 retrieves Microsoft's OIDC discovery metadata during startup even with local
 authentication disabled, so outbound HTTPS to Microsoft is required.
@@ -274,3 +280,83 @@ Run `npm run test:deployment` after deployment. It makes read-only requests thro
 the frontend to verify the page, backend/database health, local user permissions,
 country codes, and the offline team/resource/term fallbacks. It uses VM_PORT from
 .env.vm; set VM_URL to test a different base URL. No application data is changed.
+
+## Configure employee sign-in for the VM
+
+The packaged local profile supplies NAV tenant defaults and dummy client
+credentials. Changing the callback hostname alone does not configure sign-in.
+The optional protected `.vm-auth.compose.json` overrides those defaults using
+`SPRING_APPLICATION_JSON`, which takes precedence over packaged properties.
+
+On the PC, in WSL, with the previously created protected identity files, run:
+
+```sh
+node scripts/vm-auth.mjs
+```
+
+This reads `~/.config/behandlingskatalogen/identifiers.env` and
+`signin-client-secret`. It writes `~/.config/behandlingskatalogen/vm-auth.compose.json`
+with permissions 600. The JSON contains the client secret and session encryption
+key: never print it, commit it, or paste it into chat. It uses the Orkland tenant
+`91d14ddc-e451-4a63-83a5-7c9dc6335632`, the sign-in client ID (not the Key Vault
+identity), and `https://digikatalogen.orkland.kommune.no/`. Regenerating preserves
+the encryption key in an existing output file so active sessions are not
+unnecessarily invalidated.
+
+Copy this file to the project root on the VM as `.vm-auth.compose.json` using scp.
+Copy the updated `scripts/vm.sh` too so future deploy/start/restart commands retain
+the override. On the VM:
+
+```sh
+chmod 600 .vm-auth.compose.json
+sudo docker compose --project-name behandlingskatalogen-vm --env-file .env.vm -f compose.vm.yaml -f .vm-auth.compose.json up -d --no-deps --force-recreate --wait backend
+```
+
+The wrapper automatically includes this file when present. It enables application
+security and removes the local profile's anonymous WRITE/ADMIN behavior. Existing
+public READ endpoints remain as defined by the application's security rules;
+this is not a change to make all application content private. With no explicit
+group mappings, no employee receives WRITE/SUPER/ADMIN roles from this setup.
+Supply the approved Entra group IDs using repeatable `--write-group`,
+`--super-group`, and `--admin-group` options when generating the file. One group
+currently maps to one application role, so use separate groups for separate roles.
+
+After deployment, `/login` should redirect to the Orkland tenant and use the
+new sign-in client ID. Verify a full browser sign-in and check that anonymous
+`/api/userinfo` no longer returns WRITE/ADMIN. The existing `test:deployment`
+script's development-user check expects anonymous admin access and is not
+appropriate as an authentication acceptance check. Existing sessions may require
+signing in again when authentication is first enabled.
+
+The Entra app must register the exact HTTPS callback:
+`https://digikatalogen.orkland.kommune.no/oauth2/callback`.
+
+## Callback CORS and dashboard troubleshooting
+
+The VM disables `client.nom.graphql.enabled` to avoid calls to NAV's internal
+organisation service. Dashboard statistics still use the local database; no NAV
+organisation tree is populated. Java changes require a backend image rebuild.
+
+Callback CORS explicitly permits Microsoft login and the configured application
+origins for POST/OPTIONS. Application redirect URLs are normalized to origins for
+CORS, so a trailing slash in a redirect URL does not become part of an origin.
+The sign-in configuration generator enables DEBUG logging only for Spring's
+DefaultCorsProcessor. If a real callback still returns 403, inspect backend logs
+for `Reject:` to identify the actual origin, method, or header rejected. A successful
+preflight alone does not prove the real browser callback succeeds. Do not share
+login codes, state, cookies, or client secrets while troubleshooting.
+
+### Access-token version for employee sign-in
+
+Configure the sign-in resource app for access-token version 2:
+
+```sh
+az ad app update --id "$BK_SIGNIN_APP" --requested-access-token-version 2
+```
+
+A null/default setting issues v1 access tokens even when login uses the v2
+authorization endpoint. The backend validates against the tenant-specific v2 OIDC
+issuer; a v1 session token is rejected with `Invalid token issuer` and subsequent
+requests can fail while its session cookie is present. After correcting the app
+setting, restart the backend to clear its token cache, clear application cookies,
+and sign in afresh. Do not weaken issuer validation or allow arbitrary issuers.

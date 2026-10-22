@@ -29,7 +29,7 @@ export function certificateIdentity(value) {
 }
 
 export function refreshCertificate({ url = certificateUrl, tlsDir = join(root, '.vm-tls'),
-  hostname = 'behandlingskatalogen.orkland.kommune.no', reload = false, execute = run } = {}) {
+  hostname = 'digikatalogen.orkland.kommune.no', reload = false, execute = run } = {}) {
   const identity = certificateIdentity(url)
   tlsDir = resolve(tlsDir)
   mkdirSync(tlsDir, { recursive: true, mode: 0o700 })

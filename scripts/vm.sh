@@ -49,13 +49,17 @@ fi
 export VM_CA_SHA256
 VM_CA_SHA256=$(sha256sum .vm-ca.pem | cut -d ' ' -f 1)
 compose=("${docker_cmd[@]}" compose --project-name behandlingskatalogen-vm --env-file .env.vm -f compose.vm.yaml)
+# Local sign-in secrets override the packaged local-profile placeholders.
+if [[ -f .vm-auth.compose.json ]]; then
+  compose+=(-f .vm-auth.compose.json)
+fi
 trap 'echo "VM command failed. Inspect: npm run status / npm run logs" >&2' ERR
 case "$action" in
   deploy)
     "${compose[@]}" up -d --build --wait --wait-timeout 300
     "${compose[@]}" ps
     echo "Deployment ready. Local HTTP: http://localhost:3000 (see .env.vm for overrides)."
-    echo "With COMPOSE_PROFILES=https: https://behandlingskatalogen.orkland.kommune.no (see deploy/vm/README.md)."
+    echo "With COMPOSE_PROFILES=https: https://digikatalogen.orkland.kommune.no (see deploy/vm/README.md)."
     ;;
   update)
     if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then

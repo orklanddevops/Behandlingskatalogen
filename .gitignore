@@ -13,3 +13,6 @@
 
 # VM HTTPS certificate and private key (installed on the VM only)
 .vm-tls/
+
+# Generated employee sign-in configuration (contains a client secret)
+.vm-auth.compose.json

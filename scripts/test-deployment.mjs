@@ -42,6 +42,9 @@ const checks = [
     assert.ok(data.groups.includes('WRITE'))
     assert.ok(data.groups.includes('ADMIN'))
   }],
+  ['dashboard without external organisation lookup', '/api/dash?filter=ALL', (data) => {
+    assert.ok(data && typeof data === 'object')
+  }],
   ['country codelist', '/api/codelist/countries', (data) => {
     assert.ok(Array.isArray(data))
     assert.ok(data.some((country) => country.code === 'NOR'))

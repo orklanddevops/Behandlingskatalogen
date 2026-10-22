@@ -40,6 +40,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: local
       SPRING_MAIN_CLOUD_PLATFORM: NONE
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+      POLLY_SECURITY_REDIRECTURIS: ${VM_PUBLIC_URL:-https://digikatalogen.orkland.kommune.no}
       DB_HOST: postgres
       DB_DATABASE: polly
       DB_USERNAME: polly
@@ -50,6 +52,7 @@ services:
       CLIENT_TERM_CATALOG_ENABLED: "false"
       CLIENT_TEAMCAT_RESOURCE_ENABLED: "false"
       CLIENT_TEAMCAT_TEAM_ENABLED: "false"
+      CLIENT_NOM_GRAPHQL_ENABLED: "false"
       CLIENT_COMMON_CODE_NAV_URL: http://codelists/api
     depends_on:
       postgres:

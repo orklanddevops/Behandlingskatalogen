@@ -66,6 +66,9 @@ public class NomGraphClient {
     }
 
     private Map<String, OrgEnhet> getAvdelingCache() {
+        if (!nomGraphQlProperties.isEnabled()) {
+            return Map.of();
+        }
         if (securityProperties.isDev()) {
             var devAvdelinger = List.of(
                     createDevOrganisering("arbeidsavdelingen", "Arbeidsavdelingen"),
@@ -118,6 +121,9 @@ public class NomGraphClient {
     }
 
     public List<OrgEnhet> getAllSeksjonForAvdeling(String avdelingId) {
+        if (!nomGraphQlProperties.isEnabled()) {
+            return List.of();
+        }
         var avdeling = getAvdelingById(avdelingId);
         if (avdeling.isEmpty()) {
             throw new ValidationException("Invalid avdeling id: " +  avdelingId);
@@ -146,6 +152,9 @@ public class NomGraphClient {
 
 
     public List<OrgEnhet> getAllFylker() {
+        if (!nomGraphQlProperties.isEnabled()) {
+            return List.of();
+        }
             if (securityProperties.isDev()) {
                 return List.of(
                         createDevOrganisering("fylke_1", "fylke 1"),
@@ -180,6 +189,9 @@ public class NomGraphClient {
 
 
     public List<OrgEnhet> searchNavkontorByTerm(String searchTerm) {
+        if (!nomGraphQlProperties.isEnabled()) {
+            return List.of();
+        }
         if (searchTerm.length() > 2) {
             if (securityProperties.isDev()) {
                 return List.of(
@@ -219,6 +231,9 @@ public class NomGraphClient {
     }
 
     public OrgEnhet getById(String id) {
+        if (!nomGraphQlProperties.isEnabled()) {
+            return OrgEnhet.builder().id(id).navn(id).organiseringer(List.of()).build();
+        }
         if (securityProperties.isProd()) {
             var request = new GraphQLRequest(getByIdQuery, Map.of("id", id));
             var res = template().postForEntity(nomGraphQlProperties.getUrl(), request, OrgEnhetGraphqlResponse.class);
