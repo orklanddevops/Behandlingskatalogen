@@ -9,11 +9,7 @@ import { ICode } from '@/constants/codelistConstant'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
 import { IUserContext, UserContext } from '@/provider/userProvider'
 import { TNavigateFunction, useNavigate } from '@/util/router'
-import {
-  convertProcessToFormValues,
-  getDisclosuresByProcessId,
-  getResourceById,
-} from '../../../api/GetAllApi'
+import { convertProcessToFormValues, getDisclosuresByProcessId } from '../../../api/GetAllApi'
 import {
   ELegalBasesUse,
   IAddDocumentToProcessFormValues,
@@ -177,17 +173,6 @@ const AccordionProcess = (props: TAccordionProcessProps) => {
     }
   }, [currentProcess?.id, isLoading, params.processId])
 
-  useEffect(() => {
-    ;(async () => {
-      if (currentProcess) {
-        const userIdent: string = currentProcess.changeStamp.lastModifiedBy.split(' ')[0]
-        await getResourceById(userIdent).catch(() =>
-          console.debug('Unable to get email for user that last modified')
-        )
-      }
-    })()
-  }, [currentProcess])
-
   const closeRevision = (): void => {
     setShowRevisionModal(false)
     onChangeProcess(currentProcess?.id)
@@ -220,7 +205,7 @@ const AccordionProcess = (props: TAccordionProcessProps) => {
                   }}
                   className='relative'
                 >
-                  <Accordion.Header className=' sticky top-0 z-10 bg-[#FFFFFF]'>
+                  <Accordion.Header className='orkland-accordion-header sticky top-0 z-10'>
                     <AccordionTitle
                       codelistUtils={codelistUtils}
                       process={process}

@@ -29,7 +29,7 @@ export function certificateIdentity(value) {
 }
 
 export function refreshCertificate({ url = certificateUrl, tlsDir = join(root, '.vm-tls'),
-  hostname = 'digikatalogen.orkland.kommune.no', reload = false, execute = run } = {}) {
+  hostname = 'digikatalogen.orkland.kommune.no', reload = false, minimumExpiry = null, execute = run } = {}) {
   const identity = certificateIdentity(url)
   tlsDir = resolve(tlsDir)
   mkdirSync(tlsDir, { recursive: true, mode: 0o700 })
@@ -102,6 +102,9 @@ export function refreshCertificate({ url = certificateUrl, tlsDir = join(root, '
     const changed = Object.entries(files).some(([name, value]) =>
       !previous.has(name) || !previous.get(name).value.equals(Buffer.from(value)))
     if (!changed) return { changed: false, version: parts[2] }
+    if (minimumExpiry !== null && Date.parse(cert.validTo) <= minimumExpiry) {
+      throw new Error('The replacement certificate does not extend the installed expiry date.')
+    }
     // Nginx keeps its current certificate in memory until the explicit reload.
     const installed = []
     try {

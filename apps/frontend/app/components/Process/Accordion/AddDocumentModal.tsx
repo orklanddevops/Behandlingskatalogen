@@ -95,7 +95,8 @@ const ListInformationTypes = (props: IListInformationTypesProps) => {
 export const AddDocumentModal = (props: TAddDocumentProps) => {
   const { isOpen, submit, addDefaultDocument, process, error } = props
   const [defaultDoc, setDefaultDoc] = useState<IDocument | undefined>()
-  const loading = !defaultDoc
+  const [loading, setLoading] = useState(true)
+  const [defaultDocumentError, setDefaultDocumentError] = useState(false)
 
   const useSearchDocumentOption = async (searchParam: string) => {
     if (searchParam && searchParam.length > 2) {
@@ -118,7 +119,13 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
 
   useEffect(() => {
     ;(async () => {
-      setDefaultDoc(await getDefaultProcessDocument())
+      try {
+        setDefaultDoc(await getDefaultProcessDocument())
+      } catch {
+        setDefaultDocumentError(true)
+      } finally {
+        setLoading(false)
+      }
     })()
   }, [])
 
@@ -188,6 +195,11 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
               <Form onKeyDown={disableEnter}>
                 <Modal.Body className='min-h-125'>
                   <div className='flex flex-col gap-4 px-8 py-4'>
+                    {defaultDocumentError && (
+                      <BodyShort>
+                        Kunne ikke hente standarddokumentet. Du kan søke etter et dokument.
+                      </BodyShort>
+                    )}
                     <div className='flex flex-col gap-1'>
                       <Label size='small'>Dokument</Label>
                       <Field name='document'>

@@ -37,8 +37,13 @@ const ListCategoryInformationtype = ({ categoryUsages }: TInformationTypeAccordi
           onOpenChange={(open) => setOpenCategory(open ? categoryUsage.code : undefined)}
           className='relative'
         >
-          <Accordion.Header className=' sticky top-0 z-10 bg-[#FFFFFF]'>
-            <Heading level='3' size='xsmall' className='flex w-full flex-col'>
+          <Accordion.Header className='orkland-accordion-header sticky top-0 z-10'>
+            <Heading
+              level='3'
+              size='xsmall'
+              className='flex w-full flex-col'
+              style={{ color: 'inherit' }}
+            >
               <div className='min-w-0'>
                 {codelistUtils.getShortname(EListName.CATEGORY, categoryUsage.code)}
               </div>

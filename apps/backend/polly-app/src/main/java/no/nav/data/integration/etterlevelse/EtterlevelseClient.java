@@ -19,6 +19,9 @@ public class EtterlevelseClient {
     private EtterlevelseClientProperties properties;
 
     public List<PvkDokumentShort> getPvkDokumentForBehandling(UUID behandlingId) {
+        if (!properties.isEnabled() || properties.getUrl() == null || properties.getUrl().isBlank()) {
+            return List.of();
+        }
         List<PvkDokumentShort> pvkDokumentShorts = new ArrayList<>();
         try {
             log.info("Getting pvk dokument for behandling {} from etterlevelsesløsning", behandlingId);

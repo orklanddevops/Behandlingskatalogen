@@ -39,9 +39,8 @@ const CreateCodeListModal = ({
         key={String(isOpen)}
         validateOnChange={false}
         validateOnBlur={false}
-        onSubmit={(values: ISubmitValues) => {
-          submit(values)
-          onClose()
+        onSubmit={async (values: ISubmitValues) => {
+          await submit(values)
         }}
         initialValues={{
           list: list,
@@ -51,7 +50,7 @@ const CreateCodeListModal = ({
         }}
         validationSchema={codeListSchema()}
       >
-        {({ errors, submitForm }) => (
+        {({ errors, submitForm, isSubmitting }) => (
           <Form>
             <Modal.Body>
               <Field name='code'>
@@ -94,7 +93,7 @@ const CreateCodeListModal = ({
                 <Button variant='secondary' type='button' onClick={() => onClose()}>
                   Avbryt
                 </Button>
-                <Button variant='primary' type='button' onClick={submitForm}>
+                <Button variant='primary' type='button' onClick={submitForm} loading={isSubmitting}>
                   Lagre
                 </Button>
               </div>

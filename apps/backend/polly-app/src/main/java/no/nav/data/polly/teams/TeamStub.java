@@ -1,5 +1,7 @@
 package no.nav.data.polly.teams;
 
+import no.nav.data.polly.codelist.CodelistStaticService;
+import no.nav.data.polly.codelist.domain.ListName;
 import no.nav.data.polly.teams.domain.ProductArea;
 import no.nav.data.polly.teams.domain.Team;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,12 +16,15 @@ public class TeamStub implements TeamService {
 
     @Override
     public List<Team> getAllTeams() {
-        return List.of();
+        return CodelistStaticService.getCodelists(ListName.TEAM).stream()
+                .map(code -> Team.builder().id(code.getCode()).name(code.getShortName())
+                        .description(code.getDescription()).tags(List.of()).members(List.of()).build())
+                .toList();
     }
 
     @Override
     public Optional<Team> getTeam(String teamId) {
-        return Optional.empty();
+        return getAllTeams().stream().filter(team -> team.getId().equals(teamId)).findFirst();
     }
 
     @Override

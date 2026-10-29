@@ -9,4 +9,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "client.etterlevelse")
 public class EtterlevelseClientProperties {
     private String url;
+    private boolean enabled = true;
 }

@@ -3,7 +3,7 @@
 import { FileExcelIcon } from '@navikt/aksel-icons'
 import { Button, Link, Loader, SortState, Table } from '@navikt/ds-react'
 import { useEffect, useState } from 'react'
-import { getResourceById } from '../../api/TeamApi'
+import { getResourceById, hasResourceId } from '../../api/TeamApi'
 import { IProcessShort, IProcessShortWithEmail } from '../../constants'
 import handleExcelExport from '../../util/excelExport'
 import { handleSort, sortTableData } from '../../util/handleTableSort'
@@ -32,8 +32,8 @@ export const SimpleProcessTable = (props: IProps) => {
 
       const enrichedProcesses: IProcessShortWithEmail[] = await Promise.all(
         (processes ?? []).map(async (process: IProcessShort) => {
-          const userIdent: string = process.changeStamp.lastModifiedBy.split(' ')[0]
-          if (userIdent === 'migration') return { ...process }
+          const userIdent = process.changeStamp.lastModifiedBy?.split(' ')[0]
+          if (!hasResourceId(userIdent)) return { ...process }
 
           try {
             const result = await getResourceById(userIdent)

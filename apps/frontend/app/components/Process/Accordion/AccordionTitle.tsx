@@ -3,7 +3,6 @@ import { Heading, Tag } from '@navikt/ds-react'
 import { Ref, createRef } from 'react'
 import { EListName, ICode } from '@/constants/codelistConstant'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
-import { theme } from '@/util/theme'
 import { IProcessShort } from '../../../constants'
 
 type TAccordionTitleProps = {
@@ -24,12 +23,7 @@ const AccordionTitle = (props: TAccordionTitleProps) => {
 
   return (
     <div ref={forwardRef}>
-      <Heading
-        className='text-(--a-text-default)'
-        style={{ color: theme.colors.primary }}
-        level='3'
-        size='xsmall'
-      >
+      <Heading style={{ color: 'inherit' }} level='3' size='xsmall'>
         {!noChevron && expanded && <ChevronDownIcon aria-hidden className='block' />}
         {!noChevron && !expanded && <ChevronRightIcon aria-hidden className='block' />}
         <span> </span>

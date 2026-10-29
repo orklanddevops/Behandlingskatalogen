@@ -48,7 +48,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD:?Run bash setup.sh first}
       APP_NAME: polly-vm
       APP_SCOPE_KODEVERK: local
-      CLIENT_ETTERLEVELSE_URL: https://etterlevelse.ansatt.dev.nav.no
+      CLIENT_ETTERLEVELSE_ENABLED: "false"
       CLIENT_TERM_CATALOG_ENABLED: "false"
       CLIENT_TEAMCAT_RESOURCE_ENABLED: "false"
       CLIENT_TEAMCAT_TEAM_ENABLED: "false"

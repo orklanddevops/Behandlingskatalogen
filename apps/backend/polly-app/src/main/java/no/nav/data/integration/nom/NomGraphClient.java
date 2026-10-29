@@ -33,6 +33,8 @@ import no.nav.data.common.graphql.GraphQLRequest;
 import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.TokenProvider;
 import no.nav.data.common.utils.MetricUtils;
+import no.nav.data.polly.codelist.CodelistStaticService;
+import no.nav.data.polly.codelist.domain.ListName;
 import no.nav.data.integration.nom.domain.OrgEnhet;
 import no.nav.data.integration.nom.domain.OrgEnhetsType;
 import no.nav.data.integration.nom.domain.Organisering;
@@ -67,7 +69,10 @@ public class NomGraphClient {
 
     private Map<String, OrgEnhet> getAvdelingCache() {
         if (!nomGraphQlProperties.isEnabled()) {
-            return Map.of();
+            return CodelistStaticService.getCodelists(ListName.DEPARTMENT).stream()
+                    .map(code -> OrgEnhet.builder().id(code.getCode()).navn(code.getShortName())
+                            .organiseringer(List.of()).build())
+                    .collect(Collectors.toMap(OrgEnhet::getId, Function.identity()));
         }
         if (securityProperties.isDev()) {
             var devAvdelinger = List.of(
@@ -109,7 +114,8 @@ public class NomGraphClient {
     }
 
     private Map<String, OrgEnhet> getAvdelingerFromCache() {
-        return allAvdelingCache.get("singleton");
+        // Local code edits must be visible immediately, without waiting for the NOM cache.
+        return nomGraphQlProperties.isEnabled() ? allAvdelingCache.get("singleton") : getAvdelingCache();
     }
 
     public List<OrgEnhet> getAllAvdelinger() {
@@ -232,7 +238,7 @@ public class NomGraphClient {
 
     public OrgEnhet getById(String id) {
         if (!nomGraphQlProperties.isEnabled()) {
-            return OrgEnhet.builder().id(id).navn(id).organiseringer(List.of()).build();
+            return getAvdelingById(id).orElseGet(() -> OrgEnhet.builder().id(id).navn(id).organiseringer(List.of()).build());
         }
         if (securityProperties.isProd()) {
             var request = new GraphQLRequest(getByIdQuery, Map.of("id", id));

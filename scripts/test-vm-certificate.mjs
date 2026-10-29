@@ -107,3 +107,12 @@ test('failed initial reload leaves no partially installed certificate', t => {
   assert.equal(existsSync(join(h.tlsDir, 'fullchain.pem')), false)
   assert.equal(existsSync(join(h.tlsDir, 'privkey.pem')), false)
 })
+
+test('renewal refuses a changed certificate that does not extend expiry', t => {
+  const h = harness(t)
+  h.refresh()
+  const old = h.snapshot()
+  h.state.pem = second.pem
+  assert.throws(() => h.refresh({ minimumExpiry: Date.now() + 7 * 86400000 }))
+  assert.deepEqual(h.snapshot(), old)
+})

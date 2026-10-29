@@ -106,16 +106,27 @@ const ProcessData = (props: IProcessDataProps) => {
   const [riskOwnerFullName, setRiskOwnerFullName] = useState<string>()
   const [processors, setProcessors] = useState<IProcessor[]>([])
   const [pvkDokumenter, setPvkDokumenter] = useState<IPvkDokumentShort[]>([])
+  const [pvkError, setPvkError] = useState(false)
 
   useEffect(() => {
     ;(async () => {
       if (!env.disableRiskOwner && process.dpia?.riskOwner) {
-        setRiskOwnerFullName((await getResourceById(process.dpia.riskOwner)).fullName)
+        try {
+          setRiskOwnerFullName((await getResourceById(process.dpia.riskOwner)).fullName)
+        } catch {
+          setRiskOwnerFullName(process.dpia.riskOwner)
+        }
       } else {
         setRiskOwnerFullName('')
       }
 
-      await getPvkDokumentForBehandling(process.id).then(setPvkDokumenter)
+      setPvkError(false)
+      try {
+        setPvkDokumenter(await getPvkDokumentForBehandling(process.id))
+      } catch {
+        setPvkDokumenter([])
+        setPvkError(true)
+      }
     })()
   }, [process])
 
@@ -420,7 +431,8 @@ const ProcessData = (props: IProcessDataProps) => {
       </DataText>
 
       <DataText label='Gjeldende etterlevelser og PVK'>
-        {pvkDokumenter.length === 0 && (
+        {pvkError && <div>Kunne ikke hente etterlevelser og PVK. Prøv igjen senere.</div>}
+        {!pvkError && pvkDokumenter.length === 0 && (
           <BodyLong className='mb-3'>
             Behandlingen er ikke koblet til et etterlevelsesdokument
           </BodyLong>

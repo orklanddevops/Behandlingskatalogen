@@ -14,8 +14,8 @@ import {
   getDpProcess,
   updateDpProcess,
 } from '../../api/DpProcessApi'
-import { getResourceById } from '../../api/GetAllApi'
 import { getProcessorsByIds } from '../../api/ProcessorApi'
+import { getResourceById, hasResourceId } from '../../api/TeamApi'
 import {
   IDpProcess,
   IDpProcessFormValues,
@@ -110,7 +110,8 @@ const DpProcessView = () => {
       }
 
       if (dpProcess) {
-        const userIdent = dpProcess.changeStamp.lastModifiedBy.split(' ')[0]
+        const userIdent = dpProcess.changeStamp.lastModifiedBy?.split(' ')[0]
+        if (!hasResourceId(userIdent)) return
         await getResourceById(userIdent)
           .then((response) => setLastModifiedUserEmail(response.email))
           .catch(() => console.debug('Unable to get email for user that last modified'))

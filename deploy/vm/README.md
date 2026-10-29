@@ -185,10 +185,9 @@ fetch or validation preserves existing files; a failed Nginx test/reload restore
 them. On first installation without a running gateway, enable
 `COMPOSE_PROFILES=https` in `.env.vm` and run `bash scripts/vm.sh deploy` afterward.
 
-A manual refresh always retrieves the current version; **no periodic refresh is
-installed automatically**. Schedule the same command through your organization's
-VM management tooling under its configured service identity if automatic renewal
-pickup is required. Configure failure alerts there so a failed refresh is noticed.
+A manual refresh always retrieves the current version. For automatic pickup during
+the final week of validity, install the optional timer described below. A normal
+deploy does not install a timer.
 
 To change the certificate name later:
 
@@ -360,3 +359,67 @@ issuer; a v1 session token is rejected with `Invalid token issuer` and subsequen
 requests can fail while its session cookie is present. After correcting the app
 setting, restart the backend to clear its token cache, clear application cookies,
 and sign in afresh. Do not weaken issuer validation or allow arbitrary issuers.
+
+## Expiry-aware certificate renewal timer
+
+After the updated scripts are on the VM, install the daily systemd check:
+
+```sh
+sudo node scripts/install-vm-certificate-timer.mjs --identity-dir "$HOME/.config/behandlingskatalogen"
+```
+
+This creates `behandlingskatalogen-certificate.service` and
+`behandlingskatalogen-certificate.timer`, enables the timer, and runs an initial
+check. Run the installer as shown from the normal administrator shell so `$HOME`
+identifies the account holding `identifiers.env` and `keyvault-client-secret`.
+The service runs as root to read the protected files and reload Docker without an
+interactive sudo prompt. Azure CLI, OpenSSL, Docker Compose, and Node must already
+be installed on the VM. The installer checks unit syntax before installation.
+
+Every check reads the actual installed leaf certificate from the TLS directory
+configured in Compose, including `VM_TLS_DIR`, and records expiry, fingerprint,
+renewal-window start, and result in:
+
+```text
+/var/lib/behandlingskatalogen-certificate/status.json
+```
+
+Until seven days before expiry, no Azure authentication or download is performed.
+During the last seven days (and if already expired or missing), every daily run
+performs a fresh service-principal client-secret login and requests the latest
+version from Key Vault. Subscription discovery is skipped, so the workload does
+not need `management.azure.com`. The service uses its own protected Azure CLI
+cache under `/var/lib/behandlingskatalogen-certificate/azure`.
+
+If the current version is still latest, it keeps the installed files and tries
+again on the next run. A changed replacement must cover the hostname, have a
+matching private key, be valid now, and extend the installed expiry date. After
+installation, Nginx configuration is checked and reloaded. Authentication,
+network, validation, and reload failures are recorded as failures, preserving the
+working certificate; the timer still tries again on its next daily activation.
+After success, subsequent checks wait for the new certificate's final week.
+
+The calendar check runs daily in the VM's timezone with up to 15 minutes of
+random delay, also checks shortly after boot, and catches missed calendar runs.
+It therefore begins retrieval on the first check within the seven-day window.
+The latest version must keep the same Key Vault certificate name. The Key Vault
+identity's client secret must still be rotated before its own expiry.
+
+Inspect the schedule, recorded expiry, and errors:
+
+```sh
+systemctl list-timers behandlingskatalogen-certificate.timer
+sudo cat /var/lib/behandlingskatalogen-certificate/status.json
+sudo journalctl -u behandlingskatalogen-certificate.service --since today
+```
+
+Run a check immediately, or disable the timer:
+
+```sh
+sudo systemctl start behandlingskatalogen-certificate.service
+sudo systemctl disable --now behandlingskatalogen-certificate.timer
+```
+
+Failures appear in the service journal and status file; this does not configure
+email or other notifications. Your normal VM monitoring can alert on a failed
+service or a certificate still near expiry.

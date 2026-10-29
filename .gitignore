@@ -16,3 +16,6 @@
 
 # Generated employee sign-in configuration (contains a client secret)
 .vm-auth.compose.json
+
+# Local certificate expiry/status and Azure login cache
+.vm-certificate-renewal/

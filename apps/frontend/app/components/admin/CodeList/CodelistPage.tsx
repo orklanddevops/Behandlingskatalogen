@@ -81,6 +81,7 @@ const CodeListPage = () => {
             <div className='flex justify-between w-full'>
               <Select
                 label='Velg kodeverk'
+                value={listname || ''}
                 hideLabel
                 onChange={(event: ChangeEvent<HTMLSelectElement>) =>
                   setListname(event.target.value)

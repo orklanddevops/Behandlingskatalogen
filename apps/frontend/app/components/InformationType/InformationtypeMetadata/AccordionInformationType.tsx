@@ -56,7 +56,7 @@ const AccordionInformationType = (props: IAccordionInformationtypeProps) => {
             navigate(pathname + '?' + queryString.stringify({ purpose }, { skipNull: true }))
           }}
         >
-          <Accordion.Header>
+          <Accordion.Header className='orkland-accordion-header'>
             <span>
               <span className='inline-flex items-center leading-none mr-1'>
                 <PersonGroupIcon aria-hidden className='block' />

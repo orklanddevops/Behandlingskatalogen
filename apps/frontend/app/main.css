@@ -393,3 +393,18 @@ body {
 .polly-white-internalheader .polly-mainsearch__menu-list {
   background-color: var(--orkland-card) !important;
 }
+
+/* List headers use the same accent pair as the selected sidebar item. */
+.orkland-accordion-header {
+  background: var(--orkland-accent);
+  color: var(--orkland-on-accent);
+}
+
+.orkland-accordion-header:hover {
+  background: var(--orkland-accent-hover);
+  color: var(--orkland-on-accent);
+}
+
+.orkland-accordion-header:active {
+  background: var(--orkland-accent-pressed);
+}

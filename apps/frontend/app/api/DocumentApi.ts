@@ -24,7 +24,9 @@ export const getDocumentByPageAndPageSize = async (pageNumber: number, pageSize:
 
 export const getDefaultProcessDocument = async () => {
   const settings = await getSettings()
-  return await getDocument(settings.defaultProcessDocument)
+  const documentId = settings.defaultProcessDocument
+  if (!documentId || documentId === 'null' || documentId === 'undefined') return undefined
+  return await getDocument(documentId)
 }
 
 export const getDocumentsForInformationType = async (informationTypeId: string) => {

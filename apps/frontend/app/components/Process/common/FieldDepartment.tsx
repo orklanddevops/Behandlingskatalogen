@@ -80,8 +80,8 @@ const FieldDepartment = (props: IFieldDepartmentProps) => {
                 )
                 await fieldProps.form.setFieldValue(
                   'affiliation.nomDepartmentName',
-                  alleAvdelingOptions.filter((avdeling) => avdeling.value === event.target.value)[0]
-                    .label
+                  alleAvdelingOptions.find((avdeling) => avdeling.value === event.target.value)
+                    ?.label || ''
                 )
               }}
             >

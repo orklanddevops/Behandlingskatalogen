@@ -16,6 +16,7 @@
     "test:vm": "python3 scripts/test-vm.py",
     "test:deployment": "node scripts/test-deployment.mjs",
     "certificate": "bash scripts/vm.sh certificate",
-    "test:certificate": "node --test scripts/test-vm-certificate.mjs"
+    "test:certificate": "node --test scripts/test-vm-certificate.mjs scripts/test-vm-certificate-renew.mjs",
+    "certificate:check": "node scripts/vm-certificate-renew.mjs"
   }
 }

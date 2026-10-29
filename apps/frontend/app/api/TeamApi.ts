@@ -49,7 +49,11 @@ const getAllProductAreas = async () => {
     .content
 }
 
+export const hasResourceId = (resourceId?: string | null): resourceId is string =>
+  !!resourceId?.trim() && !['null', 'undefined', 'migration'].includes(resourceId.trim())
+
 export const getResourceById = async (resourceId: string) => {
+  if (!hasResourceId(resourceId)) throw new Error('Missing resource ID')
   return (await axios.get<ITeamResource>(`${env.pollyBaseUrl}/team/resource/${resourceId}`)).data
 }
 
