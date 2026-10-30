@@ -19,9 +19,9 @@ const GROUPS: IGroup[] = [
   {
     label: 'Organisering',
     fields: [
-      { value: 'AFFILIATION_DEPARTMENT', label: 'Avdeling' },
-      { value: 'AFFILIATION_SUB_DEPARTMENTS', label: 'Linja' },
-      { value: 'AFFILIATION_PRODUCT_TEAMS', label: 'Team (Oppslag i Teamkatalogen)' },
+      { value: 'AFFILIATION_DEPARTMENT', label: 'Enhet' },
+      { value: 'AFFILIATION_SUB_DEPARTMENTS', label: 'Underavdeling' },
+      { value: 'AFFILIATION_PRODUCT_TEAMS', label: 'Team' },
       { value: 'COMMON_EXTERNAL_PROCESS_RESPONSIBLE', label: 'Felles behandlingsansvarlig' },
     ],
   },

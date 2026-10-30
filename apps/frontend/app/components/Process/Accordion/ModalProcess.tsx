@@ -310,8 +310,8 @@ const ModalProcess = ({
                         <div className='flex w-full flex-col gap-4'>
                           <div className='w-full'>
                             <ModalLabel
-                              label='Avdeling'
-                              tooltip='Angi hvilken avdeling som har hovedansvar for behandlingen.'
+                              label='Enhet'
+                              tooltip='Angi hvilken enhet som har hovedansvar for behandlingen.'
                             />
                             <div className='mt-2'>
                               <FieldDepartment
@@ -322,8 +322,8 @@ const ModalProcess = ({
 
                           <div className='w-full'>
                             <ModalLabel
-                              label='Linja'
-                              tooltip='Dersom behandlingen utføres i linja, angi hvor i linja behandlingen utføres.'
+                              label='Underavdeling'
+                              tooltip='Velg underavdelinger som utfører behandlingen.'
                             />
                             <div className='mt-2'>
                               <FieldSubDepartments
@@ -335,7 +335,7 @@ const ModalProcess = ({
 
                           <div className='w-full'>
                             <ModalLabel
-                              label='Team (Oppslag i Teamkatalogen)'
+                              label='Team'
                               tooltip='Angi hvilke team som har forvaltningsansvaret for IT-systemene.'
                               fullwidth={true}
                             />

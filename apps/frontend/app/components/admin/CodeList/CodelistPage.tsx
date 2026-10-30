@@ -109,7 +109,7 @@ const CodeListPage = () => {
               )}
             </div>
           )}
-          {!loading && currentCodelist && (
+          {!loading && listname && (
             <div className='mt-4'>
               <CodeListTable tableData={currentCodelist || []} refresh={update} />
             </div>

@@ -191,11 +191,11 @@ public class ProcessToDocx {
         String title;
         switch (list) {
             case DEPARTMENT -> {
-                title = "Avdeling";
+                title = "Enhet";
                 processes = processRepository.findByDepartment(code);
             }
             case SUB_DEPARTMENT -> {
-                title = "Linja (Ytre etat)";
+                title = "Underavdeling";
                 processes = processRepository.findBySubDepartment(code);
             }
             case PURPOSE -> {
@@ -219,7 +219,7 @@ public class ProcessToDocx {
             description = codelist.getDescription();
         } else {
             Optional<OrgEnhet> orgEnhet = nomGraphClient.getAvdelingById(code);
-            description = "Ingen beskrivelse for nom avdeling";
+            description = "Ingen beskrivelse for nom enhet";
             if (orgEnhet.isPresent()) {
                 subtitle = orgEnhet.get().getNavn();
             } else {
@@ -366,10 +366,10 @@ public class ProcessToDocx {
             var linjaNames = convert(data.getAffiliation().getSubDepartments(), sd -> shortName(ListName.SUB_DEPARTMENT, sd));
             var linjaText = linjaNames.isEmpty() ? "Ikke angitt" : String.join(", ", linjaNames);
             addTexts(
-                    text("Avdeling: ", departmentName),
-                    text("Seksjon: ", seksjonNames),
-                    text("Linja (Ytre etat): ", linjaText),
-                    documentAccess.equals(DocumentAccess.INTERNAL) ? text("Produktteam (IT): ", String.join(", ", teamNames)) : text(""),
+                    text("Enhet: ", departmentName),
+                    text("Avdeling: ", seksjonNames),
+                    text("Underavdeling: ", linjaText),
+                    documentAccess.equals(DocumentAccess.INTERNAL) ? text("Team: ", String.join(", ", teamNames)) : text(""),
                     text("Felles behandlingsansvarlig: ", data.getCommonExternalProcessResponsible() == null ? "Nei" : shortName(ListName.THIRD_PARTY, data.getCommonExternalProcessResponsible()))
             );
         }

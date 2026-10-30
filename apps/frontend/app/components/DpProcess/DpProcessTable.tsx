@@ -30,7 +30,7 @@ const DpProcessTable = (props: TDpProcessTableProps) => {
               column='externalProcessResponsible'
               tableState={[table, sortColumn]}
             />
-            <HeadCell title='Avdeling' column='affiliation' tableState={[table, sortColumn]} />
+            <HeadCell title='Enhet' column='affiliation' tableState={[table, sortColumn]} />
           </>
         }
       >

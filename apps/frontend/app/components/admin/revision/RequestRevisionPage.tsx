@@ -167,7 +167,7 @@ export const RequestRevisionPage = (props: IRequestRevisionPageProps) => {
               <Tabs.List>
                 <Tabs.Tab value={EProcessSelection.ONE} label='Én behandling' />
                 <Tabs.Tab value={EProcessSelection.ALL} label='Alle behandlinger' />
-                <Tabs.Tab value={EProcessSelection.DEPARTMENT} label='Avdeling' />
+                <Tabs.Tab value={EProcessSelection.DEPARTMENT} label='Enhet' />
                 <Tabs.Tab value={EProcessSelection.PRODUCT_AREA} label='Område' />
               </Tabs.List>
               <Tabs.Panel value={EProcessSelection.ONE} className='h-48 w-full p-4'>
@@ -204,14 +204,14 @@ export const RequestRevisionPage = (props: IRequestRevisionPageProps) => {
               <Tabs.Panel value={EProcessSelection.DEPARTMENT} className='h-68 w-full p-4'>
                 <Select
                   className='w-1/2'
-                  label='Avdeling'
+                  label='Enhet'
                   hideLabel
                   onChange={(ev) => formikBag.setFieldValue('department', ev.currentTarget.value)}
                   value={formikBag.values.department || ''}
                   error={formikBag.errors.department}
                 >
                   <option key='' value=''>
-                    Velg avdeling
+                    Velg enhet
                   </option>
                   {alleAvdelingOptions.map((department) => (
                     <option key={`option_${department.value}`} value={department.value}>

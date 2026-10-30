@@ -248,7 +248,13 @@ export const CodelistProvider: FunctionComponent<TProps> = ({ children }) => {
   }
 
   const makeIdLabelForAllCodeLists = (): IMakeIdLabelForAllCodeListsProps[] => {
-    return Object.keys(EListName).map((key: string) => ({ id: key, label: key }))
+    const labels: Record<string, string> = {
+      DEPARTMENT: 'ENHET',
+      SEKSJON: 'AVDELING',
+      SUB_DEPARTMENT: 'UNDER_AVDELING',
+      TEAM: 'TEAM',
+    }
+    return Object.keys(EListName).map((key: string) => ({ id: key, label: labels[key] || key }))
   }
 
   useEffect(() => {

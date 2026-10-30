@@ -90,19 +90,12 @@ const ProcessPage = () => {
         }
 
         if (departmentCode) {
-          const [seksjonerForAvdeling, disclosureResponse, dpProcessResponse, avdelingData] =
-            await Promise.all([
-              getSeksjonerForNomAvdeling(departmentCode),
-              getDisclosureByDepartment(departmentCode),
-              getDpProcessByDepartment(departmentCode),
-              getAvdelingByNomId(departmentCode),
-            ])
-          const avdelingNavn = avdelingData?.navn
-          setDepartmentSeksjoner(
-            avdelingNavn
-              ? seksjonerForAvdeling.filter((s) => s.navn !== avdelingNavn)
-              : seksjonerForAvdeling
-          )
+          const [seksjonerForAvdeling, disclosureResponse, dpProcessResponse] = await Promise.all([
+            getSeksjonerForNomAvdeling(departmentCode),
+            getDisclosureByDepartment(departmentCode),
+            getDpProcessByDepartment(departmentCode),
+          ])
+          setDepartmentSeksjoner(seksjonerForAvdeling)
           if (disclosureResponse) setDisclosureData(disclosureResponse.content)
           if (dpProcessResponse) setDpProcessData(dpProcessResponse.content)
         }
@@ -150,10 +143,10 @@ const ProcessPage = () => {
         {isNoDepartment && (
           <LocalAlert status='warning' className='mb-4'>
             <LocalAlert.Header>
-              <LocalAlert.Title as='h3'>Disse behandlingene mangler avdeling</LocalAlert.Title>
+              <LocalAlert.Title as='h3'>Disse behandlingene mangler enhet</LocalAlert.Title>
             </LocalAlert.Header>
             <LocalAlert.Content>
-              Det er viktig at alle oppdaterer informasjon om avdeling i behandlingene sine.
+              Det er viktig at alle oppdaterer informasjon om enhet i behandlingene sine.
             </LocalAlert.Content>
           </LocalAlert>
         )}
@@ -178,13 +171,13 @@ const ProcessPage = () => {
                   )) && (
                   <div className='flex items-center gap-4 mb-4 mt-2'>
                     <Select
-                      label='Filtrer på seksjon'
+                      label='Filtrer på avdeling'
                       hideLabel={false}
                       value={selectedSeksjonId}
                       onChange={(e) => setSelectedSeksjonId(e.target.value)}
                       style={{ minWidth: '30rem' }}
                     >
-                      <option value=''>Alle seksjoner</option>
+                      <option value=''>Alle avdelinger</option>
                       {[...departmentSeksjoner]
                         .sort((a, b) => a.navn.localeCompare(b.navn))
                         .map((s) => (
@@ -195,7 +188,7 @@ const ProcessPage = () => {
                       {dashboardData?.seksjoner?.some(
                         (s) =>
                           s.seksjonId === '__INGEN_SEKSJON__' && s.department === departmentCode
-                      ) && <option value='__INGEN_SEKSJON__'>Ikke valgt seksjon</option>}
+                      ) && <option value='__INGEN_SEKSJON__'>Ikke valgt avdeling</option>}
                     </Select>
                   </div>
                 )}
@@ -203,11 +196,11 @@ const ProcessPage = () => {
                   <LocalAlert status='warning' className='mb-4'>
                     <LocalAlert.Header>
                       <LocalAlert.Title as='h3'>
-                        Disse behandlingene mangler seksjon
+                        Disse behandlingene mangler avdeling
                       </LocalAlert.Title>
                     </LocalAlert.Header>
                     <LocalAlert.Content>
-                      Det er viktig at alle oppdaterer informasjon om seksjon i behandlingene sine.
+                      Det er viktig at alle oppdaterer informasjon om avdeling i behandlingene sine.
                     </LocalAlert.Content>
                   </LocalAlert>
                 )}

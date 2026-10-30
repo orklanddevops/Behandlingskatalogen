@@ -233,7 +233,7 @@ refuses tracked local changes. No command resets local work or deletes the datab
   The bundled data currently includes Norway only.
 
 Team catalogue, term catalogue, and NAV NOM organisation integrations are disabled for this VM.
-NOM lists are empty; stored organisation IDs remain available as fallback labels in exports.
+Local organisation lists are managed under Admin → Kodeverk; see [local organisation lists](local-organisation.md). Stored organisation IDs remain available as fallback labels in exports.
 Other NAV integrations/links can still require NAV access. The backend currently
 retrieves Microsoft's OIDC discovery metadata during startup even with local
 authentication disabled, so outbound HTTPS to Microsoft is required.

@@ -89,7 +89,7 @@ public class ExportController {
         } else if (section != null) {
             OrgEnhet seksjonData = nomGraphClient.getById(section);
             List<Process> processes = processRepository.findBySeksjoner(List.of(section));
-            doc = processToDocx.generateDocForProcessList(processes, "Seksjon: " + StringUtils.capitalize(seksjonData.getNavn()), documentAccess);
+            doc = processToDocx.generateDocForProcessList(processes, "Avdeling: " + StringUtils.capitalize(seksjonData.getNavn()), documentAccess);
             filename = "behandling_seksjon_" + seksjonData.getNavn() + ".docx";
         } else if (productTeam != null) {
             List<Process> processes = processRepository.findByProductTeam(productTeam);

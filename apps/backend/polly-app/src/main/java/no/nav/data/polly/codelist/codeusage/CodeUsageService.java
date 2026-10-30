@@ -159,6 +159,21 @@ public class CodeUsageService {
                         d.getData().setNomDepartmentName(newCodeName);
                     });
                 }
+                case SEKSJON -> {
+                    var sectionName = CodelistStaticService.getCodelistResponse(ListName.SEKSJON, newCode).getShortName();
+                    getProcesses(usage).forEach(p -> nullToEmptyList(p.getData().getAffiliation().getSeksjoner()).stream()
+                            .filter(section -> oldCode.equals(section.getNomSeksjonId()))
+                            .forEach(section -> {
+                                section.setNomSeksjonId(newCode);
+                                section.setNomSeksjonName(sectionName);
+                            }));
+                    getDpProcesses(usage).forEach(p -> nullToEmptyList(p.getData().getAffiliation().getSeksjoner()).stream()
+                            .filter(section -> oldCode.equals(section.getNomSeksjonId()))
+                            .forEach(section -> {
+                                section.setNomSeksjonId(newCode);
+                                section.setNomSeksjonName(sectionName);
+                            }));
+                }
                 case TEAM -> {
                     getProcesses(usage).forEach(p -> replaceAll(p.getData().getAffiliation().getProductTeams(), oldCode, newCode));
                     getDpProcesses(usage).forEach(p -> replaceAll(p.getData().getAffiliation().getProductTeams(), oldCode, newCode));
@@ -203,6 +218,7 @@ public class CodeUsageService {
             case PURPOSE -> processRepository.findByPurpose(code);
             case TEAM -> processRepository.findByProductTeam(code);
             case DEPARTMENT -> processRepository.findByDepartment(code);
+            case SEKSJON -> processRepository.findBySeksjoner(List.of(code));
             case SUB_DEPARTMENT -> processRepository.findBySubDepartment(code);
             case GDPR_ARTICLE -> processRepository.findByGDPRArticle(code);
             case NATIONAL_LAW -> processRepository.findByNationalLaw(code);
@@ -215,6 +231,7 @@ public class CodeUsageService {
     private List<DpProcessShortResponse> findDpProcesses(ListName listName, String code) {
         return convert(switch (listName) {
             case DEPARTMENT -> dpProcessRepository.findByDepartment(code);
+            case SEKSJON -> dpProcessRepository.findBySeksjoner(List.of(code));
             case TEAM -> dpProcessRepository.findByProductTeam(code);
             case SUB_DEPARTMENT -> dpProcessRepository.findBySubDepartment(code);
             case SYSTEM -> dpProcessRepository.findByProduct(code);

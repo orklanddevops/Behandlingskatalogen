@@ -8,6 +8,8 @@ public interface DpProcessRepositoryCustom {
 
     List<DpProcess> findByProduct(String product);
 
+    List<DpProcess> findBySeksjoner(List<String> seksjoner);
+
     List<DpProcess> findBySubDepartment(String subDepartment);
 
     List<DpProcess> findByProductTeam(String productTeam);

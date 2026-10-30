@@ -27,6 +27,7 @@ import { IDisclosureFormValues, IDocument, TOption } from '../../constants'
 import BoolField from '../Process/common/BoolField'
 import FieldLegalBasis from '../Process/common/FieldLegalBasis'
 import { Error, ModalLabel } from '../common/ModalSchema'
+import OrganisationSelect from '../common/OrganisationSelect'
 import SelectDocument from '../common/SelectDocument'
 import SelectInformationTypes from '../common/SelectInformationTypes'
 import SelectProcess from '../common/SelectProcess'
@@ -75,8 +76,8 @@ const errorSummaryFieldLabels: Record<string, string> = {
   'abroad.businessArea': 'Trygdeområde',
   assessedConfidentiality: 'Hjemmel for unntak fra taushetsplikt er vurdert',
   confidentialityDescription: 'Begrunnelse / hjemmel for unntak fra taushetsplikt',
-  nomDepartmentId: 'Avdeling',
-  productTeams: 'Team (Oppslag i Teamkatalogen)',
+  nomDepartmentId: 'Enhet',
+  productTeams: 'Team',
   legalBasesOpen: 'Behandlingsgrunnlag',
 }
 
@@ -547,53 +548,27 @@ const ModalThirdParty = (props: TModalThirdPartyProps) => {
                       <h3 className='text-xl font-semibold mb-4'>Organisering</h3>
                       <div className='w-full'>
                         <ModalLabel
-                          label='Avdeling'
-                          tooltip='Angi hvilken avdeling som har hovedansvar for behandlingen.'
+                          label='Enhet'
+                          tooltip='Angi hvilken enhet som har hovedansvar for behandlingen.'
                           fullwidth
                         />
 
                         <div className='mt-2'>
-                          <Select
-                            className='w-full'
+                          <OrganisationSelect
                             id={fieldId('nomDepartmentId')}
-                            label='Velg avdeling'
-                            hideLabel
-                            aria-label='Velg avdeling'
-                            onChange={async (event) => {
-                              const selectedValue = event.target.value
-
-                              if (!selectedValue) {
-                                await formikBag.setFieldValue('nomDepartmentId', '')
-                                await formikBag.setFieldValue('nomDepartmentName', '')
-                                return
-                              }
-
-                              const selected = alleAvdelingOptions.find(
-                                (avdeling) => String(avdeling.value) === selectedValue
-                              )
-
-                              await formikBag.setFieldValue('nomDepartmentId', selectedValue)
-                              await formikBag.setFieldValue(
-                                'nomDepartmentName',
-                                typeof selected?.label === 'string'
-                                  ? selected?.label
-                                  : String(selected?.label ?? '')
-                              )
-                            }}
+                            label='Velg enhet'
+                            options={alleAvdelingOptions}
                             value={formikBag.values.nomDepartmentId ?? ''}
-                          >
-                            <option value=''>Velg avdeling</option>
-                            {alleAvdelingOptions.map((department) => (
-                              <option key={department.value} value={department.value}>
-                                {department.label}
-                              </option>
-                            ))}
-                          </Select>
+                            onChange={(option) => {
+                              formikBag.setFieldValue('nomDepartmentId', option?.value || '')
+                              formikBag.setFieldValue('nomDepartmentName', option?.label || '')
+                            }}
+                          />
                         </div>
 
                         <div className='mt-4'>
                           <ModalLabel
-                            label='Team (Oppslag i Teamkatalogen)'
+                            label='Team'
                             tooltip='Angi hvilke team som har forvaltningsansvaret for IT-systemene.'
                             fullwidth
                           />

@@ -226,7 +226,7 @@ const DpProcessView = () => {
           <DataText label='Organisering' text=''>
             {dpProcess?.affiliation.nomDepartmentId ? (
               <div className='flex gap-1 items-center'>
-                <span className='whitespace-nowrap'>Avdeling: </span>
+                <span className='whitespace-nowrap'>Enhet: </span>
                 <RouteLink
                   href={urlForObject(EListName.DEPARTMENT, dpProcess.affiliation.nomDepartmentId)}
                 >
@@ -235,14 +235,14 @@ const DpProcessView = () => {
               </div>
             ) : (
               <div className='flex gap-1 items-center'>
-                <span className='whitespace-nowrap'>Avdeling: </span>
+                <span className='whitespace-nowrap'>Enhet: </span>
                 <span>Ikke utfylt</span>
               </div>
             )}
 
             {dpProcess && dpProcess.affiliation.seksjoner.length !== 0 && (
               <div className='mt-2'>
-                <span>Seksjon: </span>
+                <span>Avdeling: </span>
                 <ul className='list-disc list-inside'>
                   {dpProcess.affiliation.seksjoner.map((seksjon: INomSeksjon) => (
                     <li key={seksjon.nomSeksjonId}>{seksjon.nomSeksjonName}</li>
@@ -254,7 +254,7 @@ const DpProcessView = () => {
             {!!dpProcess?.affiliation.subDepartments.length && (
               <div className='mt-2'>
                 <div>
-                  <span>Linja: </span>
+                  <span>Underavdeling: </span>
                   <ul className='list-disc list-inside'>
                     {dpProcess.affiliation.subDepartments.map((subDepartment) => (
                       <li key={subDepartment.code}>

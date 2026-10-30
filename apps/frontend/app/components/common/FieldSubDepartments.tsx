@@ -9,6 +9,7 @@ import { getFylkerOptions, searchNavKontorOptions } from '../../api/NomApi'
 import { IDpProcessFormValues, INomData, IProcessFormValues, TOption } from '../../constants'
 import CustomSearchSelect from './AsyncSelectComponents'
 import { ModalLabel } from './ModalSchema'
+import OrganisationSelect from './OrganisationSelect'
 import { renderTagList } from './TagList'
 
 interface IFieldSubDepartmentsProps {
@@ -34,28 +35,21 @@ const FieldSubDepartments = (props: IFieldSubDepartmentsProps) => {
         render={(arrayHelpers: FieldArrayRenderProps) => (
           <div className='w-full'>
             <div className='w-full'>
-              <Select
-                label=''
-                hideLabel
-                onChange={(event) => {
-                  if (event.target.value) {
-                    arrayHelpers.form.setFieldValue('affiliation.subDepartments', [
-                      ...formikBag.values.affiliation.subDepartments,
-                      event.target.value,
-                    ])
-                  }
-                }}
-              >
-                <option value=''>Velg linje</option>
-                {codelistUtils
+              <OrganisationSelect
+                id='affiliation-subDepartments'
+                label='Velg underavdeling'
+                options={codelistUtils
                   .getParsedOptions(EListName.SUB_DEPARTMENT)
                   .filter((code) => !formikBag.values.affiliation.subDepartments.includes(code.id))
-                  .map((code) => (
-                    <option key={code.id} value={code.id}>
-                      {code.label}
-                    </option>
-                  ))}
-              </Select>
+                  .map((code) => ({ value: code.id, label: code.label }))}
+                onChange={(option) => {
+                  if (option)
+                    arrayHelpers.form.setFieldValue('affiliation.subDepartments', [
+                      ...formikBag.values.affiliation.subDepartments,
+                      option.value,
+                    ])
+                }}
+              />
             </div>
             <div className='mt-2 flex flex-wrap gap-2'>
               {renderTagList(

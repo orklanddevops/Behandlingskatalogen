@@ -223,21 +223,21 @@ const ProcessData = (props: IProcessDataProps) => {
       <DataText label='Organisering' text={''}>
         {process.affiliation.nomDepartmentId ? (
           <div className='flex gap-1 items-center'>
-            <span className='whitespace-nowrap'>Avdeling: </span>
+            <span className='whitespace-nowrap'>Enhet: </span>
             <ObjectLink id={process.affiliation.nomDepartmentId} type={EListName.DEPARTMENT}>
               {process.affiliation.nomDepartmentName || process.affiliation.nomDepartmentId}
             </ObjectLink>
           </div>
         ) : (
           <div className='flex gap-1 items-center'>
-            <span className='whitespace-nowrap'>Avdeling: </span>
+            <span className='whitespace-nowrap'>Enhet: </span>
             <span>Ikke utfylt</span>
           </div>
         )}
 
         {!!process.affiliation.seksjoner.length && (
           <div className='mt-2'>
-            <span>Seksjon: </span>
+            <span>Avdeling: </span>
             <ul className='list-disc list-inside'>
               {process.affiliation.seksjoner.map((seksjon: INomSeksjon) => (
                 <li key={seksjon.nomSeksjonId}>{seksjon.nomSeksjonName}</li>
@@ -249,7 +249,7 @@ const ProcessData = (props: IProcessDataProps) => {
         {!!process.affiliation.subDepartments.length && (
           <div className='mt-2'>
             <div>
-              <span>Linja: </span>
+              <span>Underavdeling: </span>
               <ul className='list-disc list-inside'>
                 {process.affiliation.subDepartments.map((subDepartment) => (
                   <li key={subDepartment.code}>

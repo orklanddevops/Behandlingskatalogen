@@ -122,10 +122,10 @@ export const SimpleProcessTable = (props: IProps) => {
               Behandling
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey='affiliation' sortable>
-              Avdeling
+              Enhet
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey='seksjon' sortable>
-              Seksjon
+              Avdeling
             </Table.ColumnHeader>
             {showCommonExternalProcessResponsible && (
               <Table.ColumnHeader sortKey='commonExternalProcessResponsible' sortable>

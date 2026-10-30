@@ -38,7 +38,7 @@ export const PageHeader = (props: IPageHeaderProps) => {
         setSeksjonNavn((await getByNomId(code)).navn)
       } else if (section === 'department') {
         if (noDepartment) {
-          setNomAvdelingNavn('Ikke valgt avdeling')
+          setNomAvdelingNavn('Ikke valgt enhet')
         } else {
           setNomAvdelingNavn((await getAvdelingByNomId(code)).navn)
         }
@@ -65,10 +65,10 @@ export const PageHeader = (props: IPageHeaderProps) => {
   }
 
   const metadataTitle = () => {
-    if (section === ESection.subdepartment) return 'Linja'
+    if (section === ESection.subdepartment) return 'Underavdeling'
     else if (section === ESection.department) return ''
     else if (section === ESection.team) return 'Team'
-    else if (section === ESection.seksjon) return 'Seksjon'
+    else if (section === ESection.seksjon) return 'Avdeling'
     else if (section === ESection.system) return 'System'
     else if (section === ESection.processor) return 'Databehandler'
     else if (section === ESection.thirdparty) return 'Felles behandlingsansvarlig med ekstern part}'

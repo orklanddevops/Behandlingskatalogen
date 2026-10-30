@@ -44,7 +44,7 @@ const RelatedProcessesTable = ({ relatedProcesses }: TRelatedProcessesTableProps
             Behandling
           </Table.ColumnHeader>
           <Table.ColumnHeader sortKey='affiliation' className='w-1/5' sortable>
-            Avdeling
+            Enhet
           </Table.ColumnHeader>
           <Table.ColumnHeader>System</Table.ColumnHeader>
         </Table.Row>

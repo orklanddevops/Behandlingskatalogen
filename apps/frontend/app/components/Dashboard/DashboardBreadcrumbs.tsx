@@ -43,11 +43,11 @@ const DashboardBreadcrumbs = (props: TDashboardBreadcrumbsProps) => {
   if (noDepartment) {
     if (currentPageTitle) {
       items.push({
-        label: 'Ikke valgt avdeling',
+        label: 'Ikke valgt enhet',
         href: '/process/department/Ingen%20avdeling/?tab=Dashboard',
       })
     } else {
-      items.push({ label: 'Ikke valgt avdeling' })
+      items.push({ label: 'Ikke valgt enhet' })
     }
   } else if (departmentId) {
     const depLabel = departmentName || departmentId

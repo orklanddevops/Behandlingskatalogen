@@ -164,12 +164,12 @@ const MainSearch = () => {
       if (type === 'purpose') {
         return getCodelistByListnameAndType(searchParam, EListName.PURPOSE, 'Formål', codelistUtils)
       } else if (type === 'department') {
-        return await getAvdelingSearchItem(searchParam, EListName.DEPARTMENT, 'Avdeling')
+        return await getAvdelingSearchItem(searchParam, EListName.DEPARTMENT, 'Enhet')
       } else if (type === 'subDepartment') {
         return getCodelistByListnameAndType(
           searchParam,
           EListName.SUB_DEPARTMENT,
-          'Linja',
+          'Underavdeling',
           codelistUtils
         )
       } else if (type === 'thirdParty') {
@@ -229,7 +229,7 @@ const MainSearch = () => {
             await getAvdelingSearchItem(
               searchParam,
               EListName.DEPARTMENT,
-              'Avdeling',
+              'Enhet',
               searchResultColor.departmentBackground
             )
           )
@@ -237,7 +237,7 @@ const MainSearch = () => {
             searchCodelist(
               searchParam,
               EListName.SUB_DEPARTMENT,
-              'Linja',
+              'Underavdeling',
               searchResultColor.subDepartmentBackground,
               codelistUtils
             )
@@ -369,7 +369,7 @@ const MainSearch = () => {
               const seksjoner = await getSeksjonSearchItem(
                 searchParam,
                 'seksjon',
-                'Seksjon',
+                'Avdeling',
                 searchResultColor.productAreaBackground
               )
               add(seksjoner)

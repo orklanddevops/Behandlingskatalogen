@@ -26,9 +26,9 @@ export const SelectType = (props: IProps) => {
           {SmallRadio('process', 'Behandlinger')}
           {SmallRadio('dpprocess', 'Orkland kommune som databehandler')}
           {SmallRadio('team', 'Team')}
-          {SmallRadio('seksjon', 'Seksjon')}
-          {SmallRadio('department', 'Avdeling')}
-          {SmallRadio('subDepartment', 'Linja')}
+          {SmallRadio('seksjon', 'Avdeling')}
+          {SmallRadio('department', 'Enhet')}
+          {SmallRadio('subDepartment', 'Underavdeling')}
           {SmallRadio('thirdParty', 'Ekstern part')}
           {SmallRadio('system', 'System')}
           {SmallRadio('document', 'Dokument')}

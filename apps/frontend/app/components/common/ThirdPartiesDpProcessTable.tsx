@@ -43,7 +43,7 @@ const ThirdPartiesDpProcessTable = ({ dpProcesses }: TTableDpProcessType) => {
         <>
           <HeadCell title='Navn' column={'name'} tableState={[table, sortColumn]} />
           <HeadCell title='Beskrivelse' column={'description'} tableState={[table, sortColumn]} />
-          <HeadCell title='Avdeling' column={'affiliation'} tableState={[table, sortColumn]} />
+          <HeadCell title='Enhet' column={'affiliation'} tableState={[table, sortColumn]} />
           <HeadCell title='Team' column={'affiliation'} tableState={[table, sortColumn]} />
         </>
       }

@@ -62,11 +62,7 @@ const DocumentProcessesTable = (props: TDocumentProcessesProps) => {
               tableState={[table, sortColumn]}
             />
             <HeadCell title='Behandling' column='name' tableState={[table, sortColumn]} />
-            <HeadCell
-              title='Avdeling'
-              column='nomDepartmentName'
-              tableState={[table, sortColumn]}
-            />
+            <HeadCell title='Enhet' column='nomDepartmentName' tableState={[table, sortColumn]} />
             <HeadCell title='System' column='products' tableState={[table, sortColumn]} />
           </>
         }

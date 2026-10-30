@@ -9,6 +9,7 @@ public enum ListName {
     SUBJECT_CATEGORY,
     GDPR_ARTICLE,
     DEPARTMENT,
+    SEKSJON,
     SUB_DEPARTMENT,
     TEAM,
     SYSTEM,

@@ -128,7 +128,10 @@ public class NomGraphClient {
 
     public List<OrgEnhet> getAllSeksjonForAvdeling(String avdelingId) {
         if (!nomGraphQlProperties.isEnabled()) {
-            return List.of();
+            // Local avdelinger are a shared list, independent of the selected enhet.
+            return CodelistStaticService.getCodelists(ListName.SEKSJON).stream()
+                    .map(code -> OrgEnhet.builder().id(code.getCode()).navn(code.getShortName())
+                            .organiseringer(List.of()).build()).toList();
         }
         var avdeling = getAvdelingById(avdelingId);
         if (avdeling.isEmpty()) {
@@ -238,6 +241,10 @@ public class NomGraphClient {
 
     public OrgEnhet getById(String id) {
         if (!nomGraphQlProperties.isEnabled()) {
+            var section = CodelistStaticService.getCodelist(ListName.SEKSJON, id);
+            if (section != null) {
+                return OrgEnhet.builder().id(id).navn(section.getShortName()).organiseringer(List.of()).build();
+            }
             return getAvdelingById(id).orElseGet(() -> OrgEnhet.builder().id(id).navn(id).organiseringer(List.of()).build());
         }
         if (securityProperties.isProd()) {

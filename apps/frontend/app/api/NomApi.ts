@@ -115,17 +115,10 @@ export const getSeksjonSearchItem = async (
 
   if (avdelinger && avdelinger.length) {
     const results = await Promise.all(
-      avdelinger.map((avdeling) =>
-        getSeksjonerForNomAvdeling(avdeling.id).then((seksjonerForAvdeling) =>
-          seksjonerForAvdeling.filter(
-            (seksjonForAvdeling) =>
-              seksjonForAvdeling.navn.toLowerCase() !== avdeling.navn.toLowerCase()
-          )
-        )
-      )
+      avdelinger.map((avdeling) => getSeksjonerForNomAvdeling(avdeling.id))
     )
 
-    seksjonListe.push(...results.flat())
+    seksjonListe.push(...new Map(results.flat().map((section) => [section.id, section])).values())
 
     return seksjonListe
       .filter((seksjon: IOrgEnhet) => seksjon.navn.toLowerCase().indexOf(search.toLowerCase()) >= 0)

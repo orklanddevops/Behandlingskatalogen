@@ -125,7 +125,7 @@ const ProcessList = ({
     }
   }
 
-  const navCode = section === ESection.department && !code ? 'Ingen avdeling' : code
+  const navCode = section === ESection.department && !code ? 'Ingen enhet' : code
 
   const handleChangePanel: (process?: Partial<IProcess>) => void = (
     process?: Partial<IProcess>

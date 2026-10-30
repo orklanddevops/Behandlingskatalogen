@@ -163,7 +163,7 @@ export const selectOverrides = {
   indicatorSeparator: () => ({ display: 'none' }) as CSSObjectWithLabel,
 }
 
-const selectOverridesError = {
+export const selectOverridesError = {
   ...selectOverrides,
   control: (base: CSSObjectWithLabel) => {
     const ctrl = (selectOverrides as any).control(base) as CSSObjectWithLabel

@@ -311,7 +311,7 @@ const AccordionDisclosure = (props: TAccordionDisclosureProps) => {
                           </div>
 
                           <div>
-                            <DataText label='Avdeling'>
+                            <DataText label='Enhet'>
                               {disclosure.nomDepartmentName && (
                                 <DotTags
                                   items={[disclosure.nomDepartmentName]}

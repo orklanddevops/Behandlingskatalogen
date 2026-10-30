@@ -18,15 +18,15 @@ const FieldDpProcessAffiliation = (props: TFieldDpProcessAffiliationProps) => {
     <>
       <div className='w-full'>
         <ModalLabel
-          label='Avdeling'
-          tooltip='Angi hvilken avdeling som har hovedansvar for behandlingen.'
+          label='Enhet'
+          tooltip='Angi hvilken enhet som har hovedansvar for behandlingen.'
         />
         <FieldDpProcessDepartment department={formikBag.values.affiliation.nomDepartmentId} />
 
         <div className='mt-3'>
           <ModalLabel
-            label='Linja'
-            tooltip='Dersom behandlingen utføres i linja, angi hvor i linja behandlingen utføres.'
+            label='Underavdeling'
+            tooltip='Velg underavdelinger som utfører behandlingen.'
           />
           <FieldSubDepartments formikBag={formikBag} codelistUtils={codelistUtils} />
         </div>
@@ -34,7 +34,7 @@ const FieldDpProcessAffiliation = (props: TFieldDpProcessAffiliationProps) => {
 
       <div className='w-full mt-2.5'>
         <ModalLabel
-          label='Team (Oppslag i Teamkatalogen)'
+          label='Team'
           tooltip='Angi hvilke team som har forvaltningsansvaret for IT-systemene.'
           fullwidth={true}
         />

@@ -53,6 +53,18 @@ public class DpProcessRepositoryImpl implements DpProcessRepositoryCustom {
         return getDpProcesses(resp);
     }
 
+    @Override
+    public List<DpProcess> findBySeksjoner(List<String> seksjoner) {
+        if (seksjoner.isEmpty()) return List.of();
+        var resp = jdbcTemplate.queryForList(
+                "SELECT dp_process_id FROM dp_process WHERE EXISTS (" +
+                "SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof(data #>'{affiliation,seksjoner}') = 'array' " +
+                "THEN data #>'{affiliation,seksjoner}' ELSE '[]'::jsonb END) AS section " +
+                "WHERE section->>'nomSeksjonId' IN (:seksjoner))",
+                new MapSqlParameterSource().addValue("seksjoner", seksjoner));
+        return getDpProcesses(resp);
+    }
+
     private List<DpProcess> getDpProcesses(List<Map<String, Object>> resp) {
         List<UUID> ids = resp.stream().map(i -> ((UUID) i.values().iterator().next())).collect(Collectors.toList());
         return processRepository.findAllById(ids);

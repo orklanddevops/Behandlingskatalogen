@@ -45,7 +45,7 @@ const DepartmentCard = (props: TDepartmentCardProps) => {
           setNomDepartmentName(response.navn)
         })
       } else {
-        setNomDepartmentName('Ikke valgt avdeling')
+        setNomDepartmentName('Ikke valgt enhet')
       }
     })()
   }, [department])
