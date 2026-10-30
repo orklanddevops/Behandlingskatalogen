@@ -23,7 +23,8 @@ RUN node .yarn/releases/yarn-4.16.0.cjs --version && node .yarn/releases/yarn-4.
 
 COPY . .
 
-RUN node .yarn/releases/yarn-4.16.0.cjs run test
+# React component tests require the test build of React, including act().
+RUN NODE_ENV=test node .yarn/releases/yarn-4.16.0.cjs run test
 
 RUN node .yarn/releases/yarn-4.16.0.cjs run build
 
