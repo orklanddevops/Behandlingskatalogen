@@ -8,6 +8,7 @@ import {
   ICode,
   NATIONAL_LAW_GDPR_ARTICLES,
 } from '@/constants/codelistConstant'
+import { qualitySystemLinkLabels } from '@/constants/qualitySystemLinks'
 import {
   ELegalBasesUse,
   EProcessStatus,
@@ -349,7 +350,10 @@ export const addDocumentToProcessSchema: () => yup.ObjectSchema<IAddDocumentToPr
   () =>
     yup.object({
       document: yup.mixed<any>().required(requiredMessage),
-      informationTypes: yup.array<any>().required().min(1, requiredMessage),
+      informationTypes: yup
+        .array<any>()
+        .required()
+        .min(1, 'Opplysningstypene er allerede lagt til'),
       process: yup.mixed<ICustomizedProcess>().required(requiredMessage),
       linkDocumentToPolicies: yup.boolean().required(),
     })
@@ -480,6 +484,31 @@ export const processSchema: (purposeList: ICode[]) => yup.ObjectSchema<IProcessF
       retentionDescription: yup.string(),
     }),
     status: yup.mixed<EProcessStatus>().oneOf(Object.values(EProcessStatus)),
+    qualitySystemLinks: yup
+      .object(
+        Object.fromEntries(
+          Object.keys(qualitySystemLinkLabels).map((key) => [
+            key,
+            yup
+              .string()
+              .trim()
+              .test(
+                'http-url',
+                'Skriv inn en gyldig lenke som starter med https:// eller http://',
+                (value) => {
+                  if (!value) return true
+                  try {
+                    const url = new URL(value)
+                    return ['http:', 'https:'].includes(url.protocol) && !!url.hostname
+                  } catch {
+                    return false
+                  }
+                }
+              ),
+          ])
+        )
+      )
+      .optional(),
     dpia: yup.object({
       grounds: yup.string(),
       needForDpia: yup.boolean(),

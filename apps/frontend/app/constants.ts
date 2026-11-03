@@ -1,4 +1,5 @@
 import { EListName, ICode } from './constants/codelistConstant'
+import { TQualitySystemLinks } from './constants/qualitySystemLinks'
 import { ICodelistProps } from './provider/kodeverkProvider'
 import { TColumnCompares } from './util/hooks'
 
@@ -172,6 +173,7 @@ export interface IProcessFormValues {
   end?: string
   start?: string
   dpia: IDpia
+  qualitySystemLinks?: TQualitySystemLinks
   status?: EProcessStatus
   usesAllInformationTypes?: boolean
   automaticProcessing?: boolean
@@ -429,6 +431,7 @@ export interface IProcess extends IDurationed {
   purposes: ICode[]
   changeStamp: IChangeStamp
   dpia: IDpia
+  qualitySystemLinks?: TQualitySystemLinks
   status?: EProcessStatus
   usesAllInformationTypes: boolean
   automaticProcessing?: boolean

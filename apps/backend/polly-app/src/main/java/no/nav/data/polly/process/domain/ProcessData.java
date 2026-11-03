@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import no.nav.data.polly.process.domain.sub.QualitySystemLinks;
 
 @Data
 @Builder
@@ -60,6 +61,7 @@ public class ProcessData implements Serializable {
     private Retention retention = new Retention();
     @Default
     private Dpia dpia = new Dpia();
+    private QualitySystemLinks qualitySystemLinks;
     @Default
     private ProcessStatus status = ProcessStatus.IN_PROGRESS;
     private String revisionText;

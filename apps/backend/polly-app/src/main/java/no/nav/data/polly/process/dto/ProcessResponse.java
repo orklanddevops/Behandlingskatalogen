@@ -22,6 +22,7 @@ import no.nav.data.polly.process.dto.sub.RetentionResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import no.nav.data.polly.process.domain.sub.QualitySystemLinks;
 import java.util.UUID;
 
 @Data
@@ -55,6 +56,7 @@ public class ProcessResponse {
     private DataProcessingResponse dataProcessing;
     private RetentionResponse retention;
     private DpiaResponse dpia;
+    private QualitySystemLinks qualitySystemLinks;
     private ProcessStatus status;
     private String revisionText;
     private ChangeStampResponse changeStamp;

@@ -92,7 +92,8 @@ describe('AddDocument', () => {
   it('Add Document errors', () => {
     expect({ ...addDocumentData(), informationTypes: [] }).toBeSchemaErrorAt(
       addDocumentSchema,
-      'informationTypes'
+      'informationTypes',
+      'Opplysningstypene er allerede lagt til'
     )
     expect({ ...addDocumentData(), document: undefined }).toBeSchemaErrorAt(
       addDocumentSchema,

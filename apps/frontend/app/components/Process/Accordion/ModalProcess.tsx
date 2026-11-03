@@ -9,6 +9,7 @@ import {
   Radio,
   RadioGroup,
   Select,
+  TextField,
   Textarea,
 } from '@navikt/ds-react'
 import {
@@ -22,6 +23,7 @@ import {
 } from 'formik'
 import { useEffect, useRef, useState } from 'react'
 import { EListName } from '@/constants/codelistConstant'
+import { qualitySystemLinkLabels } from '@/constants/qualitySystemLinks'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
 import { getAll, getDisclosuresByRecipient } from '../../../api/GetAllApi'
 import { writeLog } from '../../../api/LogApi'
@@ -664,6 +666,31 @@ const ModalProcess = ({
                               </div>
                             )}
                           />
+                        </div>
+                      </Accordion.Content>
+                    </Accordion.Item>
+                    <Accordion.Item>
+                      <Accordion.Header className='z-0'>
+                        Gjeldende etterlevelser og DPIA
+                      </Accordion.Header>
+                      <Accordion.Content>
+                        <p className='mb-4'>Legg til lenker til dokumenter i kvalitetssystemet.</p>
+                        <div className='flex flex-col gap-4'>
+                          {Object.entries(qualitySystemLinkLabels).map(([key, label]) => (
+                            <Field key={key} name={`qualitySystemLinks.${key}`}>
+                              {({ field, meta }: FieldProps<string>) => (
+                                <TextField
+                                  {...field}
+                                  value={field.value || ''}
+                                  type='url'
+                                  id={`qualitySystemLinks-${key}`}
+                                  label={label}
+                                  placeholder='https://'
+                                  error={meta.touched && meta.error}
+                                />
+                              )}
+                            </Field>
+                          ))}
                         </div>
                       </Accordion.Content>
                     </Accordion.Item>

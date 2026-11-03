@@ -102,6 +102,7 @@ public class Process extends Auditable {
                 .dataProcessing(DataProcessingResponse.buildFrom(data.getDataProcessing()))                
                 .retention(data.getRetention().convertToResponse())
                 .dpia(data.getDpia().convertToResponse())
+                .qualitySystemLinks(data.getQualitySystemLinks())
                 // If we dont include policies avoid loading them all from DB
                 .changeStamp(ChangeStampResponse.from(this))
                 .status(data.getStatus())
@@ -140,6 +141,7 @@ public class Process extends Auditable {
         data.setDataProcessing(DataProcessingRequest.convertToDataProcessingNullSafe(request.getDataProcessing()));
         data.setRetention(convertRetention(request.getRetention()));
         data.setDpia(convertDpia(request.getDpia()));
+        data.setQualitySystemLinks(request.getQualitySystemLinks());
         if (request.getStatus() == ProcessStatus.NEEDS_REVISION && data.getStatus() != ProcessStatus.NEEDS_REVISION) {
             data.setStatus(ProcessStatus.IN_PROGRESS);
         } else {

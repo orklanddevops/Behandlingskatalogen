@@ -224,6 +224,7 @@ export const convertProcessToFormValues: (process?: Partial<IProcess>) => IProce
       riskOwnerFunction: dpia?.riskOwnerFunction || '',
       noDpiaReasons: dpia?.noDpiaReasons || [],
     },
+    qualitySystemLinks: process?.qualitySystemLinks || {},
     disclosures: [],
   }
 }
@@ -258,6 +259,7 @@ const convertFormValuesToProcess = (values: IProcessFormValues) => {
       processors: values.dataProcessing.processors || [],
     },
     retention: values.retention,
+    qualitySystemLinks: values.qualitySystemLinks || {},
     status: values.status,
     dpia: {
       grounds: values.dpia?.needForDpia

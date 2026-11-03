@@ -18,6 +18,8 @@ interface ICustomSearchSelectProps {
   inputId?: string
   instanceId?: string
   hasError?: boolean
+  defaultOptions?: OptionsOrGroups<any, any>
+  noOptionsText?: string
   onChange: (newValue: OnChangeValue<any, any>, actionMeta: ActionMeta<any>) => void
   loadOptions?: (
     inputValue: string,
@@ -54,10 +56,12 @@ const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
         instanceId={instanceId}
         placeholder={placeholder}
         components={{ DropdownIndicator }}
-        noOptionsMessage={({ inputValue }) => noOptionMessage(inputValue)}
+        noOptionsMessage={({ inputValue }) => props.noOptionsText ?? noOptionMessage(inputValue)}
         controlShouldRenderValue={false}
         loadingMessage={() => 'Søker...'}
         isClearable={false}
+        defaultOptions={props.defaultOptions}
+        maxMenuHeight={280}
         loadOptions={loadOptions}
         onChange={onChange}
         menuPortalTarget={menuPortalTarget}

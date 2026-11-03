@@ -17,6 +17,7 @@ import no.nav.data.polly.process.domain.sub.AiUsageDescription;
 import no.nav.data.polly.process.dto.sub.*;
 
 import java.util.List;
+import no.nav.data.polly.process.domain.sub.QualitySystemLinks;
 
 import static no.nav.data.common.swagger.SwaggerConfig.LOCAL_DATE;
 import static no.nav.data.common.utils.DateUtil.DEFAULT_END;
@@ -56,6 +57,7 @@ public class ProcessRequest implements RequestElement {
     private DataProcessingRequest dataProcessing;
     private RetentionRequest retention;
     private DpiaRequest dpia;
+    private QualitySystemLinks qualitySystemLinks;
     private ProcessStatus status;
 
     private boolean update;
@@ -81,6 +83,7 @@ public class ProcessRequest implements RequestElement {
         setAiUsageDescription(getAiUsageDescription() != null ? getAiUsageDescription() : new AiUsageDescriptionRequest());
         setRetention(getRetention() != null ? getRetention() : new RetentionRequest());
         setDpia(getDpia() != null ? getDpia() : new DpiaRequest());
+        setQualitySystemLinks(getQualitySystemLinks() != null ? getQualitySystemLinks() : new QualitySystemLinks());
 
         if (status == null) {
             setStatus(ProcessStatus.IN_PROGRESS);
@@ -102,6 +105,7 @@ public class ProcessRequest implements RequestElement {
         validator.validateType(Fields.dataProcessing, dataProcessing);
         validator.validateType(Fields.retention, retention);
         validator.validateType(Fields.dpia, dpia);
+        validator.validateType(Fields.qualitySystemLinks, qualitySystemLinks);
         validator.validateType(Fields.aiUsageDescription, aiUsageDescription);
         validator.checkDate(Fields.end, end);
     }

@@ -9,6 +9,7 @@ public enum ProcessAuditField {
     DATA_PROCESSING("dataProcessing", "Databehandling"),
     RETENTION("retention", "Oppbevaringstid"),
     DPIA("dpia", "PVK"),
+    QUALITY_SYSTEM_LINKS("qualitySystemLinks", "Gjeldende etterlevelser og DPIA"),
     AFFILIATION("affiliation", "Tilhørighet"),
     AFFILIATION_DEPARTMENT("affiliation,nomDepartmentId", "Avdeling"),
     AFFILIATION_SUB_DEPARTMENTS("affiliation,subDepartments", "Linja"),

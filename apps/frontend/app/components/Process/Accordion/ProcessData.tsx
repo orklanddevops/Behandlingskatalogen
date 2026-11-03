@@ -6,6 +6,7 @@ import { isNil, sum, uniqBy } from 'lodash'
 import { Fragment, useEffect, useState } from 'react'
 import { getPvkDokumentForBehandling } from '@/api/EtterlevelseApi'
 import { EListName } from '@/constants/codelistConstant'
+import { TQualitySystemLinks, qualitySystemLinkLabels } from '@/constants/qualitySystemLinks'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
 import { getPvkDokumentStatus, pvkVurderingToText } from '@/util/pvkDokument'
 import { getResourceById } from '../../../api/GetAllApi'
@@ -430,13 +431,15 @@ const ProcessData = (props: IProcessDataProps) => {
         </>
       </DataText>
 
-      <DataText label='Gjeldende etterlevelser og PVK'>
-        {pvkError && <div>Kunne ikke hente etterlevelser og PVK. Prøv igjen senere.</div>}
-        {!pvkError && pvkDokumenter.length === 0 && (
-          <BodyLong className='mb-3'>
-            Behandlingen er ikke koblet til et etterlevelsesdokument
-          </BodyLong>
-        )}
+      <DataText label='Gjeldende etterlevelser og DPIA'>
+        {pvkError && <div>Kunne ikke hente etterlevelser og DPIA. Prøv igjen senere.</div>}
+        {!pvkError &&
+          pvkDokumenter.length === 0 &&
+          !Object.values(process.qualitySystemLinks || {}).some(Boolean) && (
+            <BodyLong className='mb-3'>
+              Behandlingen er ikke koblet til et kvalitetssystem.
+            </BodyLong>
+          )}
         {pvkDokumenter.length !== 0 &&
           pvkDokumenter.map((pvkDokument: IPvkDokumentShort) => (
             <div key={pvkDokument.etterlevelseDokumentasjonId}>
@@ -465,6 +468,17 @@ const ProcessData = (props: IProcessDataProps) => {
             </div>
           ))}
 
+        {Object.entries(qualitySystemLinkLabels).map(([key, label]) => {
+          const url = process.qualitySystemLinks?.[key as keyof TQualitySystemLinks]
+          if (!url || !/^https?:\/\//i.test(url)) return null
+          return (
+            <div key={key}>
+              <Link href={url} target='_blank' rel='noopener noreferrer'>
+                {label}
+              </Link>
+            </div>
+          )
+        })}
         {showDpiaRequiredField(process.dpia)}
       </DataText>
 

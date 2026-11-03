@@ -13,7 +13,11 @@ import {
 import { useContext, useEffect, useState } from 'react'
 import { EListName, ICode } from '@/constants/codelistConstant'
 import { CodelistContext } from '@/provider/kodeverkProvider'
-import { getDefaultProcessDocument, searchDocuments } from '../../../api/GetAllApi'
+import {
+  getAll,
+  getDefaultProcessDocument,
+  getDocumentByPageAndPageSize,
+} from '../../../api/GetAllApi'
 import {
   IAddDocumentToProcessFormValues,
   IDocument,
@@ -98,24 +102,29 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
   const [loading, setLoading] = useState(true)
   const [defaultDocumentError, setDefaultDocumentError] = useState(false)
 
-  const useSearchDocumentOption = async (searchParam: string) => {
-    if (searchParam && searchParam.length > 2) {
-      const dokumenter: IDocument[] = (await searchDocuments(searchParam)).content
+  const [documents, setDocuments] = useState<IDocument[]>([])
+  const [documentsError, setDocumentsError] = useState(false)
+  const documentOptions = documents.map((document) => ({
+    ...document,
+    value: document.id,
+    label: document.name,
+  }))
+  const loadDocumentOptions = async (query: string) =>
+    documentOptions.filter((document) =>
+      document.name.toLocaleLowerCase('nb').includes(query.toLocaleLowerCase('nb'))
+    )
 
-      const searchResult = dokumenter
-        .filter((document) => !!document.informationTypes.length)
-        .map((dokument) => {
-          return {
-            ...dokument,
-            value: dokument.id,
-            label: dokument.name,
-          }
-        })
-
-      return searchResult
-    }
-    return []
-  }
+  useEffect(() => {
+    getAll(getDocumentByPageAndPageSize)()
+      .then((result) =>
+        setDocuments(
+          result
+            .filter((document) => document.informationTypes.length > 0)
+            .sort((a, b) => a.name.localeCompare(b.name, 'nb'))
+        )
+      )
+      .catch(() => setDocumentsError(true))
+  }, [])
 
   useEffect(() => {
     ;(async () => {
@@ -189,6 +198,7 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
                 document: document,
                 informationTypes: extractInfoTypes(document, process.policies),
               })
+              formik.setFieldTouched('informationTypes', true, false)
             }
 
             return (
@@ -201,14 +211,23 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
                       </BodyShort>
                     )}
                     <div className='flex flex-col gap-1'>
-                      <Label size='small'>Dokument</Label>
+                      <Label size='small' htmlFor='add-document-picker'>
+                        Dokument
+                      </Label>
                       <Field name='document'>
                         {({}: FieldProps<IAddDocumentToProcessFormValues>) => (
                           <>
                             <CustomSearchSelect
                               ariaLabel='Søk dokumenter'
-                              placeholder=''
-                              loadOptions={useSearchDocumentOption}
+                              inputId='add-document-picker'
+                              placeholder='Velg eller søk etter dokument'
+                              defaultOptions={documentOptions}
+                              noOptionsText={
+                                documentsError
+                                  ? 'Kunne ikke hente dokumenter. Lukk og prøv igjen.'
+                                  : 'Ingen dokumenter funnet'
+                              }
+                              loadOptions={loadDocumentOptions}
                               onChange={(value: IDocument | undefined) => {
                                 if (value) {
                                   selectDocument(value, false)
@@ -234,6 +253,7 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
 
                     {!!formik.values.document && (
                       <div className='flex flex-col gap-2'>
+                        <BodyShort weight='semibold'>{formik.values.document.name}</BodyShort>
                         {formik.values.document.description && (
                           <BodyShort className='text-gray-600'>
                             {formik.values.document.description}

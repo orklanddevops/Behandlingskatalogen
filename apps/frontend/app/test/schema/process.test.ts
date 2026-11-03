@@ -46,6 +46,21 @@ describe('Process', () => {
 
   const schema = processSchema(purposeList)
 
+  it('allows optional quality-system links and rejects unsafe URLs', () => {
+    expect({
+      ...createProcess(),
+      qualitySystemLinks: { dpia: 'https://quality.example.org/dpia/42', ros: '' },
+    }).toBeSchema(schema)
+    expect({
+      ...createProcess(),
+      qualitySystemLinks: { dpia: 'javascript:alert(1)' },
+    }).toBeSchemaErrorAt(schema, 'qualitySystemLinks.dpia')
+    expect({ ...createProcess(), qualitySystemLinks: { ros: 'not a url' } }).toBeSchemaErrorAt(
+      schema,
+      'qualitySystemLinks.ros'
+    )
+  })
+
   it('Process ok', () => {
     expect(createProcess()).toBeSchema(schema)
   })
