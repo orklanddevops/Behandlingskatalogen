@@ -53,6 +53,12 @@ public class WebSecurityConfig {
             return http.build();
         }
 
+        // Responsibility records contain employee contact details and require an employee session.
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/system-information/**").permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/system-information/**").authenticated());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/system-information/**")
+                .hasAnyRole(AppRole.WRITE.name(), AppRole.SUPER.name(), AppRole.ADMIN.name()));
+
         allowAll(http,
                 "/error",
                 "/login",

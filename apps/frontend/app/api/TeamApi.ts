@@ -41,6 +41,9 @@ export const getTeam = async (teamId: string) => {
   return promise
 }
 
+export const getAllTeams = async (): Promise<ITeam[]> =>
+  (await axios.get<IPageResponse<ITeam>>(`${env.pollyBaseUrl}/team`)).data.content
+
 export const searchTeam = async (teamSearch: string) => {
   return (
     await axios.get<IPageResponse<ITeam>>(
@@ -66,7 +69,7 @@ export const getResourceById = async (resourceId: string) => {
   ).data
 }
 
-const searchResourceByName = async (resourceName: string) => {
+export const searchResourceByName = async (resourceName: string) => {
   return (
     await axios.get<IPageResponse<ITeamResource>>(
       `${env.pollyBaseUrl}/team/resource/search/${encodeURIComponent(resourceName)}`

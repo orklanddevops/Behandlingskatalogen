@@ -485,3 +485,32 @@ missing after cache expiry. Missing consent, throttling and connection failures 
 an unavailable response, not a false empty search. Disable the adapter to restore the
 previous offline providers. Selecting someone here documents responsibility; it does not
 grant an application role or membership in the group.
+
+
+## Systeminformasjon
+
+System pages now have a **Systeminformasjon** tab alongside Behandlinger and
+Opplysningstyper. The first version records a system owner, multiple administrators
+and superusers, a responsible team/unit, support email/link and notes. Employees
+are selected through the existing directory lookup and teams through the existing
+team provider. Assignments document responsibility and do not grant access.
+
+Deploy both frontend and backend. Flyway migration
+`V1.39__system_information.sql` creates a separate audited table keyed by system
+code; existing code-list records and treatments are not migrated or rewritten.
+There is no additional feature flag for this tab. Enable the Entra directory as
+described above to select employees and Entra teams.
+
+With application security enabled, reading `/system-information/{code}` requires
+sign-in. Saving requires WRITE, SUPER or ADMIN. The UI uses the existing editing
+mode. Changes are audited through the application's audit listener and versioned
+so concurrent edits return HTTP 409 instead of silently overwriting another save.
+The optional verification checkbox records the date and reviewer separately from
+the last edit.
+
+Names and email addresses are stored with each selected employee so saved
+responsibilities remain readable during directory outages. Retained assignments
+can be saved without a new directory request; selecting a new employee requires
+successful resolution. Existing saved snapshots are retained until the assignment
+is removed/reselected. System information is attached to the current SYSTEM code;
+code-list replacement/deletion workflows do not currently transfer these records.
