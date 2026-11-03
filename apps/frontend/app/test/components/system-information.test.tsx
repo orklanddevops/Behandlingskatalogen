@@ -8,6 +8,8 @@ import {
 } from '../../api/SystemInformationApi'
 import { getAllTeams, searchResourceByName } from '../../api/TeamApi'
 import SystemInformationPanel from '../../components/SystemInformation/SystemInformationPanel'
+import { EListName, IAllCodelists } from '../../constants/codelistConstant'
+import { CodelistContext, ICodelistProps } from '../../provider/kodeverkProvider'
 import { IUserContext, UserContext } from '../../provider/userProvider'
 
 jest.mock('../../api/SystemInformationApi')
@@ -22,10 +24,13 @@ const initial: ISystemInformation = {
     systemOwner: { id: 'owner', name: 'Ada Hansen', email: 'ada@example.org' },
     administrators: [],
     superUsers: [],
-    responsibleTeam: { id: 'it', name: 'IT' },
     organisationalUnit: 'Organisasjon',
     supportEmail: '',
     supportUrl: '',
+    supportPhone: '+47 12345678',
+    emergencyEmail: 'emergency@example.org',
+    emergencyUrl: 'https://emergency.example.org',
+    emergencyPhone: '+47 87654321',
     notes: 'Original note',
     lastVerifiedDate: null,
     lastVerifiedBy: null,
@@ -59,7 +64,20 @@ async function render(writer = true) {
   await act(async () =>
     root.render(
       <UserContext.Provider value={user}>
-        <SystemInformationPanel systemCode='SIGNINAPP' />
+        <CodelistContext.Provider
+          value={{
+            utils: {
+              getCodes: (list: EListName) =>
+                list === EListName.DEPARTMENT
+                  ? [{ list, code: 'IT_ENHET', shortName: 'IT-enheten', description: '' }]
+                  : [],
+            } as unknown as ICodelistProps,
+            lists: {} as IAllCodelists,
+            setLists: jest.fn(),
+          }}
+        >
+          <SystemInformationPanel systemCode='SIGNINAPP' />
+        </CodelistContext.Provider>
       </UserContext.Provider>
     )
   )
@@ -149,4 +167,52 @@ test('selects an employee from directory results and saves the selected identity
   expect(container.textContent).toContain('Systeminformasjonen er lagret')
   expect(container.textContent).toContain('Kari Olsen')
   expect(container.querySelector('form')).toBeNull()
+})
+
+test('shows support phone and emergency contacts and does not fetch Entra teams', async () => {
+  await render()
+  expect(container.querySelector('a[href="tel:+4712345678"]')).not.toBeNull()
+  expect(container.querySelector('a[href="mailto:emergency@example.org"]')).not.toBeNull()
+  expect(container.querySelector('a[href="https://emergency.example.org"]')).not.toBeNull()
+  expect(container.querySelector('a[href="tel:+4787654321"]')).not.toBeNull()
+  await click('Rediger systeminformasjon')
+  expect(container.querySelector('input[aria-label="Ansvarlig enhet"]')).not.toBeNull()
+  expect(container.textContent).not.toContain('Ansvarlig team')
+  expect(container.querySelectorAll('input[type="tel"]')).toHaveLength(2)
+  expect(getAllTeams).not.toHaveBeenCalled()
+})
+
+test('selects a unit from kodeverk and saves its code with the contact fields', async () => {
+  jest.mocked(saveSystemInformation).mockImplementation(async (info) => ({ ...info, version: 2 }))
+  await render()
+  await click('Rediger systeminformasjon')
+  const input = container.querySelector<HTMLInputElement>('input[aria-label="Ansvarlig enhet"]')!
+  await act(async () => {
+    input.focus()
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(
+      input,
+      'IT-enheten'
+    )
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+  })
+  const choice = Array.from(document.querySelectorAll('[role="option"]')).find(
+    (node) => node.textContent === 'IT-enheten'
+  )!
+  expect(choice).toBeDefined()
+  await act(async () => choice.dispatchEvent(new MouseEvent('click', { bubbles: true })))
+  await submit()
+  expect(saveSystemInformation).toHaveBeenCalledWith(
+    expect.objectContaining({
+      data: expect.objectContaining({
+        organisationalUnit: 'IT_ENHET',
+        supportPhone: '+47 12345678',
+        emergencyEmail: 'emergency@example.org',
+        emergencyUrl: 'https://emergency.example.org',
+        emergencyPhone: '+47 87654321',
+      }),
+    }),
+    false
+  )
+  expect(container.textContent).toContain('IT-enheten')
+  expect(getAllTeams).not.toHaveBeenCalled()
 })

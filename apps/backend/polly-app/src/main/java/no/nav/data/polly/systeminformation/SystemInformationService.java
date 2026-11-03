@@ -9,7 +9,6 @@ import no.nav.data.common.utils.MdcUtils;
 import no.nav.data.polly.codelist.CodelistRepository;
 import no.nav.data.polly.codelist.domain.ListName;
 import no.nav.data.polly.teams.ResourceService;
-import no.nav.data.polly.teams.TeamService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static no.nav.data.polly.systeminformation.SystemInformationData.Contact;
-import static no.nav.data.polly.systeminformation.SystemInformationData.TeamReference;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +33,6 @@ public class SystemInformationService {
     private final SystemInformationRepository repository;
     private final CodelistRepository codelists;
     private final ResourceService employees;
-    private final TeamService teams;
 
     @Transactional(readOnly = true)
     public SystemInformationResponse get(String code) {
@@ -53,13 +50,19 @@ public class SystemInformationService {
                     "Informasjonen er endret av en annen bruker. Last inn på nytt før du lagrer.");
         }
         String supportUrl = text(request.supportUrl());
-        validateUrl(supportUrl);
+        validateUrl(supportUrl, "brukerstøtte");
+        String emergencyUrl = text(request.emergencyUrl());
+        validateUrl(emergencyUrl, "nødkontakt");
         var old = stored.map(SystemInformation::getData).orElseGet(SystemInformationData::empty);
         var known = knownContacts(old);
         var owner = resolveContact(request.systemOwnerId(), known);
         var admins = resolveContacts(request.administratorIds(), known);
         var superUsers = resolveContacts(request.superUserIds(), known);
-        var team = resolveTeam(request.responsibleTeamId(), old.responsibleTeam());
+        String unit = text(request.organisationalUnit());
+        if (!unit.isBlank() && !unit.equals(old.organisationalUnit())
+                && codelists.findByListAndCode(ListName.DEPARTMENT, unit).isEmpty()) {
+            throw new ValidationException("Den valgte enheten finnes ikke i kodeverket. Velg enhet på nytt.");
+        }
         var record = stored.orElseGet(() -> {
             var created = new SystemInformation();
             created.setId(idFor(code));
@@ -68,10 +71,11 @@ public class SystemInformationService {
         });
         String reviewer = SecurityUtils.getCurrentUser().map(UserInfo::getName)
                 .filter(name -> name != null && !name.isBlank()).orElseGet(MdcUtils::getUser);
-        record.setData(new SystemInformationData(owner, admins, superUsers, team,
-                text(request.organisationalUnit()), text(request.supportEmail()), supportUrl, text(request.notes()),
+        record.setData(new SystemInformationData(owner, admins, superUsers, old.responsibleTeam(),
+                unit, text(request.supportEmail()), supportUrl, text(request.notes()),
                 request.markVerified() ? LocalDate.now(ZoneId.of("Europe/Oslo")) : old.lastVerifiedDate(),
-                request.markVerified() ? reviewer : old.lastVerifiedBy()));
+                request.markVerified() ? reviewer : old.lastVerifiedBy(),
+                text(request.supportPhone()), text(request.emergencyEmail()), emergencyUrl, text(request.emergencyPhone())));
         return response(repository.saveAndFlush(record));
     }
 
@@ -109,16 +113,7 @@ public class SystemInformationService {
         return List.copyOf(contacts);
     }
 
-    private TeamReference resolveTeam(String rawId, TeamReference old) {
-        String id = text(rawId);
-        if (id.isBlank()) return null;
-        if (old != null && old.id().equals(id)) return old;
-        return teams.getAllTeams().stream().filter(team -> team.getId().equals(id)).findFirst()
-                .map(team -> new TeamReference(team.getId(), team.getName()))
-                .orElseThrow(() -> new ValidationException("Det valgte teamet finnes ikke. Velg team på nytt."));
-    }
-
-    private void validateUrl(String url) {
+    private void validateUrl(String url, String label) {
         if (url.isBlank()) return;
         try {
             URI uri = URI.create(url);
@@ -127,7 +122,7 @@ public class SystemInformationService {
         } catch (IllegalArgumentException ignored) {
             // Report the same useful validation message for malformed and unsupported URLs.
         }
-        throw new ValidationException("Lenke til brukerstøtte må være en gyldig http- eller https-adresse.");
+        throw new ValidationException("Lenke til " + label + " må være en gyldig http- eller https-adresse.");
     }
 
     static UUID idFor(String code) {

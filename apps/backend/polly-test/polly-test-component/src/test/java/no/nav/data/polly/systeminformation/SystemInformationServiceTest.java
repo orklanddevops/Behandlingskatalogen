@@ -7,8 +7,6 @@ import no.nav.data.polly.codelist.CodelistRepository;
 import no.nav.data.polly.codelist.domain.Codelist;
 import no.nav.data.polly.codelist.domain.ListName;
 import no.nav.data.polly.teams.ResourceService;
-import no.nav.data.polly.teams.TeamService;
-import no.nav.data.polly.teams.domain.Team;
 import no.nav.data.polly.teams.dto.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +24,7 @@ class SystemInformationServiceTest {
     private final SystemInformationRepository repository = mock(SystemInformationRepository.class);
     private final CodelistRepository codelists = mock(CodelistRepository.class);
     private final ResourceService employees = mock(ResourceService.class);
-    private final TeamService teams = mock(TeamService.class);
-    private final SystemInformationService service = new SystemInformationService(repository, codelists, employees, teams);
+    private final SystemInformationService service = new SystemInformationService(repository, codelists, employees);
 
     @BeforeEach
     void setup() {
@@ -41,9 +38,10 @@ class SystemInformationServiceTest {
     }
 
     private SystemInformationRequest request(Long version, String owner, List<String> admins,
-                                             List<String> superUsers, String team, String url, boolean verified) {
-        return new SystemInformationRequest(version, owner, admins, superUsers, team,
-                " IT ", "support@example.org", url, " Notes ", verified);
+                                             List<String> superUsers, String unit, String url, boolean verified) {
+        return new SystemInformationRequest(version, owner, admins, superUsers,
+                unit == null ? "" : unit, "support@example.org", url, " Notes ", verified,
+                "+47 12345678", "emergency@example.org", "https://emergency.example.org", "+47 87654321");
     }
 
     @Test
@@ -65,21 +63,25 @@ class SystemInformationServiceTest {
     void resolvesNewSelectionsFromDirectoryAndDeduplicatesWithinEachRole() {
         when(employees.getResource("person")).thenReturn(Optional.of(Resource.builder()
                 .navIdent("person").fullName("Ada Hansen").email("ada@example.org").build()));
-        when(teams.getAllTeams()).thenReturn(List.of(Team.builder().id("team").name("IT").build()));
+        when(codelists.findByListAndCode(ListName.DEPARTMENT, "IT")).thenReturn(Optional.of(new Codelist()));
         var result = service.save("SIGNINAPP", request(null, "person", List.of("person", "person"),
-                List.of("person"), "team", "https://support.example.org", false));
+                List.of("person"), "IT", "https://support.example.org", false));
         assertThat(result.version()).isZero();
         assertThat(result.data().systemOwner().name()).isEqualTo("Ada Hansen");
         assertThat(result.data().administrators()).hasSize(1);
         assertThat(result.data().superUsers()).hasSize(1);
-        assertThat(result.data().responsibleTeam().name()).isEqualTo("IT");
+        assertThat(result.data().responsibleTeam()).isNull();
+        assertThat(result.data().supportPhone()).isEqualTo("+47 12345678");
+        assertThat(result.data().emergencyEmail()).isEqualTo("emergency@example.org");
+        assertThat(result.data().emergencyUrl()).isEqualTo("https://emergency.example.org");
+        assertThat(result.data().emergencyPhone()).isEqualTo("+47 87654321");
         assertThat(result.data().organisationalUnit()).isEqualTo("IT");
         assertThat(result.data().lastVerifiedDate()).isNull();
         verify(employees, times(1)).getResource("person");
     }
 
     @Test
-    void invalidNewEmployeesAndTeamsCannotBeSaved() {
+    void invalidNewEmployeesAndUnitsCannotBeSaved() {
         assertThatThrownBy(() -> service.save("SIGNINAPP", request(null, "missing", List.of(), List.of(), null, "", false)))
                 .isInstanceOf(ValidationException.class);
         assertThatThrownBy(() -> service.save("SIGNINAPP", request(null, null, List.of(), List.of(), "missing", "", false)))
@@ -97,10 +99,10 @@ class SystemInformationServiceTest {
         entity.setData(new SystemInformationData(person, List.of(), List.of(),
                 new SystemInformationData.TeamReference("team", "IT"), "", "", "", "", LocalDate.of(2026, 1, 1), "Reviewer"));
         when(repository.findById(any())).thenReturn(Optional.of(entity));
-        var saved = service.save("SIGNINAPP", request(3L, "person", List.of(), List.of(), "team", "", false));
+        var saved = service.save("SIGNINAPP", request(3L, "person", List.of(), List.of(), null, "", false));
         assertThat(saved.data().systemOwner()).isEqualTo(person);
         assertThat(saved.data().lastVerifiedDate()).isEqualTo(LocalDate.of(2026, 1, 1));
-        verifyNoInteractions(employees, teams);
+        verifyNoInteractions(employees);
     }
 
     @Test
@@ -136,6 +138,14 @@ class SystemInformationServiceTest {
             assertThat(result.data().lastVerifiedDate()).isEqualTo(LocalDate.now(java.time.ZoneId.of("Europe/Oslo")));
             assertThat(result.data().lastVerifiedBy()).isEqualTo("Ada Hansen");
         } finally { MdcUtils.clearUser(); }
+    }
+
+    @Test
+    void unsafeEmergencyLinksAreRejected() {
+        var request = new SystemInformationRequest(null, null, List.of(), List.of(), "", "", "", "", false,
+                "", "", "javascript:alert(1)", "");
+        assertThatThrownBy(() -> service.save("SIGNINAPP", request)).isInstanceOf(ValidationException.class);
+        verify(repository, never()).saveAndFlush(any());
     }
 
     @Test

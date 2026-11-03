@@ -7,18 +7,16 @@ export interface ISystemContact {
   email: string
 }
 
-export interface ISystemTeam {
-  id: string
-  name: string
-}
-
 export interface ISystemInformationData {
   systemOwner: ISystemContact | null
   administrators: ISystemContact[]
   superUsers: ISystemContact[]
-  responsibleTeam: ISystemTeam | null
   organisationalUnit: string
   supportEmail: string
+  supportPhone?: string
+  emergencyEmail?: string
+  emergencyUrl?: string
+  emergencyPhone?: string
   supportUrl: string
   notes: string
   lastVerifiedDate: string | null
@@ -52,10 +50,13 @@ export const saveSystemInformation = async (
         systemOwnerId: info.data.systemOwner?.id ?? null,
         administratorIds: info.data.administrators.map((contact) => contact.id),
         superUserIds: info.data.superUsers.map((contact) => contact.id),
-        responsibleTeamId: info.data.responsibleTeam?.id ?? null,
         organisationalUnit: info.data.organisationalUnit,
         supportEmail: info.data.supportEmail,
         supportUrl: info.data.supportUrl,
+        supportPhone: info.data.supportPhone || '',
+        emergencyEmail: info.data.emergencyEmail || '',
+        emergencyUrl: info.data.emergencyUrl || '',
+        emergencyPhone: info.data.emergencyPhone || '',
         notes: info.data.notes,
         markVerified,
       }

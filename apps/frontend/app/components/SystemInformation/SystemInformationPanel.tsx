@@ -16,18 +16,17 @@ import {
 } from '@navikt/ds-react'
 import axios from 'axios'
 import { FormEvent, useContext, useEffect, useState } from 'react'
-import Select from 'react-select'
 import {
   ISystemContact,
   ISystemInformation,
   ISystemInformationData,
-  ISystemTeam,
   getSystemInformation,
   saveSystemInformation,
 } from '@/api/SystemInformationApi'
-import { getAllTeams } from '@/api/TeamApi'
+import { EListName } from '@/constants/codelistConstant'
+import { CodelistContext } from '@/provider/kodeverkProvider'
 import { UserContext } from '@/provider/userProvider'
-import { selectOverrides } from '../common/AsyncSelectComponents'
+import OrganisationSelect from '../common/OrganisationSelect'
 import EmployeePicker from './EmployeePicker'
 
 const formatDate = (value: string) =>
@@ -51,6 +50,10 @@ function Contacts({ contacts }: { contacts: ISystemContact[] }) {
 
 export default function SystemInformationPanel({ systemCode }: { systemCode: string }) {
   const user = useContext(UserContext)
+  const { utils: codelistUtils } = useContext(CodelistContext)
+  const unitOptions = codelistUtils
+    .getCodes(EListName.DEPARTMENT)
+    .map((unit) => ({ value: unit.code, label: unit.shortName }))
   const [info, setInfo] = useState<ISystemInformation | null>(null)
   const [draft, setDraft] = useState<ISystemInformation | null>(null)
   const [loading, setLoading] = useState(true)
@@ -58,10 +61,6 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [markVerified, setMarkVerified] = useState(false)
-  const [teams, setTeams] = useState<ISystemTeam[]>([])
-  const [teamsError, setTeamsError] = useState(false)
-  const [teamsLoading, setTeamsLoading] = useState(false)
-  const editing = draft !== null
   const loggedIn = user.isLoggedIn()
   const userLoaded = user.isLoaded()
 
@@ -83,30 +82,8 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
     }
   }, [systemCode, userLoaded, loggedIn])
 
-  useEffect(() => {
-    let active = true
-    if (!editing) return
-    getAllTeams()
-      .then((result) => {
-        if (active) {
-          setTeams(result.map((team) => ({ id: team.id, name: team.name })))
-          setTeamsError(false)
-        }
-      })
-      .catch(() => {
-        if (active) setTeamsError(true)
-      })
-      .finally(() => {
-        if (active) setTeamsLoading(false)
-      })
-    return () => {
-      active = false
-    }
-  }, [editing])
-
   const edit = () => {
     if (!info) return
-    setTeamsLoading(true)
     setDraft({ ...info, data: { ...info.data } })
     setMarkVerified(false)
     setSuccess(false)
@@ -139,7 +116,7 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
           : status === 401 || status === 403
             ? 'Du har ikke tilgang til å lagre. Kontroller at du er innlogget og har skrivetilgang.'
             : status === 400
-              ? 'Kunne ikke lagre. Kontroller feltene og velg ansatte og team fra søkeresultatene.'
+              ? 'Kunne ikke lagre. Kontroller feltene og velg ansatte og enhet fra søkeresultatene.'
               : 'Kunne ikke lagre systeminformasjonen. Endringene dine er beholdt. Prøv igjen senere.'
       )
     } finally {
@@ -193,31 +170,25 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
                 onChange={(contacts) => change('systemOwner', contacts[0] ?? null)}
               />
               <div>
-                <Label htmlFor='responsible-team'>Ansvarlig team</Label>
-                <Select<ISystemTeam>
-                  inputId='responsible-team'
-                  instanceId='responsible-team'
-                  aria-label='Ansvarlig team'
-                  placeholder='Velg team'
-                  isClearable
-                  isLoading={teamsLoading}
-                  options={teams}
-                  getOptionValue={(team) => team.id}
-                  getOptionLabel={(team) => team.name}
-                  value={draft.data.responsibleTeam}
-                  onChange={(team) => change('responsibleTeam', team)}
-                  styles={selectOverrides}
-                  noOptionsMessage={() =>
-                    teamsError
-                      ? 'Kunne ikke hente team. Prøv igjen senere.'
-                      : 'Ingen team tilgjengelig'
+                <Label htmlFor='responsible-unit'>Ansvarlig enhet</Label>
+                <OrganisationSelect
+                  id='responsible-unit'
+                  label='Ansvarlig enhet'
+                  options={
+                    draft.data.organisationalUnit &&
+                    !unitOptions.some((unit) => unit.value === draft.data.organisationalUnit)
+                      ? [
+                          ...unitOptions,
+                          {
+                            value: draft.data.organisationalUnit,
+                            label: draft.data.organisationalUnit,
+                          },
+                        ]
+                      : unitOptions
                   }
+                  value={draft.data.organisationalUnit || ''}
+                  onChange={(unit) => change('organisationalUnit', unit ? String(unit.value) : '')}
                 />
-                {teamsError && (
-                  <p role='status' className='mt-1 text-sm'>
-                    Teamoppslaget er utilgjengelig. Eksisterende teamvalg beholdes.
-                  </p>
-                )}
               </div>
             </div>
             <EmployeePicker
@@ -234,33 +205,54 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
               value={draft.data.superUsers}
               onChange={(contacts) => change('superUsers', contacts)}
             />
-            <TextField
-              label='Ansvarlig enhet'
-              description='Enheten som har det overordnede ansvaret for systemet.'
-              maxLength={250}
-              value={draft.data.organisationalUnit}
-              onChange={(event) => change('organisationalUnit', event.target.value)}
-            />
-            <Heading level='3' size='small'>
-              Brukerstøtte
-            </Heading>
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              <TextField
-                label='E-post til brukerstøtte'
-                type='email'
-                maxLength={254}
-                value={draft.data.supportEmail}
-                onChange={(event) => change('supportEmail', event.target.value)}
-              />
-              <TextField
-                label='Lenke til brukerstøtte'
-                description='Bruk en fullstendig adresse, for eksempel https://…'
-                type='url'
-                maxLength={2000}
-                value={draft.data.supportUrl}
-                onChange={(event) => change('supportUrl', event.target.value)}
-              />
-            </div>
+            {(
+              [
+                {
+                  title: 'Brukerstøtte',
+                  email: 'supportEmail',
+                  url: 'supportUrl',
+                  phone: 'supportPhone',
+                  name: 'brukerstøtte',
+                },
+                {
+                  title: 'Nødkontakt',
+                  email: 'emergencyEmail',
+                  url: 'emergencyUrl',
+                  phone: 'emergencyPhone',
+                  name: 'nødkontakt',
+                },
+              ] as const
+            ).map((contact) => (
+              <div key={contact.title}>
+                <Heading level='3' size='small' className='mb-4'>
+                  {contact.title}
+                </Heading>
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  <TextField
+                    label={`E-post til ${contact.name}`}
+                    type='email'
+                    maxLength={254}
+                    value={draft.data[contact.email] || ''}
+                    onChange={(event) => change(contact.email, event.target.value)}
+                  />
+                  <TextField
+                    label={`Lenke til ${contact.name}`}
+                    type='url'
+                    maxLength={2000}
+                    description='Bruk en fullstendig adresse, for eksempel https://…'
+                    value={draft.data[contact.url] || ''}
+                    onChange={(event) => change(contact.url, event.target.value)}
+                  />
+                  <TextField
+                    label={`Telefonnummer til ${contact.name}`}
+                    type='tel'
+                    maxLength={50}
+                    value={draft.data[contact.phone] || ''}
+                    onChange={(event) => change(contact.phone, event.target.value)}
+                  />
+                </div>
+              </div>
+            ))}
             <Textarea
               label='Merknader'
               description='For eksempel avklaringer om ansvarsdeling eller hvem som skal kontaktes.'
@@ -330,34 +322,56 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
               <Heading level='3' size='small' className='mb-3'>
                 Organisering
               </Heading>
-              <BodyShort weight='semibold'>Ansvarlig team</BodyShort>
-              <BodyShort>{info.data.responsibleTeam?.name || 'Ikke registrert'}</BodyShort>
-              <BodyShort weight='semibold' className='mt-4'>
-                Ansvarlig enhet
+              <BodyShort weight='semibold'>Ansvarlig enhet</BodyShort>
+              <BodyShort>
+                {unitOptions.find((unit) => unit.value === info.data.organisationalUnit)?.label ||
+                  info.data.organisationalUnit ||
+                  'Ikke registrert'}
               </BodyShort>
-              <BodyShort>{info.data.organisationalUnit || 'Ikke registrert'}</BodyShort>
             </div>
           </div>
-          <div>
-            <Heading level='3' size='small' className='mb-3'>
-              Brukerstøtte
-            </Heading>
-            {!info.data.supportEmail && !info.data.supportUrl && (
-              <BodyShort>Ikke registrert</BodyShort>
-            )}
-            {info.data.supportEmail && (
-              <div>
-                <Link href={`mailto:${info.data.supportEmail}`}>{info.data.supportEmail}</Link>
-              </div>
-            )}
-            {info.data.supportUrl && (
-              <div className='mt-2'>
-                <Link href={info.data.supportUrl} target='_blank' rel='noopener noreferrer'>
-                  Åpne brukerstøtte
-                </Link>
-              </div>
-            )}
-          </div>
+          {[
+            {
+              title: 'Brukerstøtte',
+              email: info.data.supportEmail,
+              url: info.data.supportUrl,
+              phone: info.data.supportPhone,
+              name: 'brukerstøtte',
+            },
+            {
+              title: 'Nødkontakt',
+              email: info.data.emergencyEmail,
+              url: info.data.emergencyUrl,
+              phone: info.data.emergencyPhone,
+              name: 'nødkontakt',
+            },
+          ].map((contact) => (
+            <div key={contact.title}>
+              <Heading level='3' size='small' className='mb-3'>
+                {contact.title}
+              </Heading>
+              {!contact.email && !contact.url && !contact.phone && (
+                <BodyShort>Ikke registrert</BodyShort>
+              )}
+              {contact.email && (
+                <div>
+                  <Link href={`mailto:${contact.email}`}>{contact.email}</Link>
+                </div>
+              )}
+              {contact.url && (
+                <div className='mt-2'>
+                  <Link href={contact.url} target='_blank' rel='noopener noreferrer'>
+                    Åpne {contact.name}
+                  </Link>
+                </div>
+              )}
+              {contact.phone && (
+                <div className='mt-2'>
+                  <Link href={`tel:${contact.phone.replace(/[^+0-9]/g, '')}`}>{contact.phone}</Link>
+                </div>
+              )}
+            </div>
+          ))}
           {info.data.notes && (
             <div>
               <Heading level='3' size='small' className='mb-3'>
