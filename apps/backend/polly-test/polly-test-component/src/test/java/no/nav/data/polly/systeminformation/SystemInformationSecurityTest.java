@@ -47,6 +47,32 @@ class SystemInformationSecurityTest {
         }
     }
 
+    @Test
+    void mainCrudBlocksAnonymousAndReadOnlyUsersAndAllowsWriters() throws Exception {
+        try (var context = new AnnotationConfigWebApplicationContext()) {
+            context.setServletContext(new MockServletContext());
+            context.register(TestConfig.class);
+            context.refresh();
+            var mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(context.getBean(FilterChainProxy.class)).build();
+            for (String path : new String[]{"/process", "/policy", "/document", "/informationtype", "/processor", "/dpprocess", "/disclosure"}) {
+                for (var method : new org.springframework.http.HttpMethod[]{org.springframework.http.HttpMethod.POST, org.springframework.http.HttpMethod.PUT, org.springframework.http.HttpMethod.DELETE}) {
+                    assertThat(mvc.perform(request(method, path)).andReturn().getResponse().getStatus()).isIn(401, 403);
+                    assertThat(mvc.perform(request(method, path).header("Test-Role", "READ")).andReturn().getResponse().getStatus()).isEqualTo(403);
+                    for (String role : new String[]{"WRITE", "SUPER", "ADMIN"}) {
+                        assertThat(mvc.perform(request(method, path).header("Test-Role", role)).andReturn().getResponse().getStatus()).isEqualTo(200);
+                    }
+                }
+            }
+        }
+    }
+
+    @org.springframework.web.bind.annotation.RestController
+    static class CrudProbe {
+        @org.springframework.web.bind.annotation.RequestMapping(value = {"/process", "/policy", "/document", "/informationtype", "/processor", "/dpprocess", "/disclosure"},
+                method = {org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.PUT, org.springframework.web.bind.annotation.RequestMethod.DELETE})
+        String write() { return "ok"; }
+    }
+
     @Configuration
     @EnableWebSecurity
     @EnableWebMvc
@@ -70,6 +96,7 @@ class SystemInformationSecurityTest {
             }).when(filter).doFilter(any(ServletRequest.class), any(ServletResponse.class), any(FilterChain.class));
             return filter;
         }
+        @Bean CrudProbe crudProbe() { return new CrudProbe(); }
         @Bean SystemInformationService service() { return mock(SystemInformationService.class); }
         @Bean SystemInformationController controller(SystemInformationService service) { return new SystemInformationController(service); }
     }

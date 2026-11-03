@@ -1,4 +1,5 @@
 import { Button, Label, Loader, Select, Table } from '@navikt/ds-react'
+import Link from 'next/link'
 import { ChangeEvent, createRef, useContext, useEffect, useState } from 'react'
 import { EListName, ICode, IGetParsedOptionsProps } from '@/constants/codelistConstant'
 import { CodelistContext } from '@/provider/kodeverkProvider'
@@ -30,6 +31,7 @@ const UsageTable = (props: IProps) => {
   const policies = !!usage.policies.length
   const disclosures = !!usage.disclosures.length
   const documents = !!usage.documents.length
+  const systems = usage.systemInformation || []
 
   const rows = usage
     ? Math.max(
@@ -39,7 +41,8 @@ const UsageTable = (props: IProps) => {
         usage.dpProcesses.length,
         usage.policies.length,
         usage.disclosures.length,
-        usage.documents.length
+        usage.documents.length,
+        systems.length
       )
     : -1
 
@@ -56,6 +59,7 @@ const UsageTable = (props: IProps) => {
           {policies && <Table.ColumnHeader>Polis</Table.ColumnHeader>}
           {disclosures && <Table.ColumnHeader>Utleveringer</Table.ColumnHeader>}
           {documents && <Table.ColumnHeader>Dokumenter</Table.ColumnHeader>}
+          {systems.length > 0 && <Table.ColumnHeader>Systeminformasjon</Table.ColumnHeader>}
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -149,6 +153,15 @@ const UsageTable = (props: IProps) => {
                     <ObjectLink id={documents.id} type={EObjectType.DOCUMENT} withHistory={true}>
                       {documents.name}
                     </ObjectLink>
+                  )}
+                </Table.DataCell>
+              )}
+              {systems.length > 0 && (
+                <Table.DataCell>
+                  {systems[index] && (
+                    <Link href={`/system/${encodeURIComponent(systems[index].id)}`}>
+                      {systems[index].name}
+                    </Link>
                   )}
                 </Table.DataCell>
               )}

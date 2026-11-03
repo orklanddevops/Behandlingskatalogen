@@ -101,6 +101,37 @@ public class DocxTest {
     }
 
     @Test
+    @SneakyThrows
+    void manualQualitySystemUrlsAreClickableInInternalExports() {
+        var links = new no.nav.data.polly.process.domain.sub.QualitySystemLinks();
+        links.setDataProcessingAgreement("https://quality.example.org/dpa");
+        links.setDpia("https://quality.example.org/dpia");
+        links.setInitialDpia("https://quality.example.org/initial");
+        links.setRos("https://quality.example.org/ros");
+        links.setMainAgreement("https://quality.example.org/main");
+        links.setOtherAgreement("https://quality.example.org/other");
+        process.getData().setQualitySystemLinks(links);
+        mockAlert(process);
+        var entries = unzip(processToDocx.generateDocForProcess(process, DocumentAccess.INTERNAL));
+        assertThat(entries.get("word/document.xml")).contains("Gjeldende etterlevelser og DPIA", "Databehandleravtale", "Initiell DPIA", "ROS", "Hovedavtale", "Annen avtale");
+        assertThat(entries.get("word/_rels/document.xml.rels")).contains("https://quality.example.org/dpa", "https://quality.example.org/dpia", "https://quality.example.org/initial", "https://quality.example.org/ros", "https://quality.example.org/main", "https://quality.example.org/other", "TargetMode=\"External\"");
+        var external = unzip(processToDocx.generateDocForProcess(process, DocumentAccess.EXTERNAL));
+        assertThat(external.get("word/document.xml")).doesNotContain("quality.example.org");
+    }
+
+    @SneakyThrows
+    private java.util.Map<String, String> unzip(byte[] bytes) {
+        var entries = new java.util.HashMap<String, String>();
+        try (var zip = new java.util.zip.ZipInputStream(new java.io.ByteArrayInputStream(bytes))) {
+            java.util.zip.ZipEntry entry;
+            while ((entry = zip.getNextEntry()) != null) {
+                entries.put(entry.getName(), new String(zip.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
+            }
+        }
+        return entries;
+    }
+
+    @Test
     void createBatchDoc() {
         List<Process> processes = List.of(createProcess(), createProcess(), createProcess());
         processes.forEach(this::mockAlert);

@@ -18,6 +18,9 @@ public class EmailServiceImpl implements EmailService {
     private final EmailProvider emailProvider;
     private final SecurityProperties securityProperties;
 
+    @org.springframework.beans.factory.annotation.Value("${polly.mail.enabled:false}")
+    private boolean mailEnabled;
+
     public EmailServiceImpl(StorageService storage, GenericStorageRepository storageRepository, EmailProvider emailProvider,
             SecurityProperties securityProperties) {
         this.storage = storage;
@@ -40,6 +43,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Scheduled(initialDelayString = "PT3M", fixedRateString = "PT5M")
     public void sendMails() {
+        if (!mailEnabled) return;
         var tasks = storageRepository.findAllByType(StorageType.MAIL_TASK);
         tasks.forEach(this::sendMailAndDeleteTask);
     }

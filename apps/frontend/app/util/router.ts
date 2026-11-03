@@ -5,7 +5,8 @@
  *
  * With:     import { useNavigate, useParams, useLocation } from '@/util/router'
  */
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 type TPath = {
   pathname: string
@@ -99,21 +100,29 @@ export function useNavigate(): TNavigateFunction {
 }
 
 export function useLocation() {
-  const pathName = usePathname()
-  const asPath = pathName
-  const hashIdx = asPath.indexOf('#')
-  const withoutHash = hashIdx >= 0 ? asPath.substring(0, hashIdx) : asPath
-  const hash = hashIdx >= 0 ? asPath.substring(hashIdx) : ''
-  const qIdx = withoutHash.indexOf('?')
-  const pathnameWithoutHash = qIdx >= 0 ? withoutHash.substring(0, qIdx) : withoutHash
-  const search = qIdx >= 0 ? withoutHash.substring(qIdx) : ''
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const query = searchParams.toString()
+  const search = query ? `?${query}` : ''
+  const [hash, setHash] = useState('')
+
+  useEffect(() => {
+    const updateHash = () => setHash(window.location.hash)
+    updateHash()
+    window.addEventListener('hashchange', updateHash)
+    window.addEventListener('popstate', updateHash)
+    return () => {
+      window.removeEventListener('hashchange', updateHash)
+      window.removeEventListener('popstate', updateHash)
+    }
+  }, [pathname, search])
+
   const location: TLocation = {
-    pathname: pathnameWithoutHash,
+    pathname,
     search,
     hash,
-    state: null as unknown,
-    key: 'default',
+    state: null,
+    key: `${pathname}${search}${hash}`,
   }
-
   return location
 }

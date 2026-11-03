@@ -337,6 +337,7 @@ public class ProcessToDocx {
             dataProcessing(process.getData().getDataProcessing(), processors, documentAccess);
             retention(process.getData().getRetention(), documentAccess);
             dpia(process.getData().getDpia(), documentAccess);
+            if (documentAccess == DocumentAccess.INTERNAL) qualitySystemLinks(data.getQualitySystemLinks());
 
             policies(process);
 
@@ -465,6 +466,40 @@ public class ProcessToDocx {
                     legalBasisCell.add(paragraph(text("Rettslig grunnlag for artikkel 9 mangler")));
                 }
             }
+        }
+
+        private void qualitySystemLinks(no.nav.data.polly.process.domain.sub.QualitySystemLinks links) {
+            if (links == null) return;
+            var urls = new java.util.LinkedHashMap<String, String>();
+            urls.put("Databehandleravtale", links.getDataProcessingAgreement());
+            urls.put("DPIA", links.getDpia());
+            urls.put("Initiell DPIA", links.getInitialDpia());
+            urls.put("ROS", links.getRos());
+            urls.put("Hovedavtale", links.getMainAgreement());
+            urls.put("Annen avtale", links.getOtherAgreement());
+            if (urls.values().stream().noneMatch(url -> url != null && !url.isBlank())) return;
+            addHeading4("Gjeldende etterlevelser og DPIA");
+            urls.forEach((label, url) -> {
+                if (url == null || url.isBlank()) return;
+                java.net.URI uri;
+                try { uri = java.net.URI.create(url); } catch (IllegalArgumentException ignored) { return; }
+                if (!("https".equalsIgnoreCase(uri.getScheme()) || "http".equalsIgnoreCase(uri.getScheme())) || uri.getHost() == null) return;
+                var relationship = new org.docx4j.relationships.ObjectFactory().createRelationship();
+                relationship.setType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
+                relationship.setTargetMode("External");
+                relationship.setTarget(url);
+                main.getRelationshipsPart().addRelationship(relationship);
+                var link = new P.Hyperlink();
+                link.setId(relationship.getId());
+                var run = new R();
+                var text = new Text();
+                text.setValue(label + ": " + url);
+                run.getContent().add(text);
+                link.getContent().add(run);
+                var paragraph = new P();
+                paragraph.getContent().add(link);
+                main.addObject(paragraph);
+            });
         }
 
         private void dpia(Dpia data, DocumentAccess documentAccess) {

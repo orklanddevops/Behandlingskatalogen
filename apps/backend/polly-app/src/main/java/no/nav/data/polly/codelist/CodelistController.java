@@ -57,7 +57,11 @@ public class CodelistController {
         if (refresh) {
             service.refreshCache();
         }
-        return new AllCodelistResponse(CodelistStaticService.getAll().stream().map(CodelistResponse::buildFrom).collect(Collectors.groupingBy(CodelistResponse::getList)));
+        var lists = new java.util.EnumMap<ListName, java.util.List<CodelistResponse>>(ListName.class);
+        for (var list : ListName.values()) {
+            lists.put(list, CodelistStaticService.getCodelist(list).stream().map(CodelistResponse::buildFrom).toList());
+        }
+        return new AllCodelistResponse(lists);
     }
 
     @Operation(summary = "Get codes and descriptions for listName")

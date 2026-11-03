@@ -748,6 +748,7 @@ export interface IAuditLog {
 }
 
 export interface ICodeUsage {
+  systemInformation?: IUse[]
   listName: EListName
   code: string
   inUse: boolean

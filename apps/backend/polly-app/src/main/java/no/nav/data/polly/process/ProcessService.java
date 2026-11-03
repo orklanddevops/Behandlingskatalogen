@@ -51,6 +51,9 @@ public class ProcessService {
     private final EmailService emailService;
     private final PolicyRepository policyRepository;
 
+    @org.springframework.beans.factory.annotation.Value("${polly.revision.email-enabled:false}")
+    private boolean revisionEmailEnabled;
+
 
     @Transactional
     public Process save(Process process) {
@@ -136,6 +139,8 @@ public class ProcessService {
             p.getData().setStatus(ProcessStatus.NEEDS_REVISION);
             p.getData().setRevisionText(revisionText);
         });
+
+        if (!revisionEmailEnabled) return;
 
         String lastModifiedBy = processes.get(0).getLastModifiedBy();
         changeStampToIdent(lastModifiedBy)

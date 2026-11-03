@@ -19,6 +19,12 @@ public record SystemInformationData(
                 supportUrl, notes, lastVerifiedDate, lastVerifiedBy, "", "", "", "");
     }
 
+    public SystemInformationData withOrganisationalUnit(String unit) {
+        return new SystemInformationData(systemOwner, administrators, superUsers, responsibleTeam, unit,
+                supportEmail, supportUrl, notes, lastVerifiedDate, lastVerifiedBy,
+                supportPhone, emergencyEmail, emergencyUrl, emergencyPhone);
+    }
+
     public static SystemInformationData empty() {
         return new SystemInformationData(null, List.of(), List.of(), null, "", "", "", "", null, null);
     }

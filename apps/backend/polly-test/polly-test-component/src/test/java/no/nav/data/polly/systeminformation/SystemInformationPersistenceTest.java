@@ -81,6 +81,30 @@ class SystemInformationPersistenceTest {
     }
 
     @Test
+    void unitUsageQueryAndReplacementPersistWithoutLosingContactData() {
+        var original = create("UNIT_REFERENCE");
+        try (var session = factory.openSession()) {
+            var repository = new org.springframework.data.jpa.repository.support.JpaRepositoryFactory(session)
+                    .getRepository(SystemInformationRepository.class);
+            var matches = repository.findByOrganisationalUnit("IT");
+            var entity = matches.stream().filter(record -> record.getId().equals(original.getId())).findFirst().orElseThrow();
+            var before = entity.getData();
+            var transaction = session.beginTransaction();
+            entity.setData(before.withOrganisationalUnit("NEW_UNIT"));
+            transaction.commit();
+        }
+        try (var session = factory.openSession()) {
+            var repository = new org.springframework.data.jpa.repository.support.JpaRepositoryFactory(session)
+                    .getRepository(SystemInformationRepository.class);
+            assertThat(repository.findByOrganisationalUnit("NEW_UNIT")).anySatisfy(entity -> {
+                assertThat(entity.getId()).isEqualTo(original.getId());
+                assertThat(entity.getData()).isEqualTo(original.getData().withOrganisationalUnit("NEW_UNIT"));
+            });
+            assertThat(repository.findByOrganisationalUnit("IT")).noneMatch(entity -> entity.getId().equals(original.getId()));
+        }
+    }
+
+    @Test
     void simultaneousUpdatesCannotSilentlyOverwriteEachOther() {
         var original = create("CONCURRENCY");
         try (var first = factory.openSession(); var second = factory.openSession()) {

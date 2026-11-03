@@ -28,6 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class LocalOrganisationTest {
@@ -115,7 +116,8 @@ class LocalOrganisationTest {
                 mock(DisclosureRepository.class),
                 mock(DocumentRepository.class),
                 mock(ProcessorRepository.class),
-                mock(CodelistRequestValidator.class));
+                mock(CodelistRequestValidator.class),
+                mock(no.nav.data.polly.systeminformation.SystemInformationRepository.class));
         var before = usage.findCodeUsage(ListName.SEKSJON, "OLD");
         assertThat(before.isInUse()).isTrue();
         assertThat(before.getProcesses()).hasSize(1);
@@ -145,4 +147,29 @@ class LocalOrganisationTest {
         CodelistCache.remove(ListName.TEAM, "OMSORG");
         assertThat(teams.getTeam("OMSORG")).isEmpty();
     }
+    @Test
+    void systemUnitUsagePreventsDeletionAndReplacementPreservesContacts() {
+        CodelistCache.init();
+        var repository = mock(no.nav.data.polly.systeminformation.SystemInformationRepository.class);
+        var record = new no.nav.data.polly.systeminformation.SystemInformation();
+        record.setSystemCode("SIGNINAPP");
+        record.setData(new no.nav.data.polly.systeminformation.SystemInformationData(null, List.of(), List.of(), null,
+                "OLD", "support@example.org", "https://support.example.org", "Notes", null, null,
+                "+4712345678", "emergency@example.org", "https://emergency.example.org", "+4787654321"));
+        var old = record.getData();
+        when(repository.findByOrganisationalUnit("OLD")).thenReturn(List.of(record));
+        var usage = new CodeUsageService(mock(ProcessRepository.class), mock(DpProcessRepository.class),
+                mock(PolicyRepository.class), mock(InformationTypeRepository.class), mock(DisclosureRepository.class),
+                mock(DocumentRepository.class), mock(ProcessorRepository.class), mock(CodelistRequestValidator.class), repository);
+        var before = usage.findCodeUsage(ListName.DEPARTMENT, "OLD");
+        assertThat(before.isInUse()).isTrue();
+        assertThat(before.getSystemInformation()).singleElement().satisfies(system ->
+                assertThat(system.getId()).isEqualTo("SIGNINAPP"));
+        var validator = new CodelistRequestValidator(usage, mock(CodelistRepository.class));
+        assertThatThrownBy(() -> validator.validateCodelistIsNotInUse(ListName.DEPARTMENT, "OLD"))
+                .isInstanceOf(no.nav.data.common.exceptions.CodelistNotErasableException.class);
+        usage.replaceUsage(ListName.DEPARTMENT, "OLD", "NEW", "Ny enhet");
+        assertThat(record.getData()).isEqualTo(old.withOrganisationalUnit("NEW"));
+    }
+
 }

@@ -11,12 +11,17 @@ export const ProcessCreatedModal = (props: IProps) => {
   const { openAddPolicy, openAddDocument } = props
   const history: TNavigateFunction = useNavigate()
   const location: TLocation<any> = useLocation()
-  const closeModal = () => history(location.pathname)
+  const closeModal = () => {
+    const query = new URLSearchParams(location.search)
+    query.delete('create')
+    const search = query.toString()
+    history(location.pathname + (search ? `?${search}` : '') + location.hash)
+  }
 
   return (
     <Modal
       header={{ heading: 'Behandling opprettet', closeButton: false }}
-      open={location.search.indexOf('create') >= 0}
+      open={new URLSearchParams(location.search).get('create') === 'true'}
       onClose={closeModal}
     >
       <Modal.Body>

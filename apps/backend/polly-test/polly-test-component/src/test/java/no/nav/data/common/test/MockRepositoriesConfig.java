@@ -63,6 +63,7 @@ public class MockRepositoriesConfig {
     @Bean @Primary public PolicyRepository policyRepository() { return mock(PolicyRepository.class); }
     @Bean @Primary public ProcessRepository processRepository() { return mock(ProcessRepository.class); }
     @Bean @Primary public DpProcessRepository dpProcessRepository() { return mock(DpProcessRepository.class); }
+    @Bean @Primary public no.nav.data.polly.systeminformation.SystemInformationRepository systemInformationRepository() { return mock(no.nav.data.polly.systeminformation.SystemInformationRepository.class); }
     @Bean @Primary public ProcessorRepository processorRepository() { return mock(ProcessorRepository.class); }
     @Bean @Primary public StorageService storageService() { return mock(StorageService.class); }
     @Bean @Primary public EmailServiceImpl emailServiceImpl() { return mock(EmailServiceImpl.class); }

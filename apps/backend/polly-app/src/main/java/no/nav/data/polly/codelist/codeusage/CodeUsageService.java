@@ -27,6 +27,7 @@ import no.nav.data.polly.process.dto.ProcessShortResponse;
 import no.nav.data.polly.processor.domain.Processor;
 import no.nav.data.polly.processor.domain.repo.ProcessorRepository;
 import org.springframework.stereotype.Service;
+import no.nav.data.polly.systeminformation.SystemInformationRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -51,12 +52,15 @@ public class CodeUsageService {
     private final DisclosureRepository disclosureRepository;
     private final DocumentRepository documentRepository;
     private final ProcessorRepository processorRepository;
+    private final SystemInformationRepository systemInformationRepository;
     private final Summary summary;
     private final CodelistRequestValidator requestValidator;
 
     public CodeUsageService(ProcessRepository processRepository, DpProcessRepository dpProcessRepository, PolicyRepository policyRepository,
             InformationTypeRepository informationTypeRepository, DisclosureRepository disclosureRepository, DocumentRepository documentRepository,
-            ProcessorRepository processorRepository, CodelistRequestValidator requestValidator) {
+            ProcessorRepository processorRepository, CodelistRequestValidator requestValidator,
+            SystemInformationRepository systemInformationRepository) {
+        this.systemInformationRepository = systemInformationRepository;
         this.processRepository = processRepository;
         this.dpProcessRepository = dpProcessRepository;
         this.policyRepository = policyRepository;
@@ -107,6 +111,13 @@ public class CodeUsageService {
             codeUsage.setDisclosures(findDisclosures(listName, code));
             codeUsage.setDocuments(findDocuments(listName, code));
             codeUsage.setProcessors(findProcessors(listName, code));
+            if (listName == ListName.DEPARTMENT) {
+                codeUsage.setSystemInformation(systemInformationRepository.findByOrganisationalUnit(code).stream()
+                        .map(record -> {
+                            var system = CodelistStaticService.getCodelist(ListName.SYSTEM, record.getSystemCode());
+                            return new UsedInInstance(record.getSystemCode(), system == null ? record.getSystemCode() : system.getShortName());
+                        }).toList());
+            }
             return codeUsage;
         });
     }
@@ -146,6 +157,8 @@ public class CodeUsageService {
                         convert(getDisclosures(usage), p -> p.getData().getLegalBases())
                 );
                 case DEPARTMENT -> {
+                    systemInformationRepository.findByOrganisationalUnit(oldCode)
+                            .forEach(record -> record.setData(record.getData().withOrganisationalUnit(newCode)));
                     getProcesses(usage).forEach(p -> {
                         p.getData().getAffiliation().setNomDepartmentId(newCode);
                         p.getData().getAffiliation().setNomDepartmentName(newCodeName);
