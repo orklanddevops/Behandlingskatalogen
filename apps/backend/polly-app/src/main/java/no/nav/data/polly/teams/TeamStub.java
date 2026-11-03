@@ -4,14 +4,14 @@ import no.nav.data.polly.codelist.CodelistStaticService;
 import no.nav.data.polly.codelist.domain.ListName;
 import no.nav.data.polly.teams.domain.ProductArea;
 import no.nav.data.polly.teams.domain.Team;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@ConditionalOnProperty(name = "client.teamcat-team.enabled", havingValue = "false", matchIfMissing = true)
+@ConditionalOnExpression("!${client.entra-directory.enabled:false} && !${client.teamcat-team.enabled:false}")
 public class TeamStub implements TeamService {
 
     @Override

@@ -423,3 +423,65 @@ sudo systemctl disable --now behandlingskatalogen-certificate.timer
 Failures appear in the service journal and status file; this does not configure
 email or other notifications. Your normal VM monitoring can alert on a failed
 service or a certificate still near expiry.
+
+
+## Entra employee and team lookup
+
+The optional Microsoft Graph directory adapter reuses the **sign-in application**
+and its existing confidential-client credentials. No additional client secret is
+needed, and the Key Vault application's permissions are not used.
+
+An Entra administrator must grant the sign-in application these Microsoft Graph
+**Application** permissions, with tenant admin consent:
+
+- `User.Read.All` for employee lookup and user profiles.
+- `GroupMember.Read.All` for the selected group's metadata and transitive members.
+
+The existing delegated `User.Read` sign-in permission is insufficient. The adapter
+requests `https://graph.microsoft.com/.default` using client credentials, independently
+of the signed-in user's access token. It never modifies users, groups or memberships.
+See [Microsoft's users API](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0)
+and [transitive membership API](https://learn.microsoft.com/en-us/graph/api/group-list-transitivemembers?view=graph-rest-1.0).
+Hidden-membership groups additionally need `Member.Read.Hidden`; do not grant this
+unless the selected group actually requires it.
+
+After consent, add to `.env.vm`:
+
+```dotenv
+ENTRA_DIRECTORY_ENABLED=true
+ENTRA_DIRECTORY_GROUP_IDS=526beb77-dc8d-4b5a-a7f7-7b6f504fd71b
+```
+
+The initial group is **Organisasjon og utvikling - IT**. Group IDs are a comma-separated
+allowlist; names and members are read from Entra, so renaming a group does not break
+saved references. The allowlist limits **team** lookup; employee search covers enabled
+Member accounts across the tenant. Guests and disabled accounts are excluded. Directory
+Member accounts can include service accounts; Entra does not identify all accounts as
+human employees. No Microsoft Teams license or Teams-specific API permission is needed.
+Nested user membership is included. Existing local TEAM code-list entries remain available.
+Entra groups do not create NAV product areas or an organisational hierarchy.
+
+Rebuild/redeploy the backend with the existing protected sign-in Compose override
+(see the authentication setup above). Keep `polly.security.enabled=true`; the adapter
+uses the existing login session and requires authentication for `/team` and `/team/**`.
+Directory lookup is disabled by default, so builds and offline deployments do not
+require directory permissions.
+
+The existing employee and team selectors use this adapter without new endpoints:
+
+- `GET /team/resource/search/{name}` searches by first/last name, display name, email
+  or sign-in name, starting at three characters and returning at most 25 candidates.
+  Multiple words narrow the match; type more of the name to narrow a large result.
+- `GET /team/resource/{id}` resolves an Entra user object ID. The API's historical
+  `navIdent` field carries the object ID; it is not the email address or employee number.
+- `GET /team/search/{name}` includes selected Entra groups and existing local teams.
+- `GET /team/{id}` resolves the selected group with its members across all Graph pages.
+
+Verify after deployment while signed in: search for a known employee, open the IT
+team, and confirm its members. Verify that an anonymous request to the lookup endpoints
+is rejected. Profiles, group metadata and membership are cached for five minutes;
+Graph itself can also have replication delays. Deleted/disabled users resolve as
+missing after cache expiry. Missing consent, throttling and connection failures produce
+an unavailable response, not a false empty search. Disable the adapter to restore the
+previous offline providers. Selecting someone here documents responsibility; it does not
+grant an application role or membership in the group.

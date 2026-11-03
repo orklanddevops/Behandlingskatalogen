@@ -7,7 +7,7 @@ import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.polly.teams.ResourceService;
 import no.nav.data.polly.teams.dto.Resource;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ import static no.nav.data.common.utils.StreamUtils.toMap;
 
 @Slf4j
 @Component
-@ConditionalOnProperty("client.teamcat-resource.enabled")
+@ConditionalOnExpression("!${client.entra-directory.enabled:false} && ${client.teamcat-resource.enabled:false}")
 public class TeamcatResourceClient implements ResourceService {
 
     private final RestTemplate restTemplate;

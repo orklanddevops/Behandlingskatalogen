@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Resource {
 
+    // Legacy API field name: NAV ident for Teamkatalog, Entra object ID for municipal lookup.
     private String navIdent;
     private String givenName;
     private String familyName;

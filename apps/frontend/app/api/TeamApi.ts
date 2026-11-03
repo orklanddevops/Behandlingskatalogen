@@ -23,7 +23,9 @@ export const getTeam = async (teamId: string) => {
 
   const promise = (async () => {
     try {
-      const data = (await axios.get<ITeam>(`${env.pollyBaseUrl}/team/${teamId}`)).data
+      const data = (
+        await axios.get<ITeam>(`${env.pollyBaseUrl}/team/${encodeURIComponent(teamId)}`)
+      ).data
       data.members = data.members.sort((a, b) => (a.name || '').localeCompare(b.name || ''))
       return data
     } catch (error) {
@@ -40,8 +42,11 @@ export const getTeam = async (teamId: string) => {
 }
 
 export const searchTeam = async (teamSearch: string) => {
-  return (await axios.get<IPageResponse<ITeam>>(`${env.pollyBaseUrl}/team/search/${teamSearch}`))
-    .data
+  return (
+    await axios.get<IPageResponse<ITeam>>(
+      `${env.pollyBaseUrl}/team/search/${encodeURIComponent(teamSearch)}`
+    )
+  ).data
 }
 
 const getAllProductAreas = async () => {
@@ -54,13 +59,17 @@ export const hasResourceId = (resourceId?: string | null): resourceId is string 
 
 export const getResourceById = async (resourceId: string) => {
   if (!hasResourceId(resourceId)) throw new Error('Missing resource ID')
-  return (await axios.get<ITeamResource>(`${env.pollyBaseUrl}/team/resource/${resourceId}`)).data
+  return (
+    await axios.get<ITeamResource>(
+      `${env.pollyBaseUrl}/team/resource/${encodeURIComponent(resourceId)}`
+    )
+  ).data
 }
 
 const searchResourceByName = async (resourceName: string) => {
   return (
     await axios.get<IPageResponse<ITeamResource>>(
-      `${env.pollyBaseUrl}/team/resource/search/${resourceName}`
+      `${env.pollyBaseUrl}/team/resource/search/${encodeURIComponent(resourceName)}`
     )
   ).data
 }

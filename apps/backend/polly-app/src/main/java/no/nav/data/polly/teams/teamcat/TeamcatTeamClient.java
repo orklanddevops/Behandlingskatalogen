@@ -8,7 +8,7 @@ import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.polly.teams.TeamService;
 import no.nav.data.polly.teams.domain.ProductArea;
 import no.nav.data.polly.teams.domain.Team;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 
 @Component
-@ConditionalOnProperty("client.teamcat-team.enabled")
+@ConditionalOnExpression("!${client.entra-directory.enabled:false} && ${client.teamcat-team.enabled:false}")
 @Slf4j
 public class TeamcatTeamClient implements TeamService {
 
