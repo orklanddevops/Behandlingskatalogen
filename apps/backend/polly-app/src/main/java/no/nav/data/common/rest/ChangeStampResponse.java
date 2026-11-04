@@ -21,6 +21,13 @@ public class ChangeStampResponse {
     private LocalDateTime lastModifiedDate;
     private LocalDateTime createdDate;
     
+    // Older Orkland audit stamps were formatted with a missing NAVident.
+    // Clean the API label while leaving the stored audit history untouched.
+    public String getLastModifiedBy() {
+        return lastModifiedBy != null && lastModifiedBy.startsWith("null - ")
+                ? lastModifiedBy.substring("null - ".length()) : lastModifiedBy;
+    }
+
     public static ChangeStampResponse from(Auditable auditable) {
         return ChangeStampResponse.builder()
                 .lastModifiedBy(auditable.getLastModifiedBy())

@@ -27,5 +27,13 @@ export function proxy(request: NextRequest) {
 export default proxy
 
 export const config = {
-  matcher: ['/api/:path*', '/login/:path*', '/oauth2/:path*', '/logout/:path*'],
+  matcher: [
+    '/api/:path*',
+    '/login/:path*',
+    '/oauth2/:path*',
+    '/logout/:path*',
+    '/swagger-ui.html',
+    '/swagger-ui/:path*',
+    '/v3/api-docs/:path*',
+  ],
 }

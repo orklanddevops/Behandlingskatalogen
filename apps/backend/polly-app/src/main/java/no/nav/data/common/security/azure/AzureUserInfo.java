@@ -2,6 +2,7 @@ package no.nav.data.common.security.azure;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.Value;
+import org.apache.commons.lang3.StringUtils;
 import no.nav.data.common.security.AppIdMapping;
 import no.nav.data.common.security.dto.AppRole;
 import no.nav.data.common.security.dto.UserInfo;
@@ -65,7 +66,10 @@ public class AzureUserInfo implements UserInfo {
 
     @Override
     public String getIdentName() {
-        return String.format("%s - %s", ident, name);
+        if (StringUtils.isBlank(ident)) {
+            return StringUtils.firstNonBlank(name, email, userId, "Ukjent bruker");
+        }
+        return StringUtils.isBlank(name) ? ident : ident + " - " + name;
     }
 
     @Override

@@ -41,7 +41,7 @@ public interface AuditVersionRepository extends JpaRepository<AuditVersion, UUID
                 select distinct on (table_id) audit_id
                 from audit_version
                 where table_name = 'PROCESS' 
-                    and user_id = ?1
+                    and (user_id = ?1 or user_id = concat('null - ', ?1))
                     and exists (select 1 from process where process_id = cast(table_id as uuid))
                 order by table_id, time desc
             )
