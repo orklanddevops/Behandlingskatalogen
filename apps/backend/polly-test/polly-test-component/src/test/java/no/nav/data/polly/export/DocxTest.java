@@ -101,6 +101,19 @@ public class DocxTest {
     }
 
     @Test
+    void exportsRetentionWithDaysAndDaysOnly() {
+        mockAlert(process);
+        var retention = process.getData().getRetention();
+        retention.setRetentionDays(9);
+        var combined = unzip(processToDocx.generateDocForProcess(process, DocumentAccess.INTERNAL));
+        assertThat(combined.get("word/document.xml")).contains("3 år, 1 måneder og 9 dager");
+
+        retention.setRetentionMonths(null);
+        var daysOnly = unzip(processToDocx.generateDocForProcess(process, DocumentAccess.INTERNAL));
+        assertThat(daysOnly.get("word/document.xml")).contains("9 dager").doesNotContain("3 år");
+    }
+
+    @Test
     @SneakyThrows
     void manualQualitySystemUrlsAreClickableInInternalExports() {
         var links = new no.nav.data.polly.process.domain.sub.QualitySystemLinks();

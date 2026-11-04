@@ -18,6 +18,7 @@ const RetentionItems = (props: IProps) => {
   const { formikBag } = props
 
   const [retention, setRetention] = useState(formikBag.values.retention.retentionMonths || 0)
+  const retentionDays = formikBag.values.retention.retentionDays || 0
   const retentionYears = Math.floor(retention / 12)
   const retentionMonths = retention - retentionYears * 12
 
@@ -32,7 +33,7 @@ const RetentionItems = (props: IProps) => {
   return (
     <>
       <div className='w-full mt-0'>
-        <ModalLabel fullwidth label='Omfattes av Navs bevarings- og kassasjonsvedtak?' />
+        <ModalLabel fullwidth label='Omfattes av Orklands bevarings- og kassasjonsvedtak?' />
         <div className='mt-2'>
           <BoolField
             fieldName='retention.retentionPlan'
@@ -53,7 +54,7 @@ const RetentionItems = (props: IProps) => {
             <Field name='retention.retentionMonths'>
               {() => (
                 <div className='mt-2 flex gap-6'>
-                  <div className='w-1/2'>
+                  <div className='w-1/3'>
                     <TextField
                       label='År'
                       size='small'
@@ -68,7 +69,7 @@ const RetentionItems = (props: IProps) => {
                       }}
                     />
                   </div>
-                  <div className='w-1/2'>
+                  <div className='w-1/3'>
                     <TextField
                       label='Måneder'
                       size='small'
@@ -83,11 +84,27 @@ const RetentionItems = (props: IProps) => {
                       }}
                     />
                   </div>
+                  <div className='w-1/3'>
+                    <TextField
+                      label='Dager'
+                      size='small'
+                      type='number'
+                      value={retentionDays}
+                      min={0}
+                      step={1}
+                      onChange={(e) => {
+                        const raw = Number(e.target.value)
+                        const days = Number.isFinite(raw) ? Math.max(0, Math.trunc(raw)) : 0
+                        formikBag.setFieldValue('retention.retentionDays', days || undefined)
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </Field>
           </div>
           <Error fieldName='retention.retentionMonths' fullWidth={true} />
+          <Error fieldName='retention.retentionDays' fullWidth={true} />
 
           <div className='w-full mt-4'>
             <ModalLabel

@@ -243,6 +243,7 @@ export interface IDataProcessing {
 export interface IRetention {
   retentionPlan?: boolean
   retentionMonths?: number
+  retentionDays?: number
   retentionStart?: string
   retentionDescription?: string
 }
@@ -265,6 +266,7 @@ export interface IAaregAvtale {
 
 export interface IDpRetention {
   retentionMonths?: number
+  retentionDays?: number
   retentionStart?: string
 }
 

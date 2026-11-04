@@ -211,6 +211,7 @@ export const convertProcessToFormValues: (process?: Partial<IProcess>) => IProce
     retention: {
       retentionPlan: mapBool(retention?.retentionPlan),
       retentionMonths: retention?.retentionMonths || 0,
+      retentionDays: retention?.retentionDays || 0,
       retentionStart: retention?.retentionStart || '',
       retentionDescription: retention?.retentionDescription || '',
     },

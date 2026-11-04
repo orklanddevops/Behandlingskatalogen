@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"retentionPlan", "retentionMonths", "retentionStart", "retentionDescription"})
+@JsonPropertyOrder({"retentionPlan", "retentionMonths", "retentionDays", "retentionStart", "retentionDescription"})
 public class RetentionResponse {
 
     private Boolean retentionPlan;
     private Integer retentionMonths;
+    private Integer retentionDays;
     private String retentionStart;
     private String retentionDescription;
 }

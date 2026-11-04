@@ -17,6 +17,7 @@ public class RetentionRequest implements Validated {
 
     private Boolean retentionPlan;
     private Integer retentionMonths;
+    private Integer retentionDays;
     private String retentionStart;
     private String retentionDescription;
 
@@ -28,6 +29,8 @@ public class RetentionRequest implements Validated {
 
     @Override
     public void validate(FieldValidator validator) {
-
+        if (retentionDays != null && retentionDays < 0) {
+            validator.addError("retentionDays", retentionDays.toString(), "invalidRetentionDays", "must be non-negative");
+        }
     }
 }

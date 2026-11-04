@@ -20,12 +20,14 @@ public class DpRetention implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer retentionMonths;
+    private Integer retentionDays;
     private String retentionStart;
 
     // TODO: Snu avhengigheten innover
     public DpRetentionResponse convertToResponse() {
         return DpRetentionResponse.builder()
                 .retentionMonths(getRetentionMonths())
+                .retentionDays(getRetentionDays())
                 .retentionStart(getRetentionStart())
                 .build();
     }
@@ -37,6 +39,7 @@ public class DpRetention implements Serializable {
         }
         return DpRetention.builder()
                 .retentionMonths(retention.getRetentionMonths())
+                .retentionDays(retention.getRetentionDays())
                 .retentionStart(retention.getRetentionStart())
                 .build();
     }

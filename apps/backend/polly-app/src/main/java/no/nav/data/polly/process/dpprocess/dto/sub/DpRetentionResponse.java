@@ -10,9 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"retentionMonths", "retentionStart"})
+@JsonPropertyOrder({"retentionMonths", "retentionDays", "retentionStart"})
 public class DpRetentionResponse {
 
     private Integer retentionMonths;
+    private Integer retentionDays;
     private String retentionStart;
 }

@@ -251,6 +251,7 @@ export const dpProcessSchema: () => yup.ObjectSchema<IDpProcessFormValues> = () 
     purposeDescription: yup.string(),
     retention: yup.object({
       retentionMonths: yup.number(),
+      retentionDays: yup.number().integer().min(0),
       retentionStart: yup.string(),
     }),
     start: yup.string().matches(DATE_REGEX, { message: incorrectDateMessage }),
@@ -480,6 +481,7 @@ export const processSchema: (purposeList: ICode[]) => yup.ObjectSchema<IProcessF
     retention: yup.object({
       retentionPlan: yup.boolean(),
       retentionMonths: yup.number(),
+      retentionDays: yup.number().integer().min(0),
       retentionStart: yup.string(),
       retentionDescription: yup.string(),
     }),

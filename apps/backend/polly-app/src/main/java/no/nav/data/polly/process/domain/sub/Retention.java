@@ -21,6 +21,7 @@ public class Retention implements Serializable {
 
     private Boolean retentionPlan;
     private Integer retentionMonths;
+    private Integer retentionDays;
     private String retentionStart;
     private String retentionDescription;
 
@@ -29,6 +30,7 @@ public class Retention implements Serializable {
         return RetentionResponse.builder()
                 .retentionPlan(getRetentionPlan())
                 .retentionMonths(getRetentionMonths())
+                .retentionDays(getRetentionDays())
                 .retentionStart(getRetentionStart())
                 .retentionDescription(getRetentionDescription())
                 .build();
@@ -42,6 +44,7 @@ public class Retention implements Serializable {
         return Retention.builder()
                 .retentionPlan(retention.getRetentionPlan())
                 .retentionMonths(retention.getRetentionMonths())
+                .retentionDays(retention.getRetentionDays())
                 .retentionStart(retention.getRetentionStart())
                 .retentionDescription(retention.getRetentionDescription())
                 .build();

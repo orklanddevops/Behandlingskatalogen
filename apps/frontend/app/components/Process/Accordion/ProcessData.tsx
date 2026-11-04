@@ -410,14 +410,14 @@ const ProcessData = (props: IProcessDataProps) => {
       <DataText label='Lagringsbehov' text={''}>
         <>
           {process.retention?.retentionPlan === null &&
-            'Uavklart om omfattes av NAVs bevarings- og kassasjonsvedtak'}
+            'Uavklart om omfattes av Orklands bevarings- og kassasjonsvedtak'}
           {process.retention?.retentionPlan === false &&
-            'Omfattes ikke av NAVs bevarings- og kassasjonsvedtak'}
+            'Omfattes ikke av Orklands bevarings- og kassasjonsvedtak'}
         </>
         <>
           {process.retention?.retentionPlan && (
             <div>
-              <div>Omfattes av NAVs bevarings- og kassasjonsvedtak</div>
+              <div>Omfattes av Orklands bevarings- og kassasjonsvedtak</div>
             </div>
           )}
           <div>
@@ -542,7 +542,8 @@ const Completeness = (props: ICompletenessProps) => {
     retention: !isNil(process.retention?.retentionPlan),
     retentionTime:
       !process.retention?.retentionPlan ||
-      (!!process.retention.retentionStart && !!process.retention.retentionMonths),
+      (!!process.retention.retentionStart &&
+        (!!process.retention.retentionMonths || !!process.retention.retentionDays)),
     dataProcessor: !isNil(process.dataProcessing?.dataProcessor),
     dataProcessors:
       !process.dataProcessing?.dataProcessor || !!process.dataProcessing?.processors.length,

@@ -42,16 +42,16 @@ const PurposeTable = () => {
       setTitle('Behandlinger med rettslig grunnlag artikkel 9 mangler')
     } else if (filterName === EProcessField.RETENTION_DATA) {
       setTitle(
-        'Behandlinger omfattet av NAVs bevarings- og kassasjonsvedtak uten registrert lagringstid'
+        'Behandlinger omfattet av Orklands bevarings- og kassasjonsvedtak uten registrert lagringstid'
       )
     } else if (filterName === EProcessField.RETENTION) {
       switch (filterValue) {
         case EProcessState.YES:
-          return setTitle('Omfattes av NAVs bevarings- og kassasjonsvedtak')
+          return setTitle('Omfattes av Orklands bevarings- og kassasjonsvedtak')
         case EProcessState.NO:
-          return setTitle('Omfattes ikke av NAVs bevarings- og kassasjonsvedtak')
+          return setTitle('Omfattes ikke av Orklands bevarings- og kassasjonsvedtak')
         case EProcessState.UNKNOWN:
-          return setTitle('Uavklart om omfattes av NAVs bevarings- og kassasjonsvedtak')
+          return setTitle('Uavklart om omfattes av Orklands bevarings- og kassasjonsvedtak')
       }
     } else if (filterName === EProcessField.PROFILING && filterValue) {
       setTitle(`Profilering: ${translateToNorwegian(filterValue)} `)

@@ -620,14 +620,17 @@ public class ProcessToDocx {
             var ret1 = text("Omfattes av virksomhetens bevarings- og kassasjonsplan: ", boolToText(retention.getRetentionPlan()));
             var ret3 = documentAccess.equals(DocumentAccess.INTERNAL) ? text("Begrunnelse: ", retention.getRetentionDescription()) : null;
 
-            boolean retentionDuration = retention.getRetentionMonths() != null && retention.getRetentionMonths() != 0;
-            boolean years = retentionDuration && retention.getRetentionMonths() >= 12;
-            boolean months = retentionDuration && retention.getRetentionMonths() % 12 != 0;
-            var yearsText = years ? retention.getRetentionMonths() / 12 + " år " : null;
-            var binderText = years && months ? "og " : null;
-            var monthsText = months ? retention.getRetentionMonths() % 12 + " måneder " : null;
+            int totalMonths = retention.getRetentionMonths() == null ? 0 : retention.getRetentionMonths();
+            int days = retention.getRetentionDays() == null ? 0 : retention.getRetentionDays();
+            var duration = new java.util.ArrayList<String>();
+            if (totalMonths >= 12) duration.add(totalMonths / 12 + " år");
+            if (totalMonths % 12 != 0) duration.add(totalMonths % 12 + " måneder");
+            if (days != 0) duration.add(days + " dager");
+            var durationText = duration.size() > 1
+                    ? String.join(", ", duration.subList(0, duration.size() - 1)) + " og " + duration.getLast()
+                    : String.join("", duration);
             var descText = retention.getRetentionStart() == null ? "" : " fra " + retention.getRetentionStart();
-            var ret2 = retentionDuration ? text("Lagres i ", yearsText, binderText, monthsText, descText) : null;
+            var ret2 = !duration.isEmpty() ? text("Lagres i ", durationText, descText) : null;
 
             addTexts(ret1, ret2, ret3);
         }

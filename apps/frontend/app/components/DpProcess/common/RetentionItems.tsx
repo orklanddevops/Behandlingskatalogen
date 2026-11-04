@@ -19,9 +19,10 @@ const RetentionItems = (props: IRetentionItemsProps) => {
   const { formikBag } = props
 
   const [retention, setRetention] = useState(formikBag.values.retention.retentionMonths || 0)
+  const retentionDays = formikBag.values.retention.retentionDays || 0
   const retentionYears: number = Math.floor(retention / 12)
   const retentionMonths: number = retention - retentionYears * 12
-  const isEmptyRetention = retention === 0
+  const isEmptyRetention = retention === 0 && retentionDays === 0
 
   useEffect(() => {
     ;(() =>
@@ -42,7 +43,7 @@ const RetentionItems = (props: IRetentionItemsProps) => {
         <Field name='retention.retentionMonths'>
           {() => (
             <div className='mt-2 flex w-full gap-6'>
-              <div className='w-1/2'>
+              <div className='w-1/3'>
                 <TextField
                   label='År'
                   size='small'
@@ -58,7 +59,7 @@ const RetentionItems = (props: IRetentionItemsProps) => {
                   }}
                 />
               </div>
-              <div className='w-1/2'>
+              <div className='w-1/3'>
                 <TextField
                   label='Måneder'
                   size='small'
@@ -74,11 +75,27 @@ const RetentionItems = (props: IRetentionItemsProps) => {
                   }}
                 />
               </div>
+              <div className='w-1/3'>
+                <TextField
+                  label='Dager'
+                  size='small'
+                  type='number'
+                  value={retentionDays}
+                  min={0}
+                  step={1}
+                  onChange={(e) => {
+                    const raw = Number(e.target.value)
+                    const days = Number.isFinite(raw) ? Math.max(0, Math.trunc(raw)) : 0
+                    formikBag.setFieldValue('retention.retentionDays', days || undefined)
+                  }}
+                />
+              </div>
             </div>
           )}
         </Field>
       </div>
       <Error fieldName='retention.retentionMonths' />
+      <Error fieldName='retention.retentionDays' />
 
       <div className='w-full mt-4'>
         <ModalLabel

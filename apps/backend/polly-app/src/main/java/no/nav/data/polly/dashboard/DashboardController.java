@@ -141,7 +141,8 @@ public class DashboardController {
         dashes.stream().map(DashCount::getRetention).forEach(d -> count(d, ret.map(Retention::getRetentionPlan).orElse(null)));
         var retPlan = ret.map(Retention::getRetentionPlan).orElse(false);
         var retMonths = ret.map(Retention::getRetentionMonths).orElse(0);
-        if (retPlan && retMonths == 0) {
+        var retDays = ret.map(Retention::getRetentionDays).orElse(0);
+        if (retPlan && retMonths == 0 && retDays == 0) {
             dashes.forEach(DashCount::retentionDataIncomplete);
         }
 

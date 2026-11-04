@@ -10,12 +10,13 @@ import {
   Formik,
   FormikProps,
 } from 'formik'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { EListName, ICode } from '@/constants/codelistConstant'
 import { CodelistContext } from '@/provider/kodeverkProvider'
 import {
   getAll,
   getDefaultProcessDocument,
+  getDocument,
   getDocumentByPageAndPageSize,
 } from '../../../api/GetAllApi'
 import {
@@ -104,6 +105,9 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
 
   const [documents, setDocuments] = useState<IDocument[]>([])
   const [documentsError, setDocumentsError] = useState(false)
+  const [selectionError, setSelectionError] = useState(false)
+  const [selectingDocument, setSelectingDocument] = useState(false)
+  const selectionRequest = useRef(0)
   const documentOptions = documents.map((document) => ({
     ...document,
     value: document.id,
@@ -115,16 +119,30 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
     )
 
   useEffect(() => {
-    getAll(getDocumentByPageAndPageSize)()
-      .then((result) =>
+    if (!isOpen) return
+    let active = true
+    ;(async () => {
+      setDocuments([])
+      setDocumentsError(false)
+      setSelectionError(false)
+      setSelectingDocument(false)
+      try {
+        const result = await getAll(getDocumentByPageAndPageSize)()
+        if (!active) return
         setDocuments(
           result
             .filter((document) => document.informationTypes.length > 0)
             .sort((a, b) => a.name.localeCompare(b.name, 'nb'))
         )
-      )
-      .catch(() => setDocumentsError(true))
-  }, [])
+      } catch {
+        if (active) setDocumentsError(true)
+      }
+    })()
+    return () => {
+      active = false
+      selectionRequest.current += 1
+    }
+  }, [isOpen])
 
   useEffect(() => {
     ;(async () => {
@@ -190,15 +208,24 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
           validationSchema={addDocumentToProcessSchema()}
         >
           {(formik: FormikProps<IAddDocumentToProcessFormValues>) => {
-            const selectDocument: (document: IDocument, isDefault: boolean) => void = (
-              document: IDocument
-            ) => {
-              formik.setValues({
-                ...formik.values,
-                document: document,
-                informationTypes: extractInfoTypes(document, process.policies),
-              })
-              formik.setFieldTouched('informationTypes', true, false)
+            const selectDocument = async (document: IDocument) => {
+              const request = ++selectionRequest.current
+              setSelectingDocument(true)
+              setSelectionError(false)
+              try {
+                const fullDocument = await getDocument(document.id)
+                if (request !== selectionRequest.current) return
+                await formik.setValues({
+                  ...formik.values,
+                  document: fullDocument,
+                  informationTypes: extractInfoTypes(fullDocument, process.policies),
+                })
+                formik.setFieldTouched('informationTypes', true, false)
+              } catch {
+                if (request === selectionRequest.current) setSelectionError(true)
+              } finally {
+                if (request === selectionRequest.current) setSelectingDocument(false)
+              }
             }
 
             return (
@@ -230,7 +257,7 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
                               loadOptions={loadDocumentOptions}
                               onChange={(value: IDocument | undefined) => {
                                 if (value) {
-                                  selectDocument(value, false)
+                                  selectDocument(value)
                                 }
                               }}
                             />
@@ -240,7 +267,7 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
                                 variant='secondary'
                                 size='small'
                                 className='mt-2 self-start'
-                                onClick={() => selectDocument(defaultDoc, true)}
+                                onClick={() => selectDocument(defaultDoc)}
                               >
                                 Standard opplysningstyper
                               </Button>
@@ -249,6 +276,10 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
                         )}
                       </Field>
                       <Error fieldName='document' />
+                      {selectionError && (
+                        <BodyShort role='alert'>Kunne ikke hente dokumentet. Prøv igjen.</BodyShort>
+                      )}
+                      {selectingDocument && <Loader size='small' title='Henter dokument' />}
                     </div>
 
                     {!!formik.values.document && (
@@ -282,7 +313,9 @@ export const AddDocumentModal = (props: TAddDocumentProps) => {
                     <Button type='button' variant='tertiary' onClick={onCloseModal}>
                       Avbryt
                     </Button>
-                    <Button type='submit'>Legg til</Button>
+                    <Button type='submit' disabled={selectingDocument}>
+                      Legg til
+                    </Button>
                   </div>
                 </Modal.Footer>
               </Form>

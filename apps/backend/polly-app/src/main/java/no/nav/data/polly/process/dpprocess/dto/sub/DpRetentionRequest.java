@@ -16,6 +16,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 public class DpRetentionRequest implements Validated {
 
     private Integer retentionMonths;
+    private Integer retentionDays;
     private String retentionStart;
 
     @Override
@@ -25,6 +26,8 @@ public class DpRetentionRequest implements Validated {
 
     @Override
     public void validate(FieldValidator validator) {
-
+        if (retentionDays != null && retentionDays < 0) {
+            validator.addError("retentionDays", retentionDays.toString(), "invalidRetentionDays", "must be non-negative");
+        }
     }
 }

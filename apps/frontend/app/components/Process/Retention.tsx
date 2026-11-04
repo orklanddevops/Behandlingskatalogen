@@ -9,19 +9,24 @@ export const RetentionView = (props: IRetentionViewProps) => {
   const { retention } = props
   const retentionYears = Math.floor((retention?.retentionMonths || 0) / 12)
   const retentionMonths = (retention?.retentionMonths || 0) - retentionYears * 12
-  const retainedYearsOrMonths = !!retentionYears || !!retentionMonths
-  const retainedYearsAndMonths = !!retentionYears && !!retentionMonths
+  const retentionDays = retention?.retentionDays || 0
+  const duration = [
+    retentionYears && `${retentionYears} år`,
+    retentionMonths && `${retentionMonths} måneder`,
+    retentionDays && `${retentionDays} dager`,
+  ].filter(Boolean)
+  const durationText =
+    duration.length > 1
+      ? `${duration.slice(0, -1).join(', ')} og ${duration[duration.length - 1]}`
+      : duration[0]
 
-  if (!retainedYearsOrMonths) {
+  if (!duration.length) {
     return null
   }
 
   return (
     <span>
-      <span>{retainedYearsOrMonths && 'Lagres i '} </span>
-      <span>{!!retentionYears && `${retentionYears} år`} </span>
-      <span>{retainedYearsAndMonths && '  og '} </span>
-      <span>{!!retentionMonths && `${retentionMonths} måneder`} </span>
+      <span>Lagres i {durationText}</span>
       <span> fra </span>
       <span>{_.lowerFirst(retention?.retentionStart)}</span>
     </span>

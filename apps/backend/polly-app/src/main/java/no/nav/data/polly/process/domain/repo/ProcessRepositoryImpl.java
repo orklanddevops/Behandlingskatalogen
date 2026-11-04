@@ -193,7 +193,7 @@ public class ProcessRepositoryImpl implements ProcessRepositoryCustom {
             // Covered by the retention plan, but no retention period (years/months) registered
             case RETENTION_DATA -> {
                 processState = ProcessState.UNKNOWN;
-                yield " data #> '{retention,retentionPlan}' = 'true'::jsonb and coalesce((data #>> '{retention,retentionMonths}')::int, 0) = 0 ";
+                yield " data #> '{retention,retentionPlan}' = 'true'::jsonb and coalesce((data #>> '{retention,retentionMonths}')::int, 0) = 0 and coalesce((data #>> '{retention,retentionDays}')::int, 0) = 0 ";
             }
             case DPIA_REFERENCE_MISSING -> {
                 processState = ProcessState.UNKNOWN;

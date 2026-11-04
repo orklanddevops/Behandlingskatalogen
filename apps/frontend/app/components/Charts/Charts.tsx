@@ -179,12 +179,13 @@ const Charts = (props: TChartsProps) => {
         <TriChart
           counter={chartData.retention}
           processStatus={processStatus}
-          title='Omfattes av NAVs bevarings- og kassasjonsvedtak'
+          title='Omfattes av Orklands bevarings- og kassasjonsvedtak'
           processField={EProcessField.RETENTION}
           onClickPieChartSlice={handleClickPieChartSlice}
         />
         <BodyLong>
-          Behandlinger omfattet av NAVs bevarings- og kassasjonsvedtak uten registrert lagringstid:{' '}
+          Behandlinger omfattet av Orklands bevarings- og kassasjonsvedtak uten registrert
+          lagringstid:{' '}
           <RouteLink href={link(EProcessField.RETENTION_DATA)}>
             {chartData.retentionDataIncomplete}
           </RouteLink>

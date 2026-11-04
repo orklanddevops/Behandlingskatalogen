@@ -115,6 +115,7 @@ export const dpProcessToFormValues = (dpProcess: Partial<IDpProcess>): IDpProces
     purposeDescription: purposeDescription || '',
     retention: {
       retentionMonths: retention?.retentionMonths || 0,
+      retentionDays: retention?.retentionDays || 0,
       retentionStart: retention?.retentionStart || '',
     },
     start: start || env.defaultStartDate,
