@@ -27,7 +27,7 @@ public class SwaggerConfig {
                         .version("v1.0")
                         .license(new License().name("MIT License")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("Behandlingskatalog på NAKA")
-                        .url("https://navikt.github.io/naka/behandlingskatalog"));
+                        .description("Behandlingskatalog på Orkata")
+                        .url("https://orklanddevops.github.io/orkata/behandlingskatalog"));
     }
 }
