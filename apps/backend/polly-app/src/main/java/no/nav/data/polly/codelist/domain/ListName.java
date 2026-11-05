@@ -2,6 +2,7 @@ package no.nav.data.polly.codelist.domain;
 
 public enum ListName {
     PURPOSE,
+    INFORMASJONSIKKERHET_CATEGORY,
     CATEGORY,
     THIRD_PARTY,
     NATIONAL_LAW,

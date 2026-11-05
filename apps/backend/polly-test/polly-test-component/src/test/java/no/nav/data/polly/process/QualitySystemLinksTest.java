@@ -24,4 +24,34 @@ class QualitySystemLinksTest {
         links.setDpia("javascript:alert(1)");
         assertThat(links.validateFields()).hasSize(1);
     }
+    @Test
+    void validatesNamedDocumentsAndConfiguredTypes() {
+        no.nav.data.polly.codelist.CodelistStub.initializeCodelist();
+        var document = new QualitySystemLinks.Document();
+        document.setType(" DPIA ");
+        document.setName(" Assessment ");
+        document.setUrl(" https://quality.example.org/dpia/42 ");
+        var links = new QualitySystemLinks();
+        links.setDocuments(java.util.List.of(document));
+        assertThat(links.validateFields()).isEmpty();
+        assertThat(document.getType()).isEqualTo("DPIA");
+        assertThat(document.getName()).isEqualTo("Assessment");
+        assertThat(document.getUrl()).isEqualTo("https://quality.example.org/dpia/42");
+        document.setType("UNKNOWN");
+        assertThat(links.validateFields()).hasSize(1);
+        document.setType("DPIA");
+        document.setName(" ");
+        document.setUrl("javascript:alert(1)");
+        assertThat(links.validateFields()).hasSize(2);
+        document.setName("Assessment");
+        document.setUrl("");
+        assertThat(links.validateFields()).hasSize(1);
+    }
+
+    @Test
+    void rejectsNullDocumentRows() {
+        var links = new QualitySystemLinks();
+        links.setDocuments(java.util.Arrays.asList((QualitySystemLinks.Document) null));
+        assertThat(links.validateFields()).hasSize(1);
+    }
 }

@@ -132,6 +132,28 @@ public class DocxTest {
         assertThat(external.get("word/document.xml")).doesNotContain("quality.example.org");
     }
 
+    @Test
+    void exportsMultipleNamedDocumentsOfTheSameConfiguredType() {
+        var links = new no.nav.data.polly.process.domain.sub.QualitySystemLinks();
+        var first = new no.nav.data.polly.process.domain.sub.QualitySystemLinks.Document();
+        first.setType("DPIA");
+        first.setName("Initial assessment");
+        first.setUrl("https://quality.example.org/first");
+        var second = new no.nav.data.polly.process.domain.sub.QualitySystemLinks.Document();
+        second.setType("DPIA");
+        second.setName("Updated assessment");
+        second.setUrl("https://quality.example.org/second");
+        links.setDocuments(List.of(first, second));
+        process.getData().setQualitySystemLinks(links);
+        mockAlert(process);
+        var entries = unzip(processToDocx.generateDocForProcess(process, DocumentAccess.INTERNAL));
+        assertThat(entries.get("word/document.xml")).contains("DPIA", "Initial assessment", "Updated assessment");
+        assertThat(entries.get("word/_rels/document.xml.rels"))
+                .contains(first.getUrl(), second.getUrl());
+        var external = unzip(processToDocx.generateDocForProcess(process, DocumentAccess.EXTERNAL));
+        assertThat(external.get("word/document.xml")).doesNotContain("Initial assessment", "Updated assessment");
+    }
+
     @SneakyThrows
     private java.util.Map<String, String> unzip(byte[] bytes) {
         var entries = new java.util.HashMap<String, String>();

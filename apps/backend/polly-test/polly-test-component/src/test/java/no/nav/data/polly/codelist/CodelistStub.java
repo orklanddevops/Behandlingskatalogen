@@ -7,6 +7,7 @@ public class CodelistStub {
 
     public static void initializeCodelist() {
         CodelistCache.init();
+        add(ListName.INFORMASJONSIKKERHET_CATEGORY, "DPIA", "DPIA", "Personvernkonsekvensvurdering");
         add(ListName.THIRD_PARTY, "ARBEIDSGIVER", "ARBEIDSGIVER", "Arbeidsgiver");
         add(ListName.THIRD_PARTY, "SKATTEETATEN", "SKATTEETATEN", "Skatteetaten");
         add(ListName.THIRD_PARTY, "BRUKER", "BRUKER", "BRUKER");

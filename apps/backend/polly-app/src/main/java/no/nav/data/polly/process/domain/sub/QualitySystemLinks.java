@@ -9,6 +9,7 @@ import java.net.URI;
 @Data
 public class QualitySystemLinks implements Serializable, Validated {
     private static final long serialVersionUID = 1L;
+    private java.util.List<Document> documents = new java.util.ArrayList<>();
     private String dataProcessingAgreement;
     private String dpia;
     private String initialDpia;
@@ -28,6 +29,15 @@ public class QualitySystemLinks implements Serializable, Validated {
 
     @Override
     public void validate(FieldValidator validator) {
+        if (documents != null) {
+            for (int i = 0; i < documents.size(); i++) {
+                if (documents.get(i) == null) {
+                    validator.addError("documents[" + i + "]", null, "fieldIsNullOrMissing", "Document is required");
+                } else {
+                    validator.validateType("documents[" + i + "]", documents.get(i));
+                }
+            }
+        }
         validateUrl(validator, "dataProcessingAgreement", dataProcessingAgreement);
         validateUrl(validator, "dpia", dpia);
         validateUrl(validator, "initialDpia", initialDpia);
@@ -36,7 +46,7 @@ public class QualitySystemLinks implements Serializable, Validated {
         validateUrl(validator, "otherAgreement", otherAgreement);
     }
 
-    private void validateUrl(FieldValidator validator, String field, String value) {
+    private static void validateUrl(FieldValidator validator, String field, String value) {
         if (value == null || value.isBlank()) return;
         try {
             URI uri = URI.create(value);
@@ -44,5 +54,28 @@ public class QualitySystemLinks implements Serializable, Validated {
         } catch (IllegalArgumentException ignored) {
         }
         validator.addError(field, value, "fieldWrongFormat", "Use a valid HTTP or HTTPS URL");
+    }
+    @Data
+    public static class Document implements Serializable, Validated {
+        private static final long serialVersionUID = 1L;
+        private String type;
+        private String name;
+        private String url;
+
+        @Override
+        public void format() {
+            type = type == null ? null : type.trim();
+            name = name == null ? null : name.trim();
+            url = url == null ? null : url.trim();
+        }
+
+        @Override
+        public void validate(FieldValidator validator) {
+            validator.checkRequiredCodelist("type", type,
+                    no.nav.data.polly.codelist.domain.ListName.INFORMASJONSIKKERHET_CATEGORY);
+            validator.checkBlank("name", name);
+            validator.checkBlank("url", url);
+            validateUrl(validator, "url", url);
+        }
     }
 }

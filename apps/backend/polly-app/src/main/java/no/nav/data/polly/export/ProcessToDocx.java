@@ -470,16 +470,23 @@ public class ProcessToDocx {
 
         private void qualitySystemLinks(no.nav.data.polly.process.domain.sub.QualitySystemLinks links) {
             if (links == null) return;
-            var urls = new java.util.LinkedHashMap<String, String>();
-            urls.put("Databehandleravtale", links.getDataProcessingAgreement());
-            urls.put("DPIA", links.getDpia());
-            urls.put("Initiell DPIA", links.getInitialDpia());
-            urls.put("ROS", links.getRos());
-            urls.put("Hovedavtale", links.getMainAgreement());
-            urls.put("Annen avtale", links.getOtherAgreement());
-            if (urls.values().stream().noneMatch(url -> url != null && !url.isBlank())) return;
+            var urls = new java.util.ArrayList<java.util.Map.Entry<String, String>>();
+            urls.add(new java.util.AbstractMap.SimpleEntry<>("Databehandleravtale", links.getDataProcessingAgreement()));
+            urls.add(new java.util.AbstractMap.SimpleEntry<>("DPIA", links.getDpia()));
+            urls.add(new java.util.AbstractMap.SimpleEntry<>("Initiell DPIA", links.getInitialDpia()));
+            urls.add(new java.util.AbstractMap.SimpleEntry<>("ROS", links.getRos()));
+            urls.add(new java.util.AbstractMap.SimpleEntry<>("Hovedavtale", links.getMainAgreement()));
+            urls.add(new java.util.AbstractMap.SimpleEntry<>("Annen avtale", links.getOtherAgreement()));
+            if (links.getDocuments() != null) {
+                links.getDocuments().forEach(document -> urls.add(new java.util.AbstractMap.SimpleEntry<>(
+                        shortName(ListName.INFORMASJONSIKKERHET_CATEGORY, document.getType()) + " – " + document.getName(),
+                        document.getUrl())));
+            }
+            if (urls.stream().noneMatch(entry -> entry.getValue() != null && !entry.getValue().isBlank())) return;
             addHeading4("Gjeldende etterlevelser og DPIA");
-            urls.forEach((label, url) -> {
+            urls.forEach(entry -> {
+                var label = entry.getKey();
+                var url = entry.getValue();
                 if (url == null || url.isBlank()) return;
                 java.net.URI uri;
                 try { uri = java.net.URI.create(url); } catch (IllegalArgumentException ignored) { return; }

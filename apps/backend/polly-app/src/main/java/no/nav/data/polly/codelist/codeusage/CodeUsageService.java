@@ -131,6 +131,13 @@ public class CodeUsageService {
                     getProcesses(usage).forEach(p -> replaceAll(p.getData().getPurposes(), oldCode, newCode));
                     getPolicies(usage).forEach(p -> replaceAll(p.getData().getPurposes(), oldCode, newCode));
                 }
+                case INFORMASJONSIKKERHET_CATEGORY -> getProcesses(usage).forEach(p -> {
+                    var links = p.getData().getQualitySystemLinks();
+                    if (links != null && links.getDocuments() != null) {
+                        links.getDocuments().stream().filter(document -> oldCode.equals(document.getType()))
+                                .forEach(document -> document.setType(newCode));
+                    }
+                });
                 case CATEGORY -> getInformationTypes(usage).forEach(it -> replaceAll(it.getData().getCategories(), oldCode, newCode));
                 case THIRD_PARTY -> {
                     getInformationTypes(usage).forEach(it -> replaceAll(it.getData().getSources(), oldCode, newCode));
@@ -229,6 +236,7 @@ public class CodeUsageService {
     private List<ProcessShortResponse> findProcesses(ListName listName, String code) {
         return convert(switch (listName) {
             case PURPOSE -> processRepository.findByPurpose(code);
+            case INFORMASJONSIKKERHET_CATEGORY -> processRepository.findByInformationSecurityCategory(code);
             case TEAM -> processRepository.findByProductTeam(code);
             case DEPARTMENT -> processRepository.findByDepartment(code);
             case SEKSJON -> processRepository.findBySeksjoner(List.of(code));

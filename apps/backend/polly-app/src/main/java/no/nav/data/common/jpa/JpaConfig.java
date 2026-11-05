@@ -13,6 +13,7 @@ import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -40,8 +41,8 @@ public class JpaConfig {
     }
 
     @Bean
-    public ApplicationRunner initAudit(AuditVersionRepository repository) {
-        return args -> AuditVersionListener.setRepo(repository);
+    public InitializingBean initAudit(AuditVersionRepository repository) {
+        return () -> AuditVersionListener.setRepo(repository);
     }
 
     @Bean

@@ -41,6 +41,9 @@ public interface ProcessRepository extends JpaRepository<Process, UUID>, Process
             """, nativeQuery = true)
     List<ProcessVeryShort> findSummaryById(List<UUID> uuids);
 
+    @Query(value = "select * from process where jsonb_path_exists(data, '$.qualitySystemLinks.documents[*] ? (@.type == $code)', jsonb_build_object('code', cast(?1 as text)))", nativeQuery = true)
+    List<Process> findByInformationSecurityCategory(String code);
+
     // Count
 
     @Query(value = "select jsonb_array_elements(data -> 'purposes') ->> 0 as code, count(p) as count from Process p group by code", nativeQuery = true)

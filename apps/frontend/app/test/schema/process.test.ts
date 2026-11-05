@@ -61,6 +61,27 @@ describe('Process', () => {
     )
   })
 
+  it('validates document type, name and HTTP links', () => {
+    const document = { type: 'DPIA', name: 'Vurdering', url: 'https://quality.example.org/42' }
+    const withDocument = (changes = {}) => ({
+      ...createProcess(),
+      qualitySystemLinks: { documents: [{ ...document, ...changes }] },
+    })
+    expect(withDocument()).toBeSchema(schema)
+    expect(withDocument({ type: '' })).toBeSchemaErrorAt(
+      schema,
+      'qualitySystemLinks.documents[0].type'
+    )
+    expect(withDocument({ name: ' ' })).toBeSchemaErrorAt(
+      schema,
+      'qualitySystemLinks.documents[0].name'
+    )
+    expect(withDocument({ url: 'javascript:alert(1)' })).toBeSchemaErrorAt(
+      schema,
+      'qualitySystemLinks.documents[0].url'
+    )
+  })
+
   it('Process ok', () => {
     expect(createProcess()).toBeSchema(schema)
   })

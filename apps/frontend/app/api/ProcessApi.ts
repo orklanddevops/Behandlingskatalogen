@@ -2,6 +2,7 @@
 
 import axios from 'axios'
 import queryString from 'query-string'
+import { getQualitySystemDocuments } from '@/constants/qualitySystemLinks'
 import {
   EProcessField,
   EProcessState,
@@ -225,7 +226,7 @@ export const convertProcessToFormValues: (process?: Partial<IProcess>) => IProce
       riskOwnerFunction: dpia?.riskOwnerFunction || '',
       noDpiaReasons: dpia?.noDpiaReasons || [],
     },
-    qualitySystemLinks: process?.qualitySystemLinks || {},
+    qualitySystemLinks: { documents: getQualitySystemDocuments(process?.qualitySystemLinks) },
     disclosures: [],
   }
 }

@@ -8,7 +8,7 @@ import {
   ICode,
   NATIONAL_LAW_GDPR_ARTICLES,
 } from '@/constants/codelistConstant'
-import { qualitySystemLinkLabels } from '@/constants/qualitySystemLinks'
+import { isQualitySystemUrl, qualitySystemLinkLabels } from '@/constants/qualitySystemLinks'
 import {
   ELegalBasesUse,
   EProcessStatus,
@@ -487,8 +487,8 @@ export const processSchema: (purposeList: ICode[]) => yup.ObjectSchema<IProcessF
     }),
     status: yup.mixed<EProcessStatus>().oneOf(Object.values(EProcessStatus)),
     qualitySystemLinks: yup
-      .object(
-        Object.fromEntries(
+      .object({
+        ...Object.fromEntries(
           Object.keys(qualitySystemLinkLabels).map((key) => [
             key,
             yup
@@ -499,17 +499,27 @@ export const processSchema: (purposeList: ICode[]) => yup.ObjectSchema<IProcessF
                 'Skriv inn en gyldig lenke som starter med https:// eller http://',
                 (value) => {
                   if (!value) return true
-                  try {
-                    const url = new URL(value)
-                    return ['http:', 'https:'].includes(url.protocol) && !!url.hostname
-                  } catch {
-                    return false
-                  }
+                  return isQualitySystemUrl(value)
                 }
               ),
           ])
-        )
-      )
+        ),
+        documents: yup.array().of(
+          yup.object({
+            type: yup.string().trim().required('Velg type'),
+            name: yup.string().trim().required('Skriv inn dokumentnavn'),
+            url: yup
+              .string()
+              .trim()
+              .required('Skriv inn lenke')
+              .test(
+                'http-url',
+                'Skriv inn en gyldig lenke som starter med https:// eller http://',
+                (value) => !value || isQualitySystemUrl(value)
+              ),
+          })
+        ),
+      })
       .optional(),
     dpia: yup.object({
       grounds: yup.string(),

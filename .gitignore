@@ -19,3 +19,6 @@
 
 # Local certificate expiry/status and Azure login cache
 .vm-certificate-renewal/
+
+# Local test files
+test.*
