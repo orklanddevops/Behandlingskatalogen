@@ -79,8 +79,7 @@ public class CodelistRequest implements RequestElement {
     @Override
     public void validate(FieldValidator validator) {
         validator.checkRequiredEnum(Fields.list, getList(), ListName.class);
-        // Sensitivity categories may be created by admins; deletion remains protected.
-        if (!update && !ListName.SENSITIVITY.name().equals(getList())) {
+        if (!update) {
             validator.checkIfCodelistIsOfImmutableType(getList());
         }
         validator.checkCodelistCode(Fields.code, getCode());

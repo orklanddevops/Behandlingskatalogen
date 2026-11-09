@@ -113,13 +113,14 @@ class CodelistRequestValidatorTest {
     @Nested
     class validateListNameNotImmutable {
 
-        @Test
-        void shouldValidate_whenCodelistIsNotOfImmutableType() {
-            requestValidator.validateNonImmutableTypeOfCodelist(ListName.PURPOSE);
+        @ParameterizedTest
+        @ValueSource(strings = {"PURPOSE", "SENSITIVITY"})
+        void shouldValidate_whenCodelistIsNotOfImmutableType(String input) {
+            requestValidator.validateNonImmutableTypeOfCodelist(ListName.valueOf(input));
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"GDPR_ARTICLE", "SENSITIVITY"})
+        @ValueSource(strings = {"GDPR_ARTICLE"})
         void shouldThrowCodelistNotFoundException_whenCodelistIsOfImmutableType(String input) {
             try {
                 requestValidator.validateNonImmutableTypeOfCodelist(ListName.valueOf(input));

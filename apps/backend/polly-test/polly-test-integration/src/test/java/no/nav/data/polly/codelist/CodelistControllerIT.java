@@ -264,19 +264,21 @@ class CodelistControllerIT extends IntegrationTestBase {
     @Nested
     class Delete {
 
-        @Test
-        void shouldDeleteCodelist() {
-            saveCodelist(createCodelist(ListName.THIRD_PARTY, "DELETE_CODE"));
-            assertTrue(repository.findByListAndCode(ListName.THIRD_PARTY, "DELETE_CODE").isPresent());
+        @ParameterizedTest
+        @ValueSource(strings = {"THIRD_PARTY", "SENSITIVITY"})
+        void shouldDeleteCodelist(String input) {
+            ListName listName = ListName.valueOf(input);
+            saveCodelist(createCodelist(listName, "DELETE_CODE"));
+            assertTrue(repository.findByListAndCode(listName, "DELETE_CODE").isPresent());
 
-            ResponseEntity<String> responseEntity = restTemplate.exchange("/codelist/THIRD_PARTY/DELETE_CODE", HttpMethod.DELETE, HttpEntity.EMPTY, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange("/codelist/" + input + "/DELETE_CODE", HttpMethod.DELETE, HttpEntity.EMPTY, String.class);
 
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertFalse(repository.findByListAndCode(ListName.THIRD_PARTY, "DELETE_CODE").isPresent());
+            assertFalse(repository.findByListAndCode(listName, "DELETE_CODE").isPresent());
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"GDPR_ARTICLE", "SENSITIVITY"})
+        @ValueSource(strings = {"GDPR_ARTICLE"})
         void shouldInvalidateDeletingGDPR_ARTICLE(String input) {
             saveCodelist(createCodelist(ListName.valueOf(input), "DELETE"));
             String url = String.format("/codelist/%s/DELETE", input);
@@ -285,6 +287,19 @@ class CodelistControllerIT extends IntegrationTestBase {
 
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(responseEntity.getBody()).contains(String.format(ERROR_IMMUTABLE_CODELIST, input));
+        }
+
+        @Test
+        void shouldRejectDeletingSensitivityCategoryInUse() {
+            saveCodelist(createCodelist(ListName.SENSITIVITY, "IND_POL"));
+            informationTypeRepository.save(createInformationType("infoType", "IND_POL", "TPS", "PERSONALIA", "TPS"));
+
+            var response = restTemplate.exchange("/codelist/SENSITIVITY/IND_POL",
+                    HttpMethod.DELETE, HttpEntity.EMPTY, String.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            assertThat(repository.findByListAndCode(ListName.SENSITIVITY, "IND_POL")).isPresent();
+            assertTrue(CodelistCache.contains(ListName.SENSITIVITY, "IND_POL"));
         }
 
         @Test

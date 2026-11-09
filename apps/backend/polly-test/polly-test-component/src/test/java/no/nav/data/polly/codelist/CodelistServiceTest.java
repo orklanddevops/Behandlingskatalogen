@@ -8,6 +8,7 @@ import no.nav.data.polly.codelist.domain.ListName;
 import no.nav.data.polly.codelist.dto.CodeUsageResponse;
 import no.nav.data.polly.codelist.dto.CodelistRequest;
 import no.nav.data.polly.codelist.dto.CodelistRequestValidator;
+import no.nav.data.polly.codelist.dto.UsedInInstance;
 import no.nav.data.polly.process.dto.ProcessShortResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,12 @@ import static no.nav.data.polly.codelist.CodelistUtils.createCodelist;
 import static no.nav.data.polly.codelist.CodelistUtils.createCodelistRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -89,6 +92,38 @@ class CodelistServiceTest {
 
         verify(repository, times(1)).delete(any(Codelist.class));
         assertNull(CodelistStaticService.getCodelist(ListName.THIRD_PARTY, "DELETE_CODE"));
+    }
+
+    @Test
+    void delete_shouldDeleteUnusedSensitivityCategory() {
+        var category = createCodelist(ListName.SENSITIVITY, "IND_POL");
+        CodelistCache.set(category);
+        when(repository.findByListAndCode(ListName.SENSITIVITY, "IND_POL")).thenReturn(Optional.of(category));
+        when(codeUsageService.findCodeUsage(ListName.SENSITIVITY, "IND_POL"))
+                .thenReturn(new CodeUsageResponse(ListName.SENSITIVITY, "IND_POL"));
+
+        service.delete(ListName.SENSITIVITY, "IND_POL");
+
+        verify(repository).delete(category);
+        assertNull(CodelistStaticService.getCodelist(ListName.SENSITIVITY, "IND_POL"));
+    }
+
+    @Test
+    void delete_shouldRejectSensitivityCategoryUsedByInformationType() {
+        var category = createCodelist(ListName.SENSITIVITY, "IND_POL");
+        CodelistCache.set(category);
+        var usage = new CodeUsageResponse(ListName.SENSITIVITY, "IND_POL");
+        usage.setInformationTypes(List.of(new UsedInInstance(
+                UUID.randomUUID().toString(), "Information type")));
+        when(repository.findByListAndCode(ListName.SENSITIVITY, "IND_POL")).thenReturn(Optional.of(category));
+        when(codeUsageService.findCodeUsage(ListName.SENSITIVITY, "IND_POL")).thenReturn(usage);
+
+        assertThrows(CodelistNotErasableException.class,
+                () -> service.delete(ListName.SENSITIVITY, "IND_POL"));
+
+        verify(repository, never()).delete(any(Codelist.class));
+        assertThat(CodelistStaticService.getCodelist(ListName.SENSITIVITY, "IND_POL")).isEqualTo(category);
+        CodelistCache.remove(ListName.SENSITIVITY, "IND_POL");
     }
 
     @Test
