@@ -151,6 +151,22 @@ class CodelistRequestValidatorTest {
         }
 
         @Test
+        void shouldValidate_whenCreatingSensitivityCategory() {
+            var request = createCodelistRequest("SENSITIVITY", "IND_POL",
+                    "Indirekte personopplysninger", "Opplysninger som indirekte kan identifisere en person");
+            when(repository.findByListAndCode(ListName.SENSITIVITY, "IND_POL")).thenReturn(Optional.empty());
+
+            requestValidator.validateRequest(List.of(request), false);
+        }
+
+        @Test
+        void shouldReject_whenCreatingGdprArticle() {
+            var request = createCodelistRequest("GDPR_ARTICLE");
+            org.junit.jupiter.api.Assertions.assertThrows(ValidationException.class,
+                    () -> requestValidator.validateRequest(List.of(request), false));
+        }
+
+        @Test
         void shouldThrowValidationException_whenCreatingExistingItem() {
             List<CodelistRequest> requests = List.of(createCodelistRequest("THIRD_PARTY", "BRUKER"));
             Codelist expectedCodelist = createCodelist(ListName.THIRD_PARTY, "BRUKER");

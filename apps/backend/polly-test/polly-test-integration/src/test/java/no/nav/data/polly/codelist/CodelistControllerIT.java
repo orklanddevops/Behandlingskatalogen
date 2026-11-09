@@ -155,6 +155,21 @@ class CodelistControllerIT extends IntegrationTestBase {
         }
 
         @Test
+        void shouldSaveNewSensitivityCategory() {
+            var request = createCodelistRequest("SENSITIVITY", "IND_POL",
+                    "Indirekte personopplysninger", "Opplysninger som indirekte kan identifisere en person");
+            var response = restTemplate.exchange("/codelist", HttpMethod.POST,
+                    new HttpEntity<>(List.of(request)), CODELIST_LIST_RESP);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(response.getBody()).hasSize(1);
+            assertThat(response.getBody().get(0).getCode()).isEqualTo("IND_POL");
+            assertThat(repository.findByListAndCode(ListName.SENSITIVITY, "IND_POL")).isPresent();
+            assertThat(CodelistStaticService.getCodelist(ListName.SENSITIVITY, "IND_POL").getShortName())
+                    .isEqualTo("Indirekte personopplysninger");
+        }
+
+        @Test
         void shouldNotSaveOrProcessAnEmptyRequest() {
             List<CodelistRequest> requests = Collections.emptyList();
             ResponseEntity<String> responseEntity = restTemplate.exchange(
@@ -188,7 +203,7 @@ class CodelistControllerIT extends IntegrationTestBase {
 
 
         @ParameterizedTest
-        @ValueSource(strings = {"GDPR_ARTICLE", "SENSITIVITY"})
+        @ValueSource(strings = {"GDPR_ARTICLE"})
         void shouldInvalidateCreatingImmutableCodelist(String testValue) {
             List<CodelistRequest> requests = List.of(createCodelistRequest(testValue));
             var resp = restTemplate.exchange("/codelist", HttpMethod.POST, new HttpEntity<>(requests), String.class);
