@@ -15,7 +15,7 @@ const DeleteAllPolicyModal: FunctionComponent<IProps> = ({
   <div>
     <Modal open={isOpen} header={{ heading: 'Bekreft sletting' }} onClose={onClose}>
       <Modal.Body>
-        Er du sikkert på at du vil slette alle opplysningstyper koblet til behandlingen?
+        Er du sikkert på at du vil slette alle opplysningstyper koblet til databehandlingen?
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={submitDeleteAllPolicies}>Slett</Button>

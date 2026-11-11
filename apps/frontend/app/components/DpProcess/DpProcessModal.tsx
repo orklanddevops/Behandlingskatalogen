@@ -171,7 +171,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
                 <CustomizedModalBlock first>
                   <ModalLabel
                     label='Navn'
-                    tooltip='Et kort navn som beskriver hva behandlingen går ut på, f.eks. saksbehandling eller tilgangsstyring.'
+                    tooltip='Et kort navn som beskriver hva databehandlingen går ut på, f.eks. saksbehandling eller tilgangsstyring.'
                   />
                   <Field name='name'>
                     {({ field, form }: FieldProps<string, IDpProcessFormValues>) => (
@@ -204,7 +204,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
                 <CustomizedModalBlock>
                   <ModalLabel
                     label='Beskrivelse'
-                    tooltip='Beskriv behandlingen Orkland kommune gjør på vegne av den behandlingsansvarlige, f.eks. innsamling og lagring av personopplysninger.'
+                    tooltip='Beskriv databehandlingen Orkland kommune gjør på vegne av den behandlingsansvarlige, f.eks. innsamling og lagring av personopplysninger.'
                   />
                   <div className='w-full' id={fieldId('description')} tabIndex={-1}>
                     <FieldDescription />
@@ -215,7 +215,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
                 <CustomizedModalBlock>
                   <ModalLabel
                     label='Formål'
-                    tooltip='Beskriv formålet med å bruke personopplysninger i denne behandlingen.'
+                    tooltip='Beskriv formålet med å bruke personopplysninger i denne databehandlingen.'
                   />
                   <div className='w-full' id={fieldId('purposeDescription')} tabIndex={-1}>
                     <FieldPurposeDescription />
@@ -224,7 +224,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
                 <Error fieldName='purposeDescription' />
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Gyldighetsperiode for behandlingen' />
+                  <ModalLabel label='Gyldighetsperiode for databehandlingen' />
                   <FieldDpProcessDates showDates={true} showLabels={true} />
                 </CustomizedModalBlock>
 
@@ -260,7 +260,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
                 <div className='w-full mt-4'>
                   <ModalLabel
                     label='System'
-                    tooltip='Angi hvilke systemer som er primært i bruk i denne behandlingen.'
+                    tooltip='Angi hvilke systemer som er primært i bruk i denne databehandlingen.'
                     fullwidth
                   />
                   <div className='mt-2' id={fieldId('affiliation.products')} tabIndex={-1}>

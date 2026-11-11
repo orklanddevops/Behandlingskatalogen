@@ -549,7 +549,7 @@ const ModalThirdParty = (props: TModalThirdPartyProps) => {
                       <div className='w-full'>
                         <ModalLabel
                           label='Enhet'
-                          tooltip='Angi hvilken enhet som har hovedansvar for behandlingen.'
+                          tooltip='Angi hvilken enhet som har hovedansvar for databehandlingen.'
                           fullwidth
                         />
 

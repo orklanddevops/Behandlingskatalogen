@@ -313,7 +313,7 @@ const AccordionProcess = (props: TAccordionProcessProps) => {
             <ModalProcess
               codelistUtils={codelistUtils}
               key={currentProcess.id}
-              title='Redigér behandling'
+              title='Rediger databehandling'
               onClose={() => setShowEditProcessModal(false)}
               isOpen={showEditProcessModal}
               submit={async (values: IProcessFormValues) => {
@@ -334,7 +334,7 @@ const AccordionProcess = (props: TAccordionProcessProps) => {
 
           {showCreatePolicyModal && (
             <ModalPolicy
-              title='Legg til opplysningstyper brukt i behandlingen'
+              title='Legg til opplysningstyper brukt i databehandlingen'
               initialValues={{
                 legalBasesOpen: false,
                 informationType: undefined,

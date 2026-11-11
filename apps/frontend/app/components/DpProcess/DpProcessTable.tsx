@@ -23,7 +23,7 @@ const DpProcessTable = (props: TDpProcessTableProps) => {
         emptyText='Ingen databehandlinger'
         headers={
           <>
-            <HeadCell title='Behandling' column='name' tableState={[table, sortColumn]} />
+            <HeadCell title='Databehandling' column='name' tableState={[table, sortColumn]} />
             <HeadCell title='Status' />
             <HeadCell
               title='Behandlingsansvarlig'

@@ -57,11 +57,11 @@ const DocumentProcessesTable = (props: TDocumentProcessesProps) => {
         headers={
           <>
             <HeadCell
-              title='Overordnet behandlingsaktivitet'
+              title='Overordnet databehandling'
               column='purposes'
               tableState={[table, sortColumn]}
             />
-            <HeadCell title='Behandling' column='name' tableState={[table, sortColumn]} />
+            <HeadCell title='Databehandling' column='name' tableState={[table, sortColumn]} />
             <HeadCell title='Enhet' column='nomDepartmentName' tableState={[table, sortColumn]} />
             <HeadCell title='System' column='products' tableState={[table, sortColumn]} />
           </>

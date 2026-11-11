@@ -20,7 +20,7 @@ export const ProcessCreatedModal = (props: IProps) => {
 
   return (
     <Modal
-      header={{ heading: 'Behandling opprettet', closeButton: false }}
+      header={{ heading: 'Databehandling opprettet', closeButton: false }}
       open={new URLSearchParams(location.search).get('create') === 'true'}
       onClose={closeModal}
     >

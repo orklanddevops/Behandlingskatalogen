@@ -15,7 +15,7 @@ const FieldTransferGroundsOutsideEU = () => {
           id='transferGroundsOutsideEU'
           className='mt-4'
           value={form.values.transferGroundsOutsideEU}
-          label='Velg Overføringsgrunnlag for behandling utenfor EU/EØS'
+          label='Velg Overføringsgrunnlag for databehandling utenfor EU/EØS'
           onChange={(event) => {
             form.setFieldValue('transferGroundsOutsideEU', event.target.value)
           }}

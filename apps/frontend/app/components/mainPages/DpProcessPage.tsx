@@ -67,7 +67,7 @@ const DpProcessPage = () => {
                 setShowModal(true)
               }}
             >
-              Opprett ny behandling
+              Opprett ny databehandling
             </Button>
           )}
         </div>

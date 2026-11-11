@@ -94,11 +94,11 @@ const InformationtypePolicyTable = (props: TTableInformationtypeProps) => {
         <Table.Row>
           {showPurpose && (
             <Table.ColumnHeader textSize='small' sortKey='purposes' className='w-/5' sortable>
-              Overordnet behandlingsaktivitet
+              Overordnet databehandling
             </Table.ColumnHeader>
           )}
           <Table.ColumnHeader textSize='small' sortKey='process' className='w-2/5' sortable>
-            Behandling
+            Databehandling
           </Table.ColumnHeader>
           <Table.ColumnHeader
             textSize='small'

@@ -14,7 +14,7 @@ export const DpProcessDeleteModal = (props: IDpProcessDeleteModal) => {
   return (
     <>
       <Modal open={isOpen} onClose={onClose} header={{ heading: title }}>
-        <Modal.Body>Bekreft sletting av behandlingen</Modal.Body>
+        <Modal.Body>Bekreft sletting av databehandlingen</Modal.Body>
         <Modal.Footer>
           <div className='flex justify-end'>
             <div className='self-end'>{errorOnDeletion && <p>{errorOnDeletion}</p>}</div>

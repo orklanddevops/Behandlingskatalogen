@@ -2,7 +2,7 @@ package no.nav.data.polly.process.domain;
 
 public enum ProcessAuditField {
 
-    LEGAL_BASES("legalBases", "Behandlingsgrunnlag for hele behandlingen"),
+    LEGAL_BASES("legalBases", "Behandlingsgrunnlag for hele databehandlingen"),
     PURPOSES("purposes", "Formål"),
     AUTOMATIC_PROCESSING("automaticProcessing", "Automatisk behandling"),
     PROFILING("profiling", "Profilering"),

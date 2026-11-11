@@ -119,7 +119,7 @@ export const SimpleProcessTable = (props: IProps) => {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader sortKey='name' sortable>
-              Behandling
+              Databehandling
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey='affiliation' sortable>
               Enhet

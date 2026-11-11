@@ -147,9 +147,9 @@ const ProcessData = (props: IProcessDataProps) => {
 
   return (
     <div>
-      <DataText label='Behandlingsnummer' text={'B' + process.number} />
+      <DataText label='Databehandlingsnummer' text={'B' + process.number} />
 
-      <DataText label='Formål med behandlingen' text=''>
+      <DataText label='Formål med databehandlingen' text=''>
         <div className='max-w-[100ch]'>
           {shortenLinksInText(process.description?.length ? process.description : 'Ikke utfylt')}
         </div>
@@ -162,7 +162,7 @@ const ProcessData = (props: IProcessDataProps) => {
       )}
 
       {process.legalBases.length ? (
-        <DataText label='Behandlingsgrunnlag for hele behandlingen' text={''}>
+        <DataText label='Behandlingsgrunnlag for hele databehandlingen' text={''}>
           {process.legalBases
             .sort((a, b) =>
               codelistUtils
@@ -177,11 +177,11 @@ const ProcessData = (props: IProcessDataProps) => {
         </DataText>
       ) : (
         <>
-          <DataText label='Behandlingsgrunnlag for hele behandlingen' />
+          <DataText label='Behandlingsgrunnlag for hele databehandlingen' />
         </>
       )}
 
-      <DataText label='Er behandlingen innført i Orkland kommune?' text={''}>
+      <DataText label='Er databehandlingen innført i Orkland kommune?' text={''}>
         {process.dpia?.processImplemented ? 'Ja' : 'Nei'}
       </DataText>
 
@@ -196,7 +196,7 @@ const ProcessData = (props: IProcessDataProps) => {
         </DataText>
       )}
 
-      <DataText label='Gyldighetsperiode for behandlingen' text={''}>
+      <DataText label='Gyldighetsperiode for databehandlingen' text={''}>
         <ActiveIndicator alwaysShow={true} showDates={true} {...process} />
       </DataText>
 
@@ -437,7 +437,7 @@ const ProcessData = (props: IProcessDataProps) => {
           pvkDokumenter.length === 0 &&
           getQualitySystemDocuments(process.qualitySystemLinks).length === 0 && (
             <BodyLong className='mb-3'>
-              Behandlingen er ikke koblet til et kvalitetssystem.
+              Databehandlingen er ikke koblet til et kvalitetssystem.
             </BodyLong>
           )}
         {pvkDokumenter.length !== 0 &&

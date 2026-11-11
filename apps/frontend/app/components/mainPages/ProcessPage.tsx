@@ -156,10 +156,10 @@ const ProcessPage = () => {
         {isNoDepartment && (
           <LocalAlert status='warning' className='mb-4'>
             <LocalAlert.Header>
-              <LocalAlert.Title as='h3'>Disse behandlingene mangler enhet</LocalAlert.Title>
+              <LocalAlert.Title as='h3'>Disse databehandlingene mangler enhet</LocalAlert.Title>
             </LocalAlert.Header>
             <LocalAlert.Content>
-              Det er viktig at alle oppdaterer informasjon om enhet i behandlingene sine.
+              Det er viktig at alle oppdaterer informasjon om enhet i databehandlingene sine.
             </LocalAlert.Content>
           </LocalAlert>
         )}
@@ -211,11 +211,12 @@ const ProcessPage = () => {
                   <LocalAlert status='warning' className='mb-4'>
                     <LocalAlert.Header>
                       <LocalAlert.Title as='h3'>
-                        Disse behandlingene mangler avdeling
+                        Disse databehandlingene mangler avdeling
                       </LocalAlert.Title>
                     </LocalAlert.Header>
                     <LocalAlert.Content>
-                      Det er viktig at alle oppdaterer informasjon om avdeling i behandlingene sine.
+                      Det er viktig at alle oppdaterer informasjon om avdeling i databehandlingene
+                      sine.
                     </LocalAlert.Content>
                   </LocalAlert>
                 )}

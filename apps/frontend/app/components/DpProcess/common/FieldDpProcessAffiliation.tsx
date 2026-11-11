@@ -19,14 +19,14 @@ const FieldDpProcessAffiliation = (props: TFieldDpProcessAffiliationProps) => {
       <div className='w-full'>
         <ModalLabel
           label='Enhet'
-          tooltip='Angi hvilken enhet som har hovedansvar for behandlingen.'
+          tooltip='Angi hvilken enhet som har hovedansvar for databehandlingen.'
         />
         <FieldDpProcessDepartment department={formikBag.values.affiliation.nomDepartmentId} />
 
         <div className='mt-3'>
           <ModalLabel
             label='Underavdeling'
-            tooltip='Velg underavdelinger som utfører behandlingen.'
+            tooltip='Velg underavdelinger som utfører databehandlingen.'
           />
           <FieldSubDepartments formikBag={formikBag} codelistUtils={codelistUtils} />
         </div>

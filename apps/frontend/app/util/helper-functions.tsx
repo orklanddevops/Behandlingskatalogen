@@ -40,7 +40,7 @@ export const getNoDpiaLabel = (id: string) => {
   if (id === 'NO_SPECIAL_CATEGORY_PI') {
     return 'Ingen særlige kategorier personopplysninger behandles'
   } else if (id === 'SMALL_SCALE') {
-    return 'Behandlingen skjer ikke i stor skala (få personopplysninger eller registrerte)'
+    return 'Databehandlingen skjer ikke i stor skala (få personopplysninger eller registrerte)'
   } else if (id === 'NO_DATASET_CONSOLIDATION') {
     return 'Ingen sammenstilling av datasett på tvers av formål'
   } else if (id === 'NO_NEW_TECH') {

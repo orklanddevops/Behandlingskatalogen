@@ -106,8 +106,8 @@ public class ProcessToDocx {
     private final ProcessRepository processRepository;
     private final ProcessorRepository processorRepository;
     private final CommonCodeService commonCodeService;
-    private static final String headingProcessList = "Dokumentet inneholder følgende behandlinger (%s)";
-    private static final String headingExternalProcessList = "Dokumentet inneholder følgende ferdigstilte behandlinger (%s)";
+    private static final String headingProcessList = "Dokumentet inneholder følgende databehandlinger (%s)";
+    private static final String headingExternalProcessList = "Dokumentet inneholder følgende ferdigstilte databehandlinger (%s)";
     private final NomGraphClient nomGraphClient;
 
 
@@ -117,7 +117,7 @@ public class ProcessToDocx {
         List<Codelist> allPurposes = CodelistStaticService.getCodelists(ListName.PURPOSE);
 
         allPurposes.forEach((purpose) -> {
-            String wordFileName = "Behandlinger_for_" + purpose.getShortName().replace(' ', '_') + ".docx";
+            String wordFileName = "Databehandlinger_for_" + purpose.getShortName().replace(' ', '_') + ".docx";
             byte[] document = generateDocFor(ListName.PURPOSE, purpose.getCode(), documentAccess);
 
             zipFiles.add(FileData.builder()
@@ -135,7 +135,7 @@ public class ProcessToDocx {
         var doc = new DocumentBuilder();
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd'.' MMMM yyyy 'kl 'HH:mm");
-        doc.addTitle("Behandling: " + process.getData().getName() + " (Behandlingsnummer: " + process.getData().getNumber() + ")");
+        doc.addTitle("Databehandling: " + process.getData().getName() + " (Databehandlingsnummer: " + process.getData().getNumber() + ")");
         doc.addText("Eksportert " + formatter.format(date));
         doc.generate(process, documentAccess);
         return doc.build();
@@ -276,12 +276,12 @@ public class ProcessToDocx {
             ProcessData data = process.getData();
             String purposeNames = shortNames(ListName.PURPOSE, data.getPurposes());
 
-            var header = addHeading1(purposeNames + ": " + process.getData().getName() + " (Behandlingsnummer: " + process.getData().getNumber() + ")");
+            var header = addHeading1(purposeNames + ": " + process.getData().getName() + " (Databehandlingsnummer: " + process.getData().getNumber() + ")");
 
             addBookmark(header, process.getId().toString());
             //addText(periodText(process.getData().toPeriod()));
 
-            addHeading4("Behandlingsnummer");
+            addHeading4("Databehandlingsnummer");
             addText(Integer.toString(process.getData().getNumber()));
 
             data.getPurposes().forEach(purpose -> {
@@ -289,22 +289,22 @@ public class ProcessToDocx {
                 addText(CodelistStaticService.getCodelist(ListName.PURPOSE, purpose).getDescription());
             });
 
-            addHeading4("Formål med behandlingen");
+            addHeading4("Formål med databehandlingen");
             addText(data.getDescription());
 
-            addHeading2("Egenskaper ved behandling");
+            addHeading2("Egenskaper ved databehandling");
 
-            addHeading4("Rettslig grunnlag for behandlingen");
+            addHeading4("Rettslig grunnlag for databehandlingen");
             addTexts(data.getLegalBases().stream().map(this::mapLegalBasis).collect(toList()));
 
             addHeading4("Status");
             addText(processStatusText(data));
 
-            addHeading4("Er behandlingen implementert i virksomheten?");
+            addHeading4("Er databehandlingen implementert i virksomheten?");
             addText(boolToText(data.getDpia() == null ? null : data.getDpia().isProcessImplemented()));
 
 
-            addHeading4("Gyldighetsperiode for behandlingen");
+            addHeading4("Gyldighetsperiode for databehandlingen");
             if (data.getEnd().format(df).contains("9999")) {
                 addText(data.getStart().format(df), " - ", "(ingen sluttdato satt)");
             } else {
@@ -532,7 +532,7 @@ public class ProcessToDocx {
         private String noDpiaReasonToString(NoDpiaReason noDpiaReason){
             return switch (noDpiaReason) {
                 case NO_SPECIAL_CATEGORY_PI -> " • Ingen særlige kategorier personopplysninger behandles";
-                case SMALL_SCALE -> " • Behandlingen skjer ikke i stor skala (få personopplysninger eller registrerte)";
+                case SMALL_SCALE -> " • Databehandlingen skjer ikke i stor skala (få personopplysninger eller registrerte)";
                 case NO_DATASET_CONSOLIDATION -> " • Ingen sammenstilling av datasett på tvers av formål";
                 case NO_NEW_TECH -> " • Ingen bruk av teknologi på nye måter eller ny teknologi";
                 case NO_PROFILING_OR_AUTOMATION -> " • Ingen bruk av profilering eller automatisering";
@@ -597,7 +597,7 @@ public class ProcessToDocx {
             processors.forEach(processor -> {
                 var pd = processor.getData();
                 var transferGrounds = Boolean.TRUE.equals(pd.getOutsideEU()) ?
-                        text("Overføringsgrunnlag for behandling utenfor EU/EØS: ",
+                        text("Overføringsgrunnlag for databehandling utenfor EU/EØS: ",
                                 shortName(ListName.TRANSFER_GROUNDS_OUTSIDE_EU, pd.getTransferGroundsOutsideEU()),
                                 Optional.ofNullable(pd.getTransferGroundsOutsideEUOther()).map(s -> ": " + s).orElse(""))
                         : text("");
@@ -713,7 +713,7 @@ public class ProcessToDocx {
             long currListId = listId++;
 
             for (Process process : processes) {
-                var name = shortNames(ListName.PURPOSE, process.getData().getPurposes()) + ": " + process.getData().getName() + " (Behandlingsnummer: " + process.getData().getNumber() + ")";
+                var name = shortNames(ListName.PURPOSE, process.getData().getPurposes()) + ": " + process.getData().getName() + " (Databehandlingsnummer: " + process.getData().getNumber() + ")";
                 var bookmark = process.getId().toString();
 
                 addListItem(name, currListId, bookmark);

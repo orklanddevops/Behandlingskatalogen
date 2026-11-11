@@ -151,7 +151,7 @@ describe('Policy', () => {
     expect(toAdd).toBeSchemaErrorAt(
       addBatchSchema,
       'informationTypes[0]',
-      'Behandlingen inneholder allerede personkategorien'
+      'Databehandlingen inneholder allerede personkategorien'
     )
   })
 })

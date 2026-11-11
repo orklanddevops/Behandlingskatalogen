@@ -123,7 +123,7 @@ describe('Policy', () => {
     expect(policy).toBeSchemaErrorAt(
       schema,
       'subjectCategories',
-      'Behandlingen inneholder allerede personkategorien PERSON name for opplysningstype name'
+      'Databehandlingen inneholder allerede personkategorien PERSON name for opplysningstype name'
     )
   })
 })

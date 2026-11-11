@@ -83,14 +83,14 @@ const FieldLegalBasesUse = (props: { legalBasesUse: ELegalBasesUse }) => {
             }}
           >
             <Radio value={ELegalBasesUse.INHERITED_FROM_PROCESS}>
-              Bruker behandlingens rettslige grunnlag
+              Bruker databehandlingens rettslige grunnlag
             </Radio>
             <Radio value={ELegalBasesUse.UNRESOLVED}>Uavklart</Radio>
             <Radio value={ELegalBasesUse.DEDICATED_LEGAL_BASES}>Har eget Behandlingsgrunnlag</Radio>
             <Radio value={ELegalBasesUse.EXCESS_INFO}>
               <span className='flex items-center gap-2'>
                 <span>Overskuddsinformasjon</span>
-                <CustomizedStatefulTooltip content='Informasjon som er tilgjengelig i dokumenter eller systemet som brukes, uten at dette trengs eller brukes i behandlingen.' />
+                <CustomizedStatefulTooltip content='Informasjon som er tilgjengelig i dokumenter eller systemet som brukes, uten at dette trengs eller brukes i databehandlingen.' />
               </span>
             </Radio>
           </RadioGroup>

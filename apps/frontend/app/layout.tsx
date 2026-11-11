@@ -26,7 +26,7 @@ const Main: FunctionComponent<TProps> = async ({ children }) => {
         <title>Databehandlingskatalogen – Orkland kommune</title>
         <meta
           name='description'
-          content='Oversikt over behandling av personopplysninger i Orkland kommune.'
+          content='Oversikt over databehandling av personopplysninger i Orkland kommune.'
         />
       </head>
       <body>

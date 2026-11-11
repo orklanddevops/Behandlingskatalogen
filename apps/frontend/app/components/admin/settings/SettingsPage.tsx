@@ -99,7 +99,7 @@ const DefaultProcessDocument = (props: IDefaultProcessDocumentProps) => {
     <div className='flex align-middle'>
       <div className='w-2/5'>
         <Select
-          label='Dokument for standard informasjonstyper i behandling'
+          label='Dokument for standard informasjonstyper i databehandling'
           value={documentId}
           onChange={(event: ChangeEvent<HTMLSelectElement>) => {
             setDocumentId(event.target.value)

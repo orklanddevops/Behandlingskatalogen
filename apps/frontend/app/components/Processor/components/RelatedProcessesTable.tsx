@@ -37,11 +37,11 @@ const RelatedProcessesTable = ({ relatedProcesses }: TRelatedProcessesTableProps
       <Table.Header>
         <Table.Row>
           <Table.ColumnHeader sortKey='purposes' className='w-1/5' sortable>
-            Overordnet behandlingsaktivitet
+            Overordnet databehandling
           </Table.ColumnHeader>
           <Table.ColumnHeader sortKey='name' className='w-2/5' sortable>
             {' '}
-            Behandling
+            Databehandling
           </Table.ColumnHeader>
           <Table.ColumnHeader sortKey='affiliation' className='w-1/5' sortable>
             Enhet

@@ -26,8 +26,8 @@ const GROUPS: IGroup[] = [
     ],
   },
   {
-    label: 'Behandlingsgrunnlag for hele behandlingen',
-    fields: [{ value: 'LEGAL_BASES', label: 'Behandlingsgrunnlag for hele behandlingen' }],
+    label: 'Behandlingsgrunnlag for hele databehandlingen',
+    fields: [{ value: 'LEGAL_BASES', label: 'Behandlingsgrunnlag for hele databehandlingen' }],
   },
   {
     label: 'Automatisering og profilering',
@@ -45,7 +45,7 @@ const GROUPS: IGroup[] = [
     fields: [
       {
         value: 'AI_IN_USE',
-        label: 'Benyttes det KI-systemer for å gjennomføre behandlingen?',
+        label: 'Benyttes det KI-systemer for å gjennomføre databehandlingen?',
       },
       {
         value: 'AI_REUSING_PERSONAL_INFORMATION',

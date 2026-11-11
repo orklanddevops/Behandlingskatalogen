@@ -189,7 +189,7 @@ const ProcessorView = () => {
             {currentProcessor.outsideEU && (
               <>
                 <DataText
-                  label='Overføringsgrunnlag for behandling utenfor EU/EØS'
+                  label='Overføringsgrunnlag for databehandling utenfor EU/EØS'
                   text={currentProcessor.transferGroundsOutsideEU?.shortName}
                 />
 

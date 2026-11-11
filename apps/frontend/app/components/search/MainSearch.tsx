@@ -220,7 +220,7 @@ const MainSearch = () => {
             searchCodelist(
               searchParam,
               EListName.PURPOSE,
-              'Behandlingsaktivitet',
+              'Databehandling',
               searchResultColor.purposeBackground,
               codelistUtils
             )
@@ -312,7 +312,7 @@ const MainSearch = () => {
                   return {
                     id: content.id,
                     sortKey: `${content.name} ${purposes}`,
-                    typeName: 'Behandling',
+                    typeName: 'Databehandling',
                     tagColor: searchResultColor.processBackground,
                     label: `B${content.number} ${purposes}: ${content.name}`,
                     type: EObjectType.PROCESS,

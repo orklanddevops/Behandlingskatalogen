@@ -24,9 +24,9 @@ const AAregHjemmelDataText = (props: TAAregHjemmelDataTextProps) => {
         emptyText='Ikke angitt'
         headers={
           <>
-            <HeadCell title='Formål med behandlingen' />
+            <HeadCell title='Formål med databehandlingen' />
             <HeadCell title='NAVs hjemmel for utlevering' />
-            <HeadCell title='Konsumentens hjemmel for behandlingen' />
+            <HeadCell title='Konsumentens hjemmel for databehandlingen' />
           </>
         }
       >

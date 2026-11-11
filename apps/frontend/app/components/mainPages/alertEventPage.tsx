@@ -156,7 +156,7 @@ export const AlertEventPage = () => {
               className='mx-2.5'
               onClick={() => dispatch({ type: 'OBJECT_FILTER' })}
             >
-              {state.processId && 'Behandling'}
+              {state.processId && 'Databehandling'}
               {state.informationTypeId && 'Opplysningstype'}
               {state.disclosureId && 'Utlevering'}
               <span className='ml-2 inline-flex items-center leading-none'>
@@ -198,7 +198,7 @@ export const AlertEventPage = () => {
       <Table size='small'>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader>Behandling</Table.ColumnHeader>
+            <Table.ColumnHeader>Databehandling</Table.ColumnHeader>
             <Table.ColumnHeader>Opplysningstype</Table.ColumnHeader>
             <Table.ColumnHeader>Utlevering</Table.ColumnHeader>
             <Table.ColumnHeader>Nivå - Type</Table.ColumnHeader>

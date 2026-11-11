@@ -165,7 +165,7 @@ export const RequestRevisionPage = (props: IRequestRevisionPageProps) => {
               onChange={(value) => formikBag.setFieldValue('processSelection', value)}
             >
               <Tabs.List>
-                <Tabs.Tab value={EProcessSelection.ONE} label='Én behandling' />
+                <Tabs.Tab value={EProcessSelection.ONE} label='Én databehandling' />
                 <Tabs.Tab value={EProcessSelection.ALL} label='Alle databehandlinger' />
                 <Tabs.Tab value={EProcessSelection.DEPARTMENT} label='Enhet' />
                 <Tabs.Tab value={EProcessSelection.PRODUCT_AREA} label='Område' />
@@ -173,7 +173,7 @@ export const RequestRevisionPage = (props: IRequestRevisionPageProps) => {
               <Tabs.Panel value={EProcessSelection.ONE} className='h-48 w-full p-4'>
                 <div className='flex w-full mt-4 my-3'>
                   <div className='my-3 w-1/2'>
-                    <Label>Legg til en behandling fra Databehandlingskatalogen</Label>
+                    <Label>Legg til en databehandling fra Databehandlingskatalogen</Label>
 
                     <AsyncSelect
                       className='w-full mt-1'

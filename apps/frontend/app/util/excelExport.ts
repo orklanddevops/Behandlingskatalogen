@@ -10,7 +10,7 @@ const handleExcelExport = (processes: IProcessShortWithEmail[], fileName: string
   processes.forEach((p) => {
     const newProcessObject: any = {}
 
-    newProcessObject['Behandling'] = p.purposes[0].shortName + ': ' + p.name
+    newProcessObject['Databehandling'] = p.purposes[0].shortName + ': ' + p.name
     newProcessObject['Enhet'] = p.affiliation.nomDepartmentName
     newProcessObject['Status'] = processStatusText(p.status)
     newProcessObject['Felles behandlingsansvarlig'] = p.commonExternalProcessResponsible?.shortName

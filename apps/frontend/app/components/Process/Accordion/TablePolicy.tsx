@@ -202,7 +202,7 @@ const TablePolicy = ({
 
       {showEditModal && currentPolicy && (
         <ModalPolicy
-          title='Rediger behandling for opplysningstype'
+          title='Rediger databehandling for opplysningstype'
           initialValues={convertPolicyToFormValues(
             currentPolicy,
             process.policies.filter((policy) => policy.id !== currentPolicy.id)
@@ -227,7 +227,7 @@ const TablePolicy = ({
         >
           <Modal.Body>
             Bekreft sletting av opplysningstypen {currentPolicy.informationType.name} for denne
-            behandlingen
+            databehandlingen
           </Modal.Body>
 
           <Modal.Footer>

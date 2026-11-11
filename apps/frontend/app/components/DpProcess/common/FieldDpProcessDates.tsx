@@ -157,7 +157,7 @@ export const FieldDpProcessDates = (props: IDateModalProps) => {
                         label={
                           <LabelWithToolTip
                             label='Velg fra og med dato'
-                            tooltip='Fra og med-dato er forhåndsutfylt. Endre datoen slik at den viser når behandlingen startet. Datoen kan også settes frem i tid.'
+                            tooltip='Fra og med-dato er forhåndsutfylt. Endre datoen slik at den viser når databehandlingen startet. Datoen kan også settes frem i tid.'
                             noMarginBottom
                           />
                         }
@@ -206,7 +206,7 @@ export const FieldDpProcessDates = (props: IDateModalProps) => {
                         label={
                           <LabelWithToolTip
                             label='Velg til og med dato'
-                            tooltip='Til og med-dato skal kun oppgis dersom behandlingen er midlertidig og har en sluttdato.'
+                            tooltip='Til og med-dato skal kun oppgis dersom databehandlingen er midlertidig og har en sluttdato.'
                             noMarginBottom
                           />
                         }

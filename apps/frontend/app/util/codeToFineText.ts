@@ -40,8 +40,8 @@ export const tekster: IStrings = {
   DELETE: 'Slett',
 
   INFORMATION_TYPE: 'Opplysningstype',
-  POLICY: 'Opplysningstype i behandling',
-  PROCESS: 'Behandling',
+  POLICY: 'Opplysningstype i databehandling',
+  PROCESS: 'Databehandling',
   DISCLOSURE: 'Utlevering',
   DOCUMENT: 'Dokument',
   CODELIST: 'Kodeverk',

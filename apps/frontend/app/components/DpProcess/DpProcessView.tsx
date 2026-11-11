@@ -166,7 +166,7 @@ const DpProcessView = () => {
           </div>
           <div className='mt-4'>
             <DataText
-              label='Behandlingsnummer'
+              label='Databehandlingsnummer'
               text={'D' + dpProcess?.dpProcessNumber.toString()}
             />
           </div>
@@ -194,7 +194,7 @@ const DpProcessView = () => {
             </div>
           </DataText>
 
-          <DataText label='Gyldighetsperiode for behandlingen' text=''>
+          <DataText label='Gyldighetsperiode for databehandlingen' text=''>
             <ActiveIndicator alwaysShow={true} showDates={true} {...dpProcess} />
           </DataText>
 

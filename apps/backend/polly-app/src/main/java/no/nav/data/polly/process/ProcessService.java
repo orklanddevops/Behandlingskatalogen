@@ -149,7 +149,7 @@ public class ProcessService {
                 .ifPresent(email -> emailService.scheduleMail(
                         MailTask.builder()
                                 .to(email)
-                                .subject("Behandling(er) med behov for revidering")
+                                .subject("Datadatabehandling(er) med behov for revidering")
                                 .body(templateService.needsRevision(processes))
                                 .build()
                 ));

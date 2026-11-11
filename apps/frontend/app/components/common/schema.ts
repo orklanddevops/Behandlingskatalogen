@@ -31,7 +31,7 @@ export const subjectCategoryExistsGen = (
     })
     .map(
       (category: string) =>
-        `Behandlingen inneholder allerede personkategorien ${category} for opplysningstype ${informationType.name}`
+        `Databehandlingen inneholder allerede personkategorien ${category} for opplysningstype ${informationType.name}`
     )
   return errors.length ? context.createError({ path, message: errors.join(', ') }) : true
 }

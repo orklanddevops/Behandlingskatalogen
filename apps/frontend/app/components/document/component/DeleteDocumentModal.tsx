@@ -23,7 +23,7 @@ const DeleteDocumentModal = ({
         <div>{`Bekreft sletting av dokument"${documentName}"`}</div>
       ) : (
         <div>
-          {`Kan ikke slette behandlingen ${documentName.toString()}
+          {`Kan ikke slette dokumentet ${documentName.toString()}
           den inneholder fortsatt ${documentUsageCount.toString()} opplysningstype(r)`}
         </div>
       )}

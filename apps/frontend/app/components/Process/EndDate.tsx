@@ -139,7 +139,7 @@ export const EndDate = () => {
                 label={
                   <LabelWithToolTip
                     label='Velg til og med dato'
-                    tooltip='Til og med-dato skal kun oppgis dersom behandlingen er midlertidig og har en sluttdato.'
+                    tooltip='Til og med-dato skal kun oppgis dersom databehandlingen er midlertidig og har en sluttdato.'
                     noMarginBottom
                   />
                 }

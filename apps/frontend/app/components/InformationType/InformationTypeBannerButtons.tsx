@@ -66,7 +66,7 @@ const DeleteModal = (props: IDeleteModalProps) => {
         {infoType && !canDelete && (
           <BodyShort spacing>
             {`Kan ikke slette opplysningstypen ${infoType.name} da den er knyttet til:`}
-            {!!policies && <ul>{policies} Behandling(er)</ul>}
+            {!!policies && <ul>{policies} Databehandling(er)</ul>}
             {!!documents && <ul>{documents} Dokument(er)</ul>}
           </BodyShort>
         )}

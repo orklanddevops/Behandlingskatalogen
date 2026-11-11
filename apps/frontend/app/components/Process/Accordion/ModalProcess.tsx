@@ -92,10 +92,10 @@ const normalizeErrorPath = (path: string): string => path.replace(/\[\d+\]/g, ''
 
 const errorSummaryFieldLabels: Record<string, string> = {
   name: 'Navn',
-  purposes: 'Overordnet behandlingsaktivitet',
-  description: 'Formål med behandlingen',
+  purposes: 'Overordnet databehandling',
+  description: 'Formål med databehandlingen',
   additionalDescription: 'Ytterligere beskrivelse',
-  'dpia.processImplemented': 'Er behandlingen innført i Orkland kommune?',
+  'dpia.processImplemented': 'Er databehandlingen innført i Orkland kommune?',
   legalBasesOpen: 'Behandlingsgrunnlag',
   affiliation: 'Organisering',
 }
@@ -221,23 +221,23 @@ const ModalProcess = ({
                   <CustomizedModalBlock first>
                     <ModalLabel
                       label='Navn'
-                      tooltip='Et kort navn som beskriver hva behandlingen går ut på. Eksempel: Saksbehandling, håndtere brukerhenvendelser eller rekruttering.'
+                      tooltip='Et kort navn som beskriver hva databehandlingen går ut på. Eksempel: Saksbehandling, håndtere brukerhenvendelser eller rekruttering.'
                     />
                     <FieldName />
                   </CustomizedModalBlock>
 
                   <CustomizedModalBlock>
                     <ModalLabel
-                      label='Overordnet behandlingsaktivitet'
-                      tooltip='Et kort navn som beskriver hva behandlingen går ut på. Eksempel: Saksbehandling, håndtere brukerhenvendelser eller rekruttering.'
+                      label='Overordnet databehandling'
+                      tooltip='Et kort navn som beskriver hva databehandlingen går ut på. Eksempel: Saksbehandling, håndtere brukerhenvendelser eller rekruttering.'
                     />
                     <FieldPurpose formikBag={formikBag} codelistUtils={codelistUtils} />
                   </CustomizedModalBlock>
 
                   <CustomizedModalBlock>
                     <ModalLabel
-                      label='Formål med behandlingen'
-                      tooltip='Beskriv formålet med å bruke personopplysninger i denne behandlingen. Eksempel: Behandle og vurdere rett til stønad ved behov for førerhund pga nedsatt syn.'
+                      label='Formål med databehandlingen'
+                      tooltip='Beskriv formålet med å bruke personopplysninger i denne databehandlingen. Eksempel: Behandle og vurdere rett til stønad ved behov for førerhund pga nedsatt syn.'
                     />
                     <FieldDescription />
                   </CustomizedModalBlock>
@@ -246,14 +246,14 @@ const ModalProcess = ({
                   <CustomizedModalBlock>
                     <ModalLabel
                       label='Ytterligere beskrivelse'
-                      tooltip='Personvernrelevant informasjon som ikke passer inn i andre felt kan beskrives her. Eksempelvis om man i behandlingen får uønskede personopplysninger gjennom et fritekstfelt o.l.'
+                      tooltip='Personvernrelevant informasjon som ikke passer inn i andre felt kan beskrives her. Eksempelvis om man i databehandlingen får uønskede personopplysninger gjennom et fritekstfelt o.l.'
                     />
                     <FieldAdditionalDescription />
                   </CustomizedModalBlock>
                   <Error fieldName='additionalDescription' />
 
                   <CustomizedModalBlock>
-                    <ModalLabel label='Er behandlingen innført i Orkland kommune?' />
+                    <ModalLabel label='Er databehandlingen innført i Orkland kommune?' />
                     <div>
                       <BoolField
                         value={formikBag.values.dpia?.processImplemented}
@@ -272,14 +272,14 @@ const ModalProcess = ({
                   )}
 
                   <CustomizedModalBlock>
-                    <ModalLabel label='Gyldighetsperiode for behandlingen' />
+                    <ModalLabel label='Gyldighetsperiode for databehandlingen' />
                     <DateFieldsProcessModal showDates={true} showLabels={true} />
                   </CustomizedModalBlock>
 
                   <CustomizedModalBlock>
                     <ModalLabel
                       label='System'
-                      tooltip='Angi hvilke systemer som er primært i bruk i denne behandlingen.'
+                      tooltip='Angi hvilke systemer som er primært i bruk i denne databehandlingen.'
                     />
                     <FieldProduct formikBag={formikBag} codelistUtils={codelistUtils} />
                   </CustomizedModalBlock>
@@ -289,7 +289,7 @@ const ModalProcess = ({
                       <ModalLabel
                         fullwidth
                         label='Bruker alle opplysningstyper'
-                        tooltip='Brukes for å angi at denne behandlingen bruker alle opplysningstyper. Brukes derfor kun unntaksvis for noen spesielle databehandlinger som f.eks. logginnsyn, innsyn etter personopplysningsloven, databehandlinger knyttet til personvernombudet eller Sikkerhetsseksjonens virksomhet.'
+                        tooltip='Brukes for å angi at denne databehandlingen bruker alle opplysningstyper. Brukes derfor kun unntaksvis for noen spesielle databehandlinger som f.eks. logginnsyn, innsyn etter personopplysningsloven, databehandlinger knyttet til personvernombudet eller Sikkerhetsseksjonens virksomhet.'
                       />
                       <div className='mt-2'>
                         <BoolField
@@ -312,7 +312,7 @@ const ModalProcess = ({
                           <div className='w-full'>
                             <ModalLabel
                               label='Enhet'
-                              tooltip='Angi hvilken enhet som har hovedansvar for behandlingen.'
+                              tooltip='Angi hvilken enhet som har hovedansvar for databehandlingen.'
                             />
                             <div className='mt-2'>
                               <FieldDepartment
@@ -324,7 +324,7 @@ const ModalProcess = ({
                           <div className='w-full'>
                             <ModalLabel
                               label='Underavdeling'
-                              tooltip='Velg underavdelinger som utfører behandlingen.'
+                              tooltip='Velg underavdelinger som utfører databehandlingen.'
                             />
                             <div className='mt-2'>
                               <FieldSubDepartments
@@ -387,7 +387,7 @@ const ModalProcess = ({
                       }}
                     >
                       <Accordion.Header id='legalBasesOpen' className='z-0'>
-                        Behandlingsgrunnlag for hele behandlingen
+                        Behandlingsgrunnlag for hele databehandlingen
                       </Accordion.Header>
                       <Accordion.Content>
                         {legalBasesOpen && (
@@ -413,7 +413,7 @@ const ModalProcess = ({
                         <div className='w-full mt-4'>
                           <ModalLabel
                             label='Treffes det et vedtak eller en avgjørelse som er basert på helautomatisert behandling?'
-                            tooltip='Med helautomatisert behandling menes behandling som fører til en individuell avgjørelser eller vedtak uten menneskelig involvering'
+                            tooltip='Med helautomatisert behandling menes databehandling som fører til en individuell avgjørelser eller vedtak uten menneskelig involvering'
                             fullwidth={true}
                           />
                           <div className='mt-2'>
@@ -459,8 +459,8 @@ const ModalProcess = ({
                       <Accordion.Content>
                         <div className='w-full mt-4'>
                           <ModalLabel
-                            label='Benyttes det KI-systemer for å gjennomføre behandlingen?'
-                            tooltip='Registrér om KI-systemer brukes for å realisere formålet med behandlingen.'
+                            label='Benyttes det KI-systemer for å gjennomføre databehandlingen?'
+                            tooltip='Registrér om KI-systemer brukes for å realisere formålet med databehandlingen.'
                             fullwidth={true}
                           />
                           <div className='mt-2'>

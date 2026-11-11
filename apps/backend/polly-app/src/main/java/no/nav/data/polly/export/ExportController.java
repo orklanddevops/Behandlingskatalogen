@@ -85,19 +85,19 @@ public class ExportController {
                 throw new NotFoundException("The process is not completed therefore it can not be exported");
             }
             doc = processToDocx.generateDocForProcess(p, documentAccess);
-            filename = "behandling_" + String.join(".", p.getData().getPurposes()) + "-" + p.getData().getName().replaceAll("[^a-zA-Z\\d]", "-") + "_" + p.getId() + ".docx";
+            filename = "databehandling_" + String.join(".", p.getData().getPurposes()) + "-" + p.getData().getName().replaceAll("[^a-zA-Z\\d]", "-") + "_" + p.getId() + ".docx";
         } else if (section != null) {
             OrgEnhet seksjonData = nomGraphClient.getById(section);
             List<Process> processes = processRepository.findBySeksjoner(List.of(section));
             doc = processToDocx.generateDocForProcessList(processes, "Avdeling: " + StringUtils.capitalize(seksjonData.getNavn()), documentAccess);
-            filename = "behandling_seksjon_" + seksjonData.getNavn() + ".docx";
+            filename = "databehandling_seksjon_" + seksjonData.getNavn() + ".docx";
         } else if (productTeam != null) {
             List<Process> processes = processRepository.findByProductTeam(productTeam);
             var productTeamData = teamService.getTeam(productTeam);
             String productTeamName = productTeamData.isPresent() ? productTeamData.get().getName() : "";
 
             doc = processToDocx.generateDocForProcessList(processes, "Team: " + StringUtils.capitalize(productTeamName), documentAccess);
-            filename = "behandling_team_" + productTeam + ".docx";
+            filename = "databehandling_team_" + productTeam + ".docx";
         } else {
             ListName list;
             String code;
@@ -131,7 +131,7 @@ public class ExportController {
             }
 
             doc = processToDocx.generateDocFor(list, code, documentAccess);
-            filename = "behandling_" + list.name().toLowerCase() + "_" + depNameClean + ".docx";
+            filename = "databehandling_" + list.name().toLowerCase() + "_" + depNameClean + ".docx";
 
         }
         response.setContentType(WORDPROCESSINGML_DOCUMENT);

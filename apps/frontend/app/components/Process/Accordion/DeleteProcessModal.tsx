@@ -22,26 +22,26 @@ export const DeleteProcessModal = (props: IDeleteProcessProps) => {
     <Modal header={{ heading: 'Bekreft sletting' }} onClose={onClose} open={isOpen}>
       <Modal.Body>
         <BodyShort spacing>
-          Er du sikker på at du vil slette behandlingen? Dersom behandlingen er opphørt skal
+          Er du sikker på at du vil slette databehandlingen? Dersom databehandlingen er opphørt skal
           gyldighetsperiode oppdateres.
         </BodyShort>
 
         {!user.isAdmin() && (
           <BodyShort>
-            Kontakt en administrator i Orkland kommune for å slette behandlingen.
+            Kontakt en administrator i Orkland kommune for å slette databehandlingen.
           </BodyShort>
         )}
 
         {user.isAdmin() && (
           <div>
             {!process.policies.length && (
-              <BodyShort spacing>Bekreft sletting av behandlingen {process.name}</BodyShort>
+              <BodyShort spacing>Bekreft sletting av databehandlingen {process.name}</BodyShort>
             )}
             {(!!process.policies.length || !!disclosures.length) && (
               <List as='ul'>
                 <Heading size='medium'>Disse koblingene må fjernes</Heading>
                 {!!process.policies.length && (
-                  <List.Item>{`Kan ikke slette behandlingen ${process.name}, den inneholder fortsatt ${process.policies.length} opplysningstype(r)`}</List.Item>
+                  <List.Item>{`Kan ikke slette databehandlingen ${process.name}, den inneholder fortsatt ${process.policies.length} opplysningstype(r)`}</List.Item>
                 )}
                 {!!disclosures.length && (
                   <List.Item>

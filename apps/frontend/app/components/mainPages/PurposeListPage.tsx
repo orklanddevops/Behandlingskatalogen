@@ -108,10 +108,10 @@ export const PurposeListPage = () => {
   return (
     <div role='main'>
       <>
-        <Heading size='xlarge'>Behandlingsaktiviteter</Heading>
+        <Heading size='xlarge'>Databehandlinger</Heading>
         <div className='flex w-full justify-between'>
           <div>
-            <BodyShort>Velg overordnet behandlingsaktivitet</BodyShort>
+            <BodyShort>Velg overordnet databehandling</BodyShort>
           </div>
 
           <div className='mt-auto flex items-center'>
@@ -148,7 +148,7 @@ export const PurposeListPage = () => {
                   setShowCreateProcessModal(true)
                 }}
               >
-                Opprett ny behandling
+                Opprett ny databehandling
               </Button>
             )}
           </div>
@@ -159,7 +159,7 @@ export const PurposeListPage = () => {
         <ModalProcess
           key={createProcessModalKey}
           codelistUtils={codelistUtils}
-          title='Opprett ny behandling'
+          title='Opprett ny databehandling'
           onClose={() => {
             setErrorProcessModal(null)
             setShowCreateProcessModal(false)

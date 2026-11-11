@@ -36,7 +36,7 @@ const Purposes = (props: IPurposesProps) => {
     <div>
       <div className='flex justify-end mr-2.5 mt-2.5'>
         <Button onClick={() => setAccordion(!accordion)} size='xsmall' kind='outline'>
-          {accordion ? 'Vis alle' : 'Gruppér etter behandlingsaktivitet'}
+          {accordion ? 'Vis alle' : 'Gruppér etter databehandling'}
         </Button>
       </div>
       {accordion ? (
@@ -97,7 +97,7 @@ export const InformationtypeMetadata = (props: IInformationtypeMetadataProps) =>
 
           <Tabs defaultValue='purposes'>
             <Tabs.List>
-              <Tabs.Tab value='purposes' label='Brukes til behandlingsaktivitet' />
+              <Tabs.Tab value='purposes' label='Brukes til databehandling' />
               <Tabs.Tab value='disclose' label='Utleveringer til ekstern part' />
               <Tabs.Tab value='document' label='Dokumenter' />
             </Tabs.List>

@@ -248,7 +248,10 @@ const AccordionDisclosure = (props: TAccordionDisclosureProps) => {
                             </DataText>
 
                             {selectedDisclosure?.legalBases.length ? (
-                              <DataText label='Behandlingsgrunnlag for hele behandlingen' text={''}>
+                              <DataText
+                                label='Behandlingsgrunnlag for hele databehandlingen'
+                                text={''}
+                              >
                                 {selectedDisclosure.legalBases
                                   .sort((a: ILegalBasis, b: ILegalBasis) =>
                                     codelistUtils
@@ -272,7 +275,7 @@ const AccordionDisclosure = (props: TAccordionDisclosureProps) => {
                             ) : (
                               <>
                                 <DataText
-                                  label='Behandlingsgrunnlag for hele behandlingen'
+                                  label='Behandlingsgrunnlag for hele databehandlingen'
                                   text='Ikke angitt'
                                 />
                               </>

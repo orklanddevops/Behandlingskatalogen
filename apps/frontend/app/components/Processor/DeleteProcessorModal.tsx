@@ -21,7 +21,8 @@ export const DeleteProcessorModal = (props: IDeleteProcessProps) => {
           <BodyLong>Er du sikker på at du vil slette {processor.name}?</BodyLong>
         ) : (
           <BodyLong>
-            Kan ikke slette {processor.name} siden den er knyttet til {usageCount} behandling(er)
+            Kan ikke slette {processor.name} siden den er knyttet til {usageCount}{' '}
+            databehandling(er)
           </BodyLong>
         )}
       </Modal.Body>

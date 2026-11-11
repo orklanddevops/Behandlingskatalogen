@@ -117,7 +117,7 @@ export const LegalBasesNotClarified = (props: ILegalBasesNotClarifiedProps) => {
         {alert?.excessInfo && (
           <Tooltip
             content={
-              'Informasjon som er tilgjengelig i dokumenter eller systemet som brukes, uten at dette trengs eller brukes i behandlingen.'
+              'Informasjon som er tilgjengelig i dokumenter eller systemet som brukes, uten at dette trengs eller brukes i databehandlingen.'
             }
           >
             <Button type='button' variant='tertiary-neutral' size='small'>
@@ -137,7 +137,7 @@ export const LegalBasesNotClarified = (props: ILegalBasesNotClarifiedProps) => {
       </div>
       <div>
         {alert?.missingArt9 && (
-          <Tooltip content='Behandling av personopplysninger som anses som særlige kategorier (tidl. sensitive opplysninger) krever et ytterligere behandlingsgrunnlag iht. personopplysningsloven art. 9'>
+          <Tooltip content='Databehandling av personopplysninger som anses som særlige kategorier (tidl. sensitive opplysninger) krever et ytterligere behandlingsgrunnlag iht. personopplysningsloven art. 9'>
             <Button type='button' variant='tertiary-neutral' size='small'>
               {warningIcon} Behandlingsgrunnlag for artikkel 9 mangler
             </Button>

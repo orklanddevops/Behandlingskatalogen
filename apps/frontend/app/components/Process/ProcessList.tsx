@@ -174,7 +174,7 @@ const ProcessList = ({
       })
     } catch (error: any) {
       if (error.response.data.message && error.response.data.message.includes('already exists')) {
-        setErrorProcessModal('Behandlingen eksisterer allerede.')
+        setErrorProcessModal('Databehandlingen eksisterer allerede.')
         return
       }
       setErrorProcessModal(error.response.data.message)
@@ -448,7 +448,7 @@ const ProcessList = ({
                   setShowCreateProcessModal(true)
                 }}
               >
-                Opprett ny behandling
+                Opprett ny databehandling
               </Button>
             )}
           </div>
@@ -485,7 +485,7 @@ const ProcessList = ({
         <ModalProcess
           key={createProcessModalKey}
           codelistUtils={codelistUtils}
-          title='Opprett ny behandling'
+          title='Opprett ny databehandling'
           onClose={() => {
             setErrorProcessModal('')
             setShowCreateProcessModal(false)
