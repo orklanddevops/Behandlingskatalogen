@@ -116,12 +116,12 @@ export const RequestRevisionPage = (props: IRequestRevisionPageProps) => {
       <RadioGroup
         value={formikBag.values.completedOnly}
         className='flex w-full mt-4'
-        legend='Velg kun fullførte behandlinger'
+        legend='Velg kun fullførte databehandlinger'
         onChange={(value) => formikBag.setFieldValue('completedOnly', value)}
         error={formikBag.errors.completedOnly}
       >
-        <Radio value={true}>Velg kun fullførte behandlinger</Radio>
-        <Radio value={false}>Velg alle behandlinger</Radio>
+        <Radio value={true}>Velg kun fullførte databehandlinger</Radio>
+        <Radio value={false}>Velg alle databehandlinger</Radio>
       </RadioGroup>
     )
   }
@@ -166,18 +166,18 @@ export const RequestRevisionPage = (props: IRequestRevisionPageProps) => {
             >
               <Tabs.List>
                 <Tabs.Tab value={EProcessSelection.ONE} label='Én behandling' />
-                <Tabs.Tab value={EProcessSelection.ALL} label='Alle behandlinger' />
+                <Tabs.Tab value={EProcessSelection.ALL} label='Alle databehandlinger' />
                 <Tabs.Tab value={EProcessSelection.DEPARTMENT} label='Enhet' />
                 <Tabs.Tab value={EProcessSelection.PRODUCT_AREA} label='Område' />
               </Tabs.List>
               <Tabs.Panel value={EProcessSelection.ONE} className='h-48 w-full p-4'>
                 <div className='flex w-full mt-4 my-3'>
                   <div className='my-3 w-1/2'>
-                    <Label>Legg til en behandling fra Behandlingskatalogen</Label>
+                    <Label>Legg til en behandling fra Databehandlingskatalogen</Label>
 
                     <AsyncSelect
                       className='w-full mt-1'
-                      aria-label='Søk etter behandlinger'
+                      aria-label='Søk etter databehandlinger'
                       placeholder='Søk'
                       components={{ DropdownIndicator }}
                       noOptionsMessage={({ inputValue }) => noOptionMessage(inputValue)}

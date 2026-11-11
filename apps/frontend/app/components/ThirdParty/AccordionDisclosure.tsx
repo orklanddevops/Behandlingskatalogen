@@ -216,7 +216,7 @@ const AccordionDisclosure = (props: TAccordionDisclosureProps) => {
                               text={selectedDisclosure?.description}
                             />
 
-                            <DataText label='Relaterte behandlinger'>
+                            <DataText label='Relaterte databehandlinger'>
                               <div className='mt-2'>
                                 {LinkListProcess(
                                   selectedDisclosure?.processes ? selectedDisclosure?.processes : []

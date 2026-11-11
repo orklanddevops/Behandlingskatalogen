@@ -289,7 +289,7 @@ const ModalProcess = ({
                       <ModalLabel
                         fullwidth
                         label='Bruker alle opplysningstyper'
-                        tooltip='Brukes for å angi at denne behandlingen bruker alle opplysningstyper. Brukes derfor kun unntaksvis for noen spesielle behandlinger som f.eks. logginnsyn, innsyn etter personopplysningsloven, behandlinger knyttet til personvernombudet eller Sikkerhetsseksjonens virksomhet.'
+                        tooltip='Brukes for å angi at denne behandlingen bruker alle opplysningstyper. Brukes derfor kun unntaksvis for noen spesielle databehandlinger som f.eks. logginnsyn, innsyn etter personopplysningsloven, databehandlinger knyttet til personvernombudet eller Sikkerhetsseksjonens virksomhet.'
                       />
                       <div className='mt-2'>
                         <BoolField

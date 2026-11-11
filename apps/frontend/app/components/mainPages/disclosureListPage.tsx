@@ -207,7 +207,7 @@ export const DisclosureListPage = () => {
                 tableState={[table, sortColumn]}
               />
               <HeadCell
-                title='Relaterte behandlinger'
+                title='Relaterte databehandlinger'
                 column='processes'
                 tableState={[table, sortColumn]}
               />

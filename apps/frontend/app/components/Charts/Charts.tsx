@@ -184,7 +184,7 @@ const Charts = (props: TChartsProps) => {
           onClickPieChartSlice={handleClickPieChartSlice}
         />
         <BodyLong>
-          Behandlinger omfattet av Orklands bevarings- og kassasjonsvedtak uten registrert
+          Databehandlinger omfattet av Orklands bevarings- og kassasjonsvedtak uten registrert
           lagringstid:{' '}
           <RouteLink href={link(EProcessField.RETENTION_DATA)}>
             {chartData.retentionDataIncomplete}
@@ -244,13 +244,13 @@ const Charts = (props: TChartsProps) => {
         </InfoCard.Header>
         <InfoCard.Content>
           <BodyLong size='small' className='text-lg'>
-            Behandlinger hvor Orkland kommune er felles behandlingsansvarlig med ekstern part:{' '}
+            Databehandlinger hvor Orkland kommune er felles behandlingsansvarlig med ekstern part:{' '}
             <RouteLink href={link(EProcessField.COMMON_EXTERNAL_PROCESSOR, EProcessState.YES)}>
               {chartData.commonExternalProcessResponsible}
             </RouteLink>
           </BodyLong>
           <BodyLong size='small' className='text-lg'>
-            Behandlinger hvor Orkland kommune er databehandler:{' '}
+            Databehandlinger hvor Orkland kommune er databehandler:{' '}
             <RouteLink href={'/dpprocess'}>{chartData.dpProcesses}</RouteLink>
           </BodyLong>
         </InfoCard.Content>

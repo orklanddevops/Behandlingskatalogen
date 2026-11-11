@@ -37,7 +37,7 @@ export const MainPage = () => {
     <div className='flex flex-wrap' role='main'>
       <div className='orkland-home-intro mb-8 w-full rounded-lg p-7'>
         <Heading size='xlarge' level='1' className='mb-3'>
-          Orkland kommunes behandlingskatalog
+          Databehandlingskatalogen – Orkland kommune
         </Heading>
         <BodyLong>Dokumenter og følg opp hvordan kommunen behandler personopplysninger.</BodyLong>
       </div>

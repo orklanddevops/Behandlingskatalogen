@@ -120,7 +120,7 @@ export const LegalBasesNotClarified = (props: ILegalBasesNotClarifiedProps) => {
     <div className='text-[#E85C4A]'>
       <div>
         {alert?.missingLegalBasis && (
-          <Tooltip content='Alle behandlinger av personopplysninger må ha et rettslig grunnlag iht. personopplysningsloven artikkel 6.'>
+          <Tooltip content='Alle databehandlinger av personopplysninger må ha et rettslig grunnlag iht. personopplysningsloven artikkel 6.'>
             <Button type='button' variant='tertiary-neutral' size='small'>
               {warningIcon} Behandlingsgrunnlag er ikke avklart
             </Button>
@@ -142,7 +142,7 @@ export const LegalBasesNotClarified = (props: ILegalBasesNotClarifiedProps) => {
       </div>
       <div>
         {alert?.missingArt6 && (
-          <Tooltip content='Alle behandlinger av personopplysninger må ha et rettslig grunnlag iht. personopplysningsloven artikkel 6.'>
+          <Tooltip content='Alle databehandlinger av personopplysninger må ha et rettslig grunnlag iht. personopplysningsloven artikkel 6.'>
             <Button type='button' variant='tertiary-neutral' size='small'>
               {warningIcon} Behandlingsgrunnlag for artikkel 6 mangler
             </Button>

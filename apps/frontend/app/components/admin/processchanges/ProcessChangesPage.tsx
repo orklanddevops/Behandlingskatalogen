@@ -167,7 +167,7 @@ export const ProcessChangesPage = () => {
   return (
     <div role='main' className='w-full px-4'>
       <Heading size='large' level='1' className='mt-4 mb-6'>
-        Endringer i behandlinger
+        Endringer i databehandlinger
       </Heading>
 
       <div className='flex flex-col gap-4 max-w-xl'>
@@ -219,7 +219,7 @@ export const ProcessChangesPage = () => {
                   Periode
                 </Table.HeaderCell>
                 <Table.HeaderCell className='whitespace-nowrap text-center'>
-                  Totalt antall behandlinger
+                  Totalt antall databehandlinger
                 </Table.HeaderCell>
                 <Table.HeaderCell className='whitespace-nowrap text-center'>
                   Antall med endring

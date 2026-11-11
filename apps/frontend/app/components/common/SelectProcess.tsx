@@ -76,7 +76,7 @@ const SelectProcess = (props: TSelectProcessProps) => {
         <div className='w-full'>
           <div className='w-full'>
             <CustomSearchSelect
-              ariaLabel='Søk etter behandlinger'
+              ariaLabel='Søk etter databehandlinger'
               placeholder=''
               inputId={inputId}
               instanceId={inputId}

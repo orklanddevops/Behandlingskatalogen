@@ -305,7 +305,7 @@ const AccordionProcess = (props: TAccordionProcessProps) => {
               )
             })}
       </Accordion>
-      {!processList.length && <BodyShort className='m-4'>Ingen behandlinger</BodyShort>}
+      {!processList.length && <BodyShort className='m-4'>Ingen databehandlinger</BodyShort>}
 
       {!!currentProcess && (
         <>

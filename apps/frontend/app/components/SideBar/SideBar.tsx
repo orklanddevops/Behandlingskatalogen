@@ -8,7 +8,7 @@ const SideBar = ({ themeMode }: { themeMode: TThemeMode }) => (
       <div className='min-h-0 flex-1 overflow-y-auto px-3 pt-6'>
         <NavItem
           to='/process'
-          text='Behandlinger'
+          text='Databehandlinger'
           tooltip='En aktivitet du gjør på personopplysninger for å oppnå et formål. For eksempel saksbehandling av kommunale tjenester.'
         />
         <NavItem to='/dpprocess' text='Orkland kommune som databehandler' />
@@ -41,8 +41,9 @@ const SideBar = ({ themeMode }: { themeMode: TThemeMode }) => (
         <NavItem
           to='/dashboard'
           text='Dashboard'
-          tooltip='Oversikt og statistikk over behandlinger i behandlingskatalogen.'
+          tooltip='Oversikt og statistikk over databehandlinger i databehandlingskatalogen.'
         />
+        <NavItem to='/organisasjon' text='Organisasjonsstruktur' />
         <NavItem to='/veileder' text='Veileder' />
       </div>
       <div className='mt-auto px-5 pb-8 pt-6'>

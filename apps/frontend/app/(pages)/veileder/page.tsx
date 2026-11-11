@@ -9,7 +9,7 @@ export default function Veileder() {
         Veileder for Orkland kommune
       </Heading>
       <BodyLong>
-        Behandlingskatalogen gir oversikt over kommunens behandling av personopplysninger. Bruk
+        Databehandlingskatalogen gir oversikt over kommunens behandling av personopplysninger. Bruk
         katalogen til å dokumentere hva opplysningene brukes til, hvem som har ansvar, og hvordan de
         håndteres.
       </BodyLong>
@@ -19,7 +19,7 @@ export default function Veileder() {
         </Heading>
         <List as='ol'>
           <List.Item>
-            Velg Behandlinger i menyen for å finne eller opprette en behandling.
+            Velg Databehandlinger i menyen for å finne eller opprette en behandling.
           </List.Item>
           <List.Item>
             Beskriv formål, ansvar, opplysningstyper, systemer og behandlingsgrunnlag.

@@ -54,13 +54,17 @@ const ShortcutCard = (props: TShortcutCardProps) => {
 
 export const ShortcutNav = () => (
   <div className='flex justify-between flex-wrap'>
-    <ShortcutCard title='Behandlinger' subtitle='Se og endre behandlinger' to='/process' />
+    <ShortcutCard title='Databehandlinger' subtitle='Se og endre databehandlinger' to='/process' />
     <ShortcutCard
       title='Opplysningstyper'
       subtitle='Se og endre opplysningstyper'
       to='/informationtype'
     />
     <ShortcutCard title='Eksterne parter' subtitle='Se alle eksterne parter' to='/thirdparty' />
-    <ShortcutCard title='Dashboard' subtitle='Se statistikk over behandlinger' to='/dashboard' />
+    <ShortcutCard
+      title='Dashboard'
+      subtitle='Se statistikk over databehandlinger'
+      to='/dashboard'
+    />
   </div>
 )

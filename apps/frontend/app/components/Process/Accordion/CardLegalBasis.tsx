@@ -25,8 +25,8 @@ const renderCardHeader = (text: string, sensitivityLevel: ESensitivityLevel) => 
     <Label>{text}</Label>
     <Detail>
       {sensitivityLevel === ESensitivityLevel.ART6
-        ? 'Alle behandlinger av personopplysninger krever et behandlingsgrunnlag iht. personopplysningsloven artikkel 6.'
-        : 'Alle behandlinger av særlige kategorier (sensitive) av personopplysninger krever i tillegg et behandlingsgrunnlag iht personopplysningsloven artikkel 9.'}
+        ? 'Alle databehandlinger av personopplysninger krever et behandlingsgrunnlag iht. personopplysningsloven artikkel 6.'
+        : 'Alle databehandlinger av særlige kategorier (sensitive) av personopplysninger krever i tillegg et behandlingsgrunnlag iht personopplysningsloven artikkel 9.'}
     </Detail>
   </div>
 )

@@ -53,7 +53,7 @@ const DocumentProcessesTable = (props: TDocumentProcessesProps) => {
   return (
     <>
       <Table
-        emptyText='Ingen behandlinger'
+        emptyText='Ingen databehandlinger'
         headers={
           <>
             <HeadCell

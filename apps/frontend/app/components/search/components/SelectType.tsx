@@ -23,7 +23,7 @@ export const SelectType = (props: IProps) => {
           {SmallRadio('all', 'Alle')}
           {SmallRadio('informationType', 'Opplysningstype')}
           {SmallRadio('purpose', 'Formål')}
-          {SmallRadio('process', 'Behandlinger')}
+          {SmallRadio('process', 'Databehandlinger')}
           {SmallRadio('dpprocess', 'Orkland kommune som databehandler')}
           {SmallRadio('team', 'Team')}
           {SmallRadio('seksjon', 'Avdeling')}

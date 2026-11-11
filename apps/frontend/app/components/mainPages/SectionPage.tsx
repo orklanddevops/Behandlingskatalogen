@@ -34,7 +34,7 @@ export const SectionPage = () => {
 
           <Tabs defaultValue='behandlinger'>
             <Tabs.List>
-              <Tabs.Tab value='behandlinger' label='Behandlinger' />
+              <Tabs.Tab value='behandlinger' label='Databehandlinger' />
               {!isLoading && chartData && <Tabs.Tab value='dashboard' label='Dashboard' />}
             </Tabs.List>
             <Tabs.Panel value='behandlinger'>

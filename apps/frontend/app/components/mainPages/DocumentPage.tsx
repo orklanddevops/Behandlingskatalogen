@@ -157,7 +157,7 @@ const DocumentPage = () => {
             <Tabs.List>
               <Tabs.Tab value='containsInformationType' label='Inneholder opplysningstyper' />
               {documentUsages && documentUsages.length > 0 && (
-                <Tabs.Tab value='containsProcesses' label='Brukes i behandlinger' />
+                <Tabs.Tab value='containsProcesses' label='Brukes i databehandlinger' />
               )}
             </Tabs.List>
 

@@ -23,7 +23,7 @@ const Main: FunctionComponent<TProps> = async ({ children }) => {
         <link rel='manifest' href='/manifest.json' />
         <meta name='theme-color' content='#DDEBD7' />
         <meta charSet='utf-8' />
-        <title>Behandlingskatalog – Orkland kommune</title>
+        <title>Databehandlingskatalogen – Orkland kommune</title>
         <meta
           name='description'
           content='Oversikt over behandling av personopplysninger i Orkland kommune.'

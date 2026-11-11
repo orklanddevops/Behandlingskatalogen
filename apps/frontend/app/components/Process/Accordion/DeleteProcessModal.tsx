@@ -45,7 +45,7 @@ export const DeleteProcessModal = (props: IDeleteProcessProps) => {
                 )}
                 {!!disclosures.length && (
                   <List.Item>
-                    Du kan ikke slette behandlinger med eksisterende utleveringer.
+                    Du kan ikke slette databehandlinger med eksisterende utleveringer.
                   </List.Item>
                 )}
               </List>

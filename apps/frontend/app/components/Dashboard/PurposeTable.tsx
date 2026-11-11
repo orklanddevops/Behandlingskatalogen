@@ -35,14 +35,14 @@ const PurposeTable = () => {
     if (filterName === EProcessField.DPIA && filterValue) {
       setTitle(`Behov for PVK: ${translateToNorwegian(filterValue)}`)
     } else if (filterName === EProcessField.MISSING_LEGAL_BASIS) {
-      setTitle('Behandlinger med rettslig grunnlag uavklart')
+      setTitle('Databehandlinger med rettslig grunnlag uavklart')
     } else if (filterName === EProcessField.MISSING_ARTICLE_6) {
-      setTitle('Behandlinger med rettslig grunnlag artikkel 6 mangler')
+      setTitle('Databehandlinger med rettslig grunnlag artikkel 6 mangler')
     } else if (filterName === EProcessField.MISSING_ARTICLE_9) {
-      setTitle('Behandlinger med rettslig grunnlag artikkel 9 mangler')
+      setTitle('Databehandlinger med rettslig grunnlag artikkel 9 mangler')
     } else if (filterName === EProcessField.RETENTION_DATA) {
       setTitle(
-        'Behandlinger omfattet av Orklands bevarings- og kassasjonsvedtak uten registrert lagringstid'
+        'Databehandlinger omfattet av Orklands bevarings- og kassasjonsvedtak uten registrert lagringstid'
       )
     } else if (filterName === EProcessField.RETENTION) {
       switch (filterValue) {
@@ -60,7 +60,9 @@ const PurposeTable = () => {
     } else if (filterName === EProcessField.DATA_PROCESSOR && filterValue) {
       setTitle(`Databehandler: ${translateToNorwegian(filterValue)} `)
     } else if (filterName === EProcessField.COMMON_EXTERNAL_PROCESSOR) {
-      setTitle('Behandlinger hvor Orkland kommune er felles behandlingsansvarlig med ekstern part')
+      setTitle(
+        'Databehandlinger hvor Orkland kommune er felles behandlingsansvarlig med ekstern part'
+      )
     } else if (filterName === EProcessField.AIUSAGE && filterValue) {
       setTitle(`KI systemer benyttes: ${translateToNorwegian(filterValue)} `)
     } else if (filterName === EProcessField.DPIA_REFERENCE_MISSING) {

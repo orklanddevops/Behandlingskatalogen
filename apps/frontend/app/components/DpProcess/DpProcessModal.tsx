@@ -153,7 +153,7 @@ const DpProcessModal = (props: TModalDpProcessProps) => {
     <Modal
       open={isOpen}
       onClose={onClose}
-      header={{ heading: 'Behandlinger hvor Orkland kommune er databehandler' }}
+      header={{ heading: 'Databehandlinger hvor Orkland kommune er databehandler' }}
       width='960px'
     >
       <Formik

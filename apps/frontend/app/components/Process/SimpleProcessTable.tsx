@@ -144,7 +144,7 @@ export const SimpleProcessTable = (props: IProps) => {
           {sortedData.length === 0 ? (
             <Table.Row>
               <Table.DataCell colSpan={showCommonExternalProcessResponsible ? 6 : 5}>
-                Ingen behandlinger
+                Ingen databehandlinger
               </Table.DataCell>
             </Table.Row>
           ) : (

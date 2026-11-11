@@ -20,7 +20,7 @@ const DpProcessTable = (props: TDpProcessTableProps) => {
   return (
     <>
       <Table
-        emptyText='Ingen behandlinger'
+        emptyText='Ingen databehandlinger'
         headers={
           <>
             <HeadCell title='Behandling' column='name' tableState={[table, sortColumn]} />

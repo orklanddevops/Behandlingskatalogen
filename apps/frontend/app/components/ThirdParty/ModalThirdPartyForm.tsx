@@ -66,7 +66,7 @@ const errorSummaryFieldLabels: Record<string, string> = {
   name: 'Navn på utlevering',
   recipientPurpose: 'Formål med utlevering',
   description: 'Ytterligere beskrivelse',
-  processes: 'Relaterte behandlinger',
+  processes: 'Relaterte databehandlinger',
   informationTypes: 'Opplysningstyper',
   document: 'Dokument',
   administrationArchiveCaseNumber: 'Saksnummer i adminstrativt arkiv',
@@ -348,7 +348,7 @@ const ModalThirdParty = (props: TModalThirdPartyProps) => {
                   <Error fieldName='description' fullWidth />
 
                   <div className='w-full mt-4'>
-                    <ModalLabel label='Relaterte behandlinger' fullwidth />
+                    <ModalLabel label='Relaterte databehandlinger' fullwidth />
                     <div className='mt-2 w-full'>
                       <SelectProcess
                         formikBag={formikBag}

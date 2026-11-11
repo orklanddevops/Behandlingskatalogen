@@ -88,7 +88,7 @@ const FieldLegalBasis = (props: TFieldLegalBasisProps) => {
               }
             >
               <div className='w-full'>
-                <Tooltip content='Alle behandlinger av personopplysninger krever et behandlingsgrunnlag iht. personopplysningsloven artikkel 6.'>
+                <Tooltip content='Alle databehandlinger av personopplysninger krever et behandlingsgrunnlag iht. personopplysningsloven artikkel 6.'>
                   <div>
                     <Button
                       size='xsmall'
@@ -126,7 +126,7 @@ const FieldLegalBasis = (props: TFieldLegalBasisProps) => {
               </div>
 
               <div className='w-full'>
-                <Tooltip content='Alle behandlinger av særlige kategorier (sensitive) av personopplysninger krever i tillegg et behandlingsgrunnlag iht personopplysningsloven artikkel 9.'>
+                <Tooltip content='Alle databehandlinger av særlige kategorier (sensitive) av personopplysninger krever i tillegg et behandlingsgrunnlag iht personopplysningsloven artikkel 9.'>
                   <Button
                     size='xsmall'
                     type='button'

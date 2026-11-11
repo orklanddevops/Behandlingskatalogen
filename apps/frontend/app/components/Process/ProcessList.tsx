@@ -235,7 +235,7 @@ const ProcessList = ({
       return true
     } catch (error: any) {
       if (error.response.data.message.includes('disclosure(s)')) {
-        setErrorProcessModal('Du kan ikke slette behandlinger med eksisterende utleveringer.')
+        setErrorProcessModal('Du kan ikke slette databehandlinger med eksisterende utleveringer.')
         return false
       }
       setErrorProcessModal(error.response.data.message)
@@ -396,7 +396,7 @@ const ProcessList = ({
         <div className='min-w-0 sm:mr-auto'>
           {!hideTitle && (
             <Heading size='small' level='2'>
-              {titleOverride || 'Behandlinger'} ({processList.length})
+              {titleOverride || 'Databehandlinger'} ({processList.length})
             </Heading>
           )}
         </div>
@@ -419,10 +419,10 @@ const ProcessList = ({
                 )
               }
             >
-              <option value=''>Alle behandlinger</option>
-              <option value={EProcessStatus.IN_PROGRESS}>Behandlinger under arbeid</option>
+              <option value=''>Alle databehandlinger</option>
+              <option value={EProcessStatus.IN_PROGRESS}>Databehandlinger under arbeid</option>
               <option value={EProcessStatus.NEEDS_REVISION}>Trenger revidering</option>
-              <option value={EProcessStatus.COMPLETED}>Ferdig dokumenterte behandlinger</option>
+              <option value={EProcessStatus.COMPLETED}>Ferdig dokumenterte databehandlinger</option>
             </Select>
           </div>
 

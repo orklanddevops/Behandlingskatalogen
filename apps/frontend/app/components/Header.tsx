@@ -104,7 +104,7 @@ const AdminOptions = ({ showPermissionOverrides }: IAdminOptionsProps) => {
 
   const pages = [
     { label: 'Administrering av kodeverk', href: '/admin/codelist' },
-    { label: 'Endringer i behandlinger', href: '/admin/process-changes' },
+    { label: 'Endringer i databehandlinger', href: '/admin/process-changes' },
     { label: 'Innstillinger', href: '/admin/settings' },
     { label: 'Mail log', href: '/admin/maillog' },
     { label: 'Trenger revidering', href: '/admin/request-revision', super: true },
@@ -189,7 +189,7 @@ const Header = ({ themeMode, onThemeModeChange, origin }: IHeaderProps) => {
     <InternalHeader className='polly-white-internalheader' data-orkland-theme={themeMode}>
       <InternalHeader.Title href='/'>
         <span className='orkland-header-title'>
-          <span>Behandlingskatalog</span>
+          <span>Databehandlingskatalogen</span>
           <span className='orkland-header-organization'>Orkland kommune</span>
         </span>
       </InternalHeader.Title>

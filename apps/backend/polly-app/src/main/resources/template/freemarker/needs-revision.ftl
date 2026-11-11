@@ -9,7 +9,7 @@
 <body>
 
 <p>Hei,</p>
-<p>Du er oppført som siste person som redigerte følgende behandling(er) i behandlingskatalogen:</p>
+<p>Du er oppført som siste person som redigerte følgende behandling(er) i databehandlingskatalogen:</p>
 <ul>
     <#list processes as process>
       <li><a href="${process.processUrl}?source=revisionmail">${process.purposeNames}: ${process.name}</a></li>
@@ -39,7 +39,7 @@
   <p>
     Hilsen
     <br/>
-    Behandlingskatalogen / Orkland kommune
+    Databehandlingskatalogen / Orkland kommune
   </p>
 </div>
 

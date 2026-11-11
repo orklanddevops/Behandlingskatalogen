@@ -93,9 +93,9 @@ export const LegalPage = () => {
 
 const ProcessTable = (props: { processes: IProcess[] }) => (
   <div className='flex flex-col mt-3'>
-    <Heading size='medium'> Behandlinger ({props.processes.length})</Heading>
+    <Heading size='medium'> Databehandlinger ({props.processes.length})</Heading>
     <SimpleProcessTable
-      title={'Behandlinger' + ' (' + props.processes.length + ')'}
+      title={'Databehandlinger' + ' (' + props.processes.length + ')'}
       processes={props.processes}
     />
   </div>

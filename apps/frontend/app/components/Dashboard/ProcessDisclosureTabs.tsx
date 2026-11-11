@@ -145,7 +145,7 @@ const ProcessDisclosureTabs = (props: IProps) => {
   return (
     <Tabs defaultValue={defaultTab ?? 'behandlinger'} onChange={handleTabChange}>
       <Tabs.List>
-        <Tabs.Tab value='behandlinger' label='Behandlinger' />
+        <Tabs.Tab value='behandlinger' label='Databehandlinger' />
         <Tabs.Tab value='dpprocess' label='Orkland kommune som databehandler' />
         <Tabs.Tab value='utleveringer' label='Utleveringer' />
         {thirdTabTitle && <Tabs.Tab value={thirdTabTitle} label={thirdTabTitle} />}

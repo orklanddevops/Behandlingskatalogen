@@ -23,7 +23,7 @@ export const SystemPage = () => {
 
           <Tabs value={activeTab} onChange={setActiveTab}>
             <Tabs.List>
-              <Tabs.Tab value='behandlinger' label='Behandlinger' />
+              <Tabs.Tab value='behandlinger' label='Databehandlinger' />
               <Tabs.Tab value='opplysningstyper' label='Opplysningstyper' />
               <Tabs.Tab value='systeminformasjon' label='Systeminformasjon' />
             </Tabs.List>

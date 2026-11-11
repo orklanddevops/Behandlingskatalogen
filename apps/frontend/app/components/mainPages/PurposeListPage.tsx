@@ -130,7 +130,7 @@ export const PurposeListPage = () => {
                   setIsExportModalOpen(true)
                 }}
               >
-                Eksportér alle behandlinger
+                Eksportér alle databehandlinger
               </Button>
             )}
 
