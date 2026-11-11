@@ -5,6 +5,7 @@ import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik'
 import { useEffect, useState } from 'react'
 import { EListName } from '@/constants/codelistConstant'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
+import { filterOrganisationCodes } from '@/util/organisationHierarchy'
 import { getFylkerOptions, searchNavKontorOptions } from '../../api/NomApi'
 import { IDpProcessFormValues, INomData, IProcessFormValues, TOption } from '../../constants'
 import CustomSearchSelect from './AsyncSelectComponents'
@@ -29,23 +30,12 @@ const FieldSubDepartments = (props: IFieldSubDepartmentsProps) => {
     ...codelistUtils.getCodes(EListName.SEKSJON),
     ...codelistUtils.getCodes(EListName.SUB_DEPARTMENT),
   ]
-  const byId = new Map(organisationCodes.map((code) => [code.code, code]))
-  const subDepartmentOptions = codelistUtils
-    .getCodes(EListName.SUB_DEPARTMENT)
-    .filter((code) => {
-      if (code.source !== 'EADM') return true
-      let parent = code.parentCode
-      let sectionMatches = selectedSections.length === 0
-      const visited = new Set<string>()
-      while (parent && !visited.has(parent)) {
-        visited.add(parent)
-        if (selectedSections.includes(parent)) sectionMatches = true
-        if (parent === selectedDepartment) return sectionMatches
-        parent = byId.get(parent)?.parentCode
-      }
-      return false
-    })
-    .map((code) => ({ id: code.code, label: code.shortName }))
+  const subDepartmentOptions = filterOrganisationCodes(
+    organisationCodes,
+    EListName.SUB_DEPARTMENT,
+    selectedDepartment ? [selectedDepartment] : [],
+    selectedSections
+  ).map((code) => ({ id: code.code, label: code.shortName }))
 
   const [alleFylker, setAlleFylker] = useState<TOption[]>([])
 
@@ -65,6 +55,7 @@ const FieldSubDepartments = (props: IFieldSubDepartmentsProps) => {
               <OrganisationSelect
                 id='affiliation-subDepartments'
                 label='Velg underavdeling'
+                disabled={!selectedDepartment && !selectedSections.length}
                 options={subDepartmentOptions
                   .filter((code) => !formikBag.values.affiliation.subDepartments.includes(code.id))
                   .map((code) => ({ value: code.id, label: code.label }))}

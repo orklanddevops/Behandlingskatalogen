@@ -35,6 +35,12 @@ Manuell oppretting, redigering og sletting av disse kategoriene er sperret for a
 inkludert administratorer, både i grensesnitt og backend. Team er fortsatt separat,
 og administratorer beholder oppretting/redigering/sletting for Team.
 Avdeling filtreres etter valgt Enhet; Underavdeling filtreres etter valgt gren.
+Velges flere avdelinger, tilbys underavdelinger fra alle de valgte avdelingene.
+Uten valgt Avdeling vises alle Underavdelinger under valgt Enhet, inkludert dypere nivåer.
+Ved bytte eller tømming av Enhet fjernes valgte Avdelinger og Underavdelinger som
+ikke lenger tilhører grenen. Ved endring av Avdeling beholdes kun relevante Underavdelinger.
+Dette gjelder de felles tilknytningsfeltene i både databehandlinger og databehandlerregistreringer.
+Team velges uavhengig av organisasjonshierarkiet.
 
 ## Drift
 

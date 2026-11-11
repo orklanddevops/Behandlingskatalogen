@@ -63,8 +63,11 @@ const ProcessPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [chartData, setChartData] = useState<IDepartmentDashCount>()
   const [dashboardData, setDashboardData] = useState<IDashboardData>()
-  const [departmentSeksjoner, setDepartmentSeksjoner] = useState<IOrgEnhet[]>([])
-  const [selectedSeksjonId, setSelectedSeksjonId] = useState<string>('')
+  const [sectionOptions, setSectionOptions] = useState<{ department: string; units: IOrgEnhet[] }>({
+    department: '',
+    units: [],
+  })
+  const [sectionFilter, setSectionFilter] = useState({ department: '', id: '' })
   const [seksjonChartData, setSeksjonChartData] = useState<ISeksjonDashCount>()
   const [siblingSeksjoner, setSiblingSeksjoner] = useState<ISeksjonDashCount[]>([])
   const [seksjonAvdelingId, setSeksjonAvdelingId] = useState<string>('')
@@ -78,12 +81,17 @@ const ProcessPage = () => {
   const { section, code, processId } = params
   const isNoDepartment = section === ESection.department && code === 'Ingen avdeling'
   const departmentCode = isNoDepartment ? '' : (code ?? '')
+  const selectedSeksjonId = sectionFilter.department === departmentCode ? sectionFilter.id : ''
+  const departmentSeksjoner =
+    sectionOptions.department === departmentCode ? sectionOptions.units : []
 
   useEffect(() => {
+    let active = true
     if (section === ESection.department) {
       ;(async () => {
         setIsLoading(true)
         const res = await getDashboard(EProcessStatusFilter.All)
+        if (!active) return
         if (res) {
           setChartData(res.departments.find((d) => d.department === departmentCode))
           setDashboardData(res)
@@ -95,7 +103,8 @@ const ProcessPage = () => {
             getDisclosureByDepartment(departmentCode),
             getDpProcessByDepartment(departmentCode),
           ])
-          setDepartmentSeksjoner(seksjonerForAvdeling)
+          if (!active) return
+          setSectionOptions({ department: departmentCode, units: seksjonerForAvdeling })
           if (disclosureResponse) setDisclosureData(disclosureResponse.content)
           if (dpProcessResponse) setDpProcessData(dpProcessResponse.content)
         }
@@ -112,6 +121,7 @@ const ProcessPage = () => {
           getSeksjonerForNomAvdeling(avdeling),
           getAvdelingByNomId(avdeling),
         ])
+        if (!active) return
         if (res) {
           const allSeksjoner = res.seksjoner ?? []
           setSeksjonChartData(allSeksjoner.find((s) => s.seksjonId === code))
@@ -123,7 +133,10 @@ const ProcessPage = () => {
         setIsLoading(false)
       })()
     }
-  }, [section, code])
+    return () => {
+      active = false
+    }
+  }, [section, code, avdeling])
 
   return (
     <>
@@ -174,7 +187,9 @@ const ProcessPage = () => {
                       label='Filtrer på avdeling'
                       hideLabel={false}
                       value={selectedSeksjonId}
-                      onChange={(e) => setSelectedSeksjonId(e.target.value)}
+                      onChange={(e) =>
+                        setSectionFilter({ department: departmentCode, id: e.target.value })
+                      }
                       style={{ minWidth: '30rem' }}
                     >
                       <option value=''>Alle avdelinger</option>

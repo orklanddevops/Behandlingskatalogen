@@ -11,10 +11,19 @@ type TProps = {
   options: TOption[]
   value?: string
   error?: boolean
+  disabled?: boolean
   onChange: (option: TOption | null) => void
 }
 
-export default function OrganisationSelect({ id, label, options, value, error, onChange }: TProps) {
+export default function OrganisationSelect({
+  id,
+  label,
+  options,
+  value,
+  error,
+  disabled,
+  onChange,
+}: TProps) {
   const wrapper = useRef<HTMLDivElement>(null)
   const [portal, setPortal] = useState<HTMLElement | null>(null)
   useEffect(() => {
@@ -33,6 +42,7 @@ export default function OrganisationSelect({ id, label, options, value, error, o
         options={options}
         value={options.find((option) => option.value === value) ?? null}
         onChange={onChange}
+        isDisabled={disabled}
         isSearchable
         isClearable={value !== undefined}
         controlShouldRenderValue={value !== undefined}
