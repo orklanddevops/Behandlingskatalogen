@@ -12,7 +12,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATIONS = ROOT / "apps/backend/polly-app/src/main/resources/db/migration"
 MANIFEST = json.loads((ROOT / "scripts/import-data/municipal-national-laws-2026-11-11.json").read_text())
-SQL = (MIGRATIONS / "V1.41__municipal_national_laws.sql").read_text()
+SEED_SQL = (MIGRATIONS / "V1.41__municipal_national_laws.sql").read_text()
+DESCRIPTION_SQL = (MIGRATIONS / "V1.42__national_law_descriptions.sql").read_text()
+SQL = SEED_SQL + "\n" + DESCRIPTION_SQL
 LAWS = MANIFEST["laws"]
 
 def quote(value):
@@ -55,7 +57,7 @@ class MunicipalLawImportTest(unittest.TestCase):
         self.assertEqual(actual, expected)
         for row in LAWS:
             self.assertRegex(row["code"], r"^[A-Z0-9_]+$")
-            self.assertEqual(row["url"], "https://lovdata.no/lov/" + row["description"])
+            self.assertEqual(row["url"], "https://lovdata.no/lov/" + row["lawId"].removeprefix("LOV-"))
 
     def test_repeated_execution_never_changes_existing_rows(self):
         database(SQL)
@@ -88,6 +90,22 @@ class MunicipalLawImportTest(unittest.TestCase):
         self.assertEqual(database("SELECT SHORT_NAME FROM CODELIST WHERE LIST_NAME='TEAM';"), "Keep team")
         self.assertEqual(int(database("SELECT count(*) FROM CODELIST WHERE LIST_NAME='NATIONAL_LAW';")), len(LAWS))
 
+    def test_followup_updates_previously_imported_dates_without_changing_codes(self):
+        database(SEED_SQL)
+        codes_before = database("SELECT string_agg(CODE, ',' ORDER BY CODE) FROM CODELIST;")
+        database(DESCRIPTION_SQL)
+        self.assertEqual(codes_before, database("SELECT string_agg(CODE, ',' ORDER BY CODE) FROM CODELIST;"))
+        mineral = next(row for row in LAWS if row["code"] == "LOV_2025_06_20_107")
+        self.assertEqual(database("SELECT DESCRIPTION FROM CODELIST WHERE CODE='LOV_2025_06_20_107';"),
+                         mineral["description"])
+
+    def test_existing_editorial_description_is_not_overwritten(self):
+        law = LAWS[0]
+        self.seed("NATIONAL_LAW", law["code"], "Existing name", "Existing reviewed description")
+        database(SQL)
+        self.assertEqual(database("SELECT DESCRIPTION FROM CODELIST WHERE CODE=" + quote(law["code"]) + ";"),
+                         "Existing reviewed description")
+
     def test_manifest_and_complete_export_review_are_consistent(self):
         review = list(csv.DictReader(io.StringIO((ROOT / "docs/municipal-national-laws-review.tsv").read_text()), delimiter="\t"))
         self.assertEqual(len(review), MANIFEST["reviewedDocuments"])
@@ -100,6 +118,8 @@ class MunicipalLawImportTest(unittest.TestCase):
             self.assertRegex(row["sourceSha256"], r"^[0-9a-f]{64}$")
             self.assertNotIn("..", Path(row["sourceFile"]).parts)
             self.assertTrue(row["reason"])
+            self.assertGreater(len(row["description"]), 45)
+            self.assertNotRegex(row["description"], r"^\d{4}-\d{2}-\d{2}")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

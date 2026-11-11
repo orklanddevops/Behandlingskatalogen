@@ -1,5 +1,6 @@
 import { BodyShort, Button, Modal, TextField, Textarea } from '@navikt/ds-react'
 import { ErrorMessage, Field, FieldProps, Form, Formik } from 'formik'
+import { EListName } from '@/constants/codelistConstant'
 import { ICodeListFormValues } from '../../../constants'
 import { codeListSchema } from '../../common/schemaValidation'
 
@@ -60,7 +61,11 @@ const CreateCodeListModal = ({
                     className='w-full'
                     {...field}
                     label='Kode'
-                    description='Bruk store bokstaver (A–Z), tall (0–9) og understrek (_).'
+                    description={
+                      list === EListName.NATIONAL_LAW
+                        ? 'Bruk Lovdata-ID som kode, for eksempel LOV_2025_06_20_107.'
+                        : 'Bruk store bokstaver (A–Z), tall (0–9) og understrek (_).'
+                    }
                     error={errors.code && <ErrorMessage name='code' />}
                   />
                 )}
@@ -82,6 +87,11 @@ const CreateCodeListModal = ({
                     className='w-full mt-4'
                     {...field}
                     label='Beskrivelse'
+                    description={
+                      list === EListName.NATIONAL_LAW
+                        ? 'Beskriv kort hva loven regulerer og dens relevans for kommunen.'
+                        : undefined
+                    }
                     minRows={6}
                     error={errors.description && <ErrorMessage name='description' />}
                   />

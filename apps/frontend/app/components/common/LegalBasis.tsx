@@ -5,7 +5,7 @@ import { EListName, ESensitivityLevel } from '@/constants/codelistConstant'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
 import { theme } from '@/util/theme'
 import { ILegalBasis, ILegalBasisFormValues, IPolicyAlert } from '../../constants'
-import { env } from '../../util/env'
+import { getLovdataUrl } from '../../util/lovdata'
 import { processString } from '../../util/string-processor'
 
 interface ILegalBasisViewProps {
@@ -53,18 +53,9 @@ export const LegalBasisView = (props: ILegalBasisViewProps) => {
   )
 }
 
-const lovdataBase = (codelistUtils: ICodelistProps, nationalLaw: string): string => {
-  return (
-    (codelistUtils.isForskrift(nationalLaw) ? env.lovdataForskriftBaseUrl : env.lovdataLovBaseUrl) +
-    codelistUtils.getDescription(EListName.NATIONAL_LAW, nationalLaw)
-  )
-}
-
 const legalBasisLinkProcessor = (codelistUtils: ICodelistProps, law: string, text?: string) => {
-  const lawCode: string = codelistUtils.getDescription(EListName.NATIONAL_LAW, law)
-  if (!lawCode.match(/^\d+.*/)) {
-    return text
-  }
+  const lawUrl = getLovdataUrl(law, codelistUtils.getDescription(EListName.NATIONAL_LAW, law))
+  if (!lawUrl) return text
 
   return processString([
     {
@@ -76,12 +67,7 @@ const legalBasisLinkProcessor = (codelistUtils: ICodelistProps, law: string, tex
       // tripe '§§§' is hidden, used as a trick in combination with rule 1 above
       regex: /§(§§)?(§)?\s*(\d+(-\d+)?)/g,
       fn: (key: string, result: string[]) => (
-        <Link
-          key={key}
-          href={`${lovdataBase(codelistUtils, law)}/§${result[3]}`}
-          target='_blank'
-          rel='noopener noreferrer'
-        >
+        <Link key={key} href={`${lawUrl}/§${result[3]}`} target='_blank' rel='noopener noreferrer'>
           {!result[1] && !result[2] && '§'} {result[2] && '§§'} {result[3]}
         </Link>
       ),
@@ -91,7 +77,7 @@ const legalBasisLinkProcessor = (codelistUtils: ICodelistProps, law: string, tex
       fn: (key: string, result: string[]) => (
         <Link
           key={key}
-          href={`${lovdataBase(codelistUtils, law)}/KAPITTEL_${result[2]}`}
+          href={`${lawUrl}/KAPITTEL_${result[2]}`}
           target='_blank'
           rel='noopener noreferrer'
         >
