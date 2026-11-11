@@ -301,10 +301,7 @@ export const codeListSchema: () => yup.ObjectSchema<ICode> = () =>
     list: yup.mixed<EListName>().required(requiredMessage),
     code: yup
       .string()
-      .matches(
-        /^[A-Z0-9_]+$/,
-        'Det er ikke tillatt med små bokstaver, mellomrom, æ, ø eller å i kode.'
-      )
+      .matches(/^[A-Z0-9_]+$/, 'Bruk bare store bokstaver (A–Z), tall (0–9) og understrek (_).')
       .required(requiredMessage),
     shortName: yup.string().required(requiredMessage),
     description: yup.string().required(requiredMessage),

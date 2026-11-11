@@ -30,3 +30,19 @@ test('imported Lovdata identifiers remain valid in the administration forms', ()
   }).toBeSchema(schema)
   expect({ ...createCodelist(), code: 'lov-2018-06-22-83' }).toBeSchemaErrorAt(schema, 'code')
 })
+
+test.each(['123', '00123', 'TEAM_2', '2_TEAM'])(
+  'numbers are allowed generally in code %s',
+  (code) => {
+    for (const list of [
+      EListName.PURPOSE,
+      EListName.TEAM,
+      EListName.NATIONAL_LAW,
+      EListName.SYSTEM,
+    ]) {
+      const value = { ...createCodelist(), list, code }
+      expect(value).toBeSchema(schema)
+      expect(schema.validateSync(value).code).toBe(code)
+    }
+  }
+)

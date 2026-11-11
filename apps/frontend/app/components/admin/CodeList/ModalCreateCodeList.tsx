@@ -60,6 +60,7 @@ const CreateCodeListModal = ({
                     className='w-full'
                     {...field}
                     label='Kode'
+                    description='Bruk store bokstaver (A–Z), tall (0–9) og understrek (_).'
                     error={errors.code && <ErrorMessage name='code' />}
                   />
                 )}
