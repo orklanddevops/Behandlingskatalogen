@@ -167,7 +167,7 @@ test('cascades enhet to avdelinger and narrows underavdelinger across multiple s
   await renderFields()
   expect(
     container.querySelector('input[aria-label="Velg underavdeling"]')!.hasAttribute('disabled')
-  ).toBe(true)
+  ).toBe(false)
   await open('Velg enhet')
   await choose('Enhet A')
   await open('Velg avdeling')
@@ -199,8 +199,6 @@ test('changing enhet drops unrelated child selections and immediately replaces t
   await open('Velg underavdeling')
   expect(menuOptions()).toEqual(['Under A1', 'Under A2'])
   await choose('Under A1')
-  await open('Velg avdeling')
-  await choose('Avdeling A1')
   await open('Velg enhet')
   await choose('Enhet B')
   expect(affiliation().seksjoner).toEqual([])
@@ -234,4 +232,47 @@ test('keeps long lists scrollable and mounts the menu inside a form dialog', asy
   expect(getComputedStyle(menu).overflowY).toBe('auto')
   expect(menu.querySelectorAll('[role="option"]')).toHaveLength(30)
   dialog.remove()
+})
+
+test('all levels are available initially and selecting a child fills its parents', async () => {
+  await renderFields()
+  await open('Velg avdeling')
+  expect(menuOptions()).toEqual(['Avdeling A1', 'Avdeling A2', 'Avdeling B1'])
+  await choose('Avdeling B1')
+  expect(affiliation().nomDepartmentId).toBe('B')
+
+  await act(async () => root.unmount())
+  root = createRoot(container)
+  await renderFields()
+  await open('Velg underavdeling')
+  expect(menuOptions()).toEqual(['Under A1', 'Under A2', 'Under B1'])
+  await choose('Under A1')
+  expect(affiliation()).toEqual(
+    expect.objectContaining({
+      nomDepartmentId: 'A',
+      nomDepartmentName: 'Enhet A',
+      seksjoner: [{ nomSeksjonId: 'A1', nomSeksjonName: 'Avdeling A1' }],
+      subDepartments: ['S1'],
+    })
+  )
+})
+
+test('clearing enhet clears its children and makes all branches selectable again', async () => {
+  await renderFields()
+  await open('Velg underavdeling')
+  await choose('Under A1')
+  const input = container.querySelector<HTMLInputElement>('input[aria-label="Velg enhet"]')!
+  await act(async () => {
+    input.focus()
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true }))
+  })
+  expect(affiliation()).toEqual(
+    expect.objectContaining({
+      nomDepartmentId: '',
+      seksjoner: [],
+      subDepartments: [],
+    })
+  )
+  await open('Velg avdeling')
+  expect(menuOptions()).toEqual(['Avdeling A1', 'Avdeling A2', 'Avdeling B1'])
 })

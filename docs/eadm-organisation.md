@@ -34,6 +34,10 @@ Tilordninger slettes ikke automatisk fra eksisterende databehandlinger.
 Manuell oppretting, redigering og sletting av disse kategoriene er sperret for alle,
 inkludert administratorer, både i grensesnitt og backend. Team er fortsatt separat,
 og administratorer beholder oppretting/redigering/sletting for Team.
+Alle tre organisasjonsfeltene er tilgjengelige fra start, og bare importerte eADM-koder tilbys.
+Uten valgt Enhet/Avdeling vises alle importerte alternativer på neste nivå.
+Valg av Avdeling fyller ut tilhørende Enhet automatisk. Valg av Underavdeling følger
+hele foreldrekjeden og fyller ut tilhørende Avdeling og Enhet, også for dypere nivåer.
 Avdeling filtreres etter valgt Enhet; Underavdeling filtreres etter valgt gren.
 Velges flere avdelinger, tilbys underavdelinger fra alle de valgte avdelingene.
 Uten valgt Avdeling vises alle Underavdelinger under valgt Enhet, inkludert dypere nivåer.

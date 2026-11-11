@@ -5,7 +5,7 @@ import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik'
 import { useEffect, useState } from 'react'
 import { EListName } from '@/constants/codelistConstant'
 import { ICodelistProps } from '@/provider/kodeverkProvider'
-import { filterOrganisationCodes } from '@/util/organisationHierarchy'
+import { filterOrganisationCodes, selectOrganisationCode } from '@/util/organisationHierarchy'
 import { getFylkerOptions, searchNavKontorOptions } from '../../api/NomApi'
 import { IDpProcessFormValues, INomData, IProcessFormValues, TOption } from '../../constants'
 import CustomSearchSelect from './AsyncSelectComponents'
@@ -55,16 +55,20 @@ const FieldSubDepartments = (props: IFieldSubDepartmentsProps) => {
               <OrganisationSelect
                 id='affiliation-subDepartments'
                 label='Velg underavdeling'
-                disabled={!selectedDepartment && !selectedSections.length}
+
                 options={subDepartmentOptions
                   .filter((code) => !formikBag.values.affiliation.subDepartments.includes(code.id))
                   .map((code) => ({ value: code.id, label: code.label }))}
                 onChange={(option) => {
-                  if (option)
-                    arrayHelpers.form.setFieldValue('affiliation.subDepartments', [
-                      ...formikBag.values.affiliation.subDepartments,
-                      option.value,
-                    ])
+                  if (option && typeof option.value === 'string')
+                    arrayHelpers.form.setFieldValue(
+                      'affiliation',
+                      selectOrganisationCode(
+                        organisationCodes,
+                        formikBag.values.affiliation,
+                        option.value
+                      )
+                    )
                 }}
               />
             </div>

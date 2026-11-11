@@ -5,7 +5,7 @@ import { getIn, useFormikContext } from 'formik'
 import { useContext, useEffect } from 'react'
 import { EListName } from '@/constants/codelistConstant'
 import { CodelistContext } from '@/provider/kodeverkProvider'
-import { filterOrganisationCodes } from '@/util/organisationHierarchy'
+import { filterOrganisationCodes, selectOrganisationCode } from '@/util/organisationHierarchy'
 import { IDpProcessFormValues, IProcessFormValues } from '../../../constants'
 import { ModalLabel } from '../../common/ModalSchema'
 import OrganisationSelect from '../../common/OrganisationSelect'
@@ -44,8 +44,8 @@ const FieldDepartment = (props: { department?: string }) => {
         (code) => code.code
       )
     )
-    const retainedSections = nextSections.filter((section) =>
-      availableSections.has(section.nomSeksjonId)
+    const retainedSections = nextSections.filter(
+      (section) => !!nextDepartment && availableSections.has(section.nomSeksjonId)
     )
     const availableSubDepartments = new Set(
       filterOrganisationCodes(
@@ -60,8 +60,8 @@ const FieldDepartment = (props: { department?: string }) => {
       nomDepartmentId: nextDepartment,
       nomDepartmentName: nextDepartmentName,
       seksjoner: retainedSections,
-      subDepartments: (values.affiliation.subDepartments ?? []).filter((id) =>
-        availableSubDepartments.has(id)
+      subDepartments: (values.affiliation.subDepartments ?? []).filter(
+        (id) => !!nextDepartment && availableSubDepartments.has(id)
       ),
     })
   }
@@ -81,52 +81,47 @@ const FieldDepartment = (props: { department?: string }) => {
           setFieldTouched('affiliation.nomDepartmentId', true, false)
         }}
       />
-      {department && (
-        <div className='mt-3'>
-          <ModalLabel
-            label='Avdeling'
-            tooltip='Velg én eller flere avdelinger under valgt enhet.'
-          />
-          <OrganisationSelect
-            id='affiliation-seksjoner-nomSeksjonId'
-            label='Velg avdeling'
-            options={sections
-              .filter((code) => !selected.some((section) => section.nomSeksjonId === code.code))
-              .map((code) => ({ value: code.code, label: code.shortName }))}
-            error={hasError('affiliation.seksjoner')}
-            onChange={(option) => {
-              if (
-                option &&
-                typeof option.value === 'string' &&
-                typeof option.label === 'string' &&
-                !selected.some((section) => section.nomSeksjonId === option.value)
-              ) {
-                updateAffiliation(department, values.affiliation.nomDepartmentName ?? '', [
-                  ...selected,
-                  { nomSeksjonId: option.value, nomSeksjonName: option.label },
-                ])
-                setFieldTouched('affiliation.seksjoner', true, false)
+      <div className='mt-3'>
+        <ModalLabel label='Avdeling' tooltip='Velg avdeling. Tilhørende enhet velges automatisk.' />
+        <OrganisationSelect
+          id='affiliation-seksjoner-nomSeksjonId'
+          label='Velg avdeling'
+          options={sections
+            .filter((code) => !selected.some((section) => section.nomSeksjonId === code.code))
+            .map((code) => ({ value: code.code, label: code.shortName }))}
+          error={hasError('affiliation.seksjoner')}
+          onChange={(option) => {
+            if (
+              option &&
+              typeof option.value === 'string' &&
+              typeof option.label === 'string' &&
+              !selected.some((section) => section.nomSeksjonId === option.value)
+            ) {
+              setFieldValue(
+                'affiliation',
+                selectOrganisationCode(codes, values.affiliation, option.value)
+              )
+              setFieldTouched('affiliation.seksjoner', true, false)
+            }
+          }}
+        />
+        <div className='mt-2 flex flex-wrap gap-2'>
+          {selected.map((section, index) => (
+            <Chips.Removable
+              key={section.nomSeksjonId}
+              onClick={() =>
+                updateAffiliation(
+                  department,
+                  values.affiliation.nomDepartmentName ?? '',
+                  selected.filter((_, selectedIndex) => selectedIndex !== index)
+                )
               }
-            }}
-          />
-          <div className='mt-2 flex flex-wrap gap-2'>
-            {selected.map((section, index) => (
-              <Chips.Removable
-                key={section.nomSeksjonId}
-                onClick={() =>
-                  updateAffiliation(
-                    department,
-                    values.affiliation.nomDepartmentName ?? '',
-                    selected.filter((_, selectedIndex) => selectedIndex !== index)
-                  )
-                }
-              >
-                {section.nomSeksjonName}
-              </Chips.Removable>
-            ))}
-          </div>
+            >
+              {section.nomSeksjonName}
+            </Chips.Removable>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   )
 }

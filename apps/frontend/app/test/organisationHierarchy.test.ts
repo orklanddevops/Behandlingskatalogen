@@ -1,11 +1,12 @@
 import { EListName, ICode } from '../constants/codelistConstant'
-import { filterOrganisationCodes } from '../util/organisationHierarchy'
+import { filterOrganisationCodes, selectOrganisationCode } from '../util/organisationHierarchy'
 
 const code = (list: EListName, id: string, parentCode?: string): ICode => ({
   list,
   code: id,
   shortName: id,
   parentCode,
+  source: 'EADM',
   description: '',
 })
 const codes = [
@@ -35,9 +36,9 @@ test('multiple parents include the union of their descendants and preserve deepe
     'B1-child',
   ])
 })
-test('child options require a matching parent, and departments never leak between branches', () => {
-  expect(ids(EListName.SEKSJON)).toEqual([])
-  expect(ids(EListName.SUB_DEPARTMENT)).toEqual([])
+test('child options are initially available and never leak between selected branches', () => {
+  expect(ids(EListName.SEKSJON)).toEqual(['A1', 'A2', 'B1'])
+  expect(ids(EListName.SUB_DEPARTMENT)).toHaveLength(4)
   expect(ids(EListName.SUB_DEPARTMENT, ['A'], ['B1'])).toEqual([])
   expect(ids(EListName.SUB_DEPARTMENT, [], ['A1'])).toEqual(['A1-child', 'A1-grandchild'])
 })
@@ -48,4 +49,37 @@ test('missing and cyclic ancestry never becomes an eligible branch', () => {
     code(EListName.SUB_DEPARTMENT, 'cycle2', 'cycle1'),
   ]
   expect(filterOrganisationCodes(broken, EListName.SUB_DEPARTMENT, ['A'])).toEqual([])
+})
+
+test('only imported codes are offered, even if legacy codes remain in a cached response', () => {
+  const legacy = { ...code(EListName.SEKSJON, 'OLD'), source: undefined }
+  expect(
+    filterOrganisationCodes([...codes, legacy], EListName.SEKSJON).map((entry) => entry.code)
+  ).toEqual(['A1', 'A2', 'B1'])
+})
+
+test('selecting a deep descendant resolves enhet and avdeling without mutating the form', () => {
+  const initial = {
+    nomDepartmentId: 'B',
+    nomDepartmentName: 'B',
+    seksjoner: [{ nomSeksjonId: 'B1', nomSeksjonName: 'B1' }],
+    subDepartments: ['B1-child'],
+    fylker: [],
+    navKontorer: [],
+    productTeams: ['TEAM'],
+    products: [],
+    disclosureDispatchers: [],
+  }
+  const selected = selectOrganisationCode(codes, initial, 'A1-grandchild')
+  expect(selected).toEqual(
+    expect.objectContaining({
+      nomDepartmentId: 'A',
+      nomDepartmentName: 'A',
+      seksjoner: [{ nomSeksjonId: 'A1', nomSeksjonName: 'A1' }],
+      subDepartments: ['A1-grandchild'],
+      productTeams: ['TEAM'],
+    })
+  )
+  expect(initial.nomDepartmentId).toBe('B')
+  expect(initial.subDepartments).toEqual(['B1-child'])
 })
