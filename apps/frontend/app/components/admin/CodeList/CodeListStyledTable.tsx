@@ -3,7 +3,7 @@
 import { DocPencilIcon, GlassesIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Button, SortState, Table, Tooltip } from '@navikt/ds-react'
 import { useEffect, useState } from 'react'
-import { ICode } from '@/constants/codelistConstant'
+import { ICode, isOrganisationList } from '@/constants/codelistConstant'
 import { deleteCodelist, getCodelistUsage, updateCodelist } from '../../../api/GetAllApi'
 import { ICodeListFormValues, ICodeUsage } from '../../../constants'
 import { handleSort, sortTableData } from '../../../util/handleTableSort'
@@ -116,27 +116,31 @@ const CodeListTable = ({ tableData, refresh }: TTableCodelistProps) => {
 
                   <AuditButtonDS id={`${row.list}-${row.code}`} variant='tertiary' />
 
-                  <Tooltip content='Redigér'>
-                    <Button
-                      variant='tertiary'
-                      onClick={() => {
-                        setSelectedCode(row)
-                        setShowEditModal(true)
-                      }}
-                      icon={<DocPencilIcon title='Redigér' />}
-                    />
-                  </Tooltip>
+                  {!isOrganisationList(row.list) && (
+                    <>
+                      <Tooltip content='Redigér'>
+                        <Button
+                          variant='tertiary'
+                          onClick={() => {
+                            setSelectedCode(row)
+                            setShowEditModal(true)
+                          }}
+                          icon={<DocPencilIcon title='Redigér' />}
+                        />
+                      </Tooltip>
 
-                  <Tooltip content='Slett'>
-                    <Button
-                      variant='tertiary'
-                      onClick={() => {
-                        setSelectedCode(row)
-                        setShowDeleteModal(true)
-                      }}
-                      icon={<TrashIcon title='Slett' />}
-                    />
-                  </Tooltip>
+                      <Tooltip content='Slett'>
+                        <Button
+                          variant='tertiary'
+                          onClick={() => {
+                            setSelectedCode(row)
+                            setShowDeleteModal(true)
+                          }}
+                          icon={<TrashIcon title='Slett' />}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
                 </div>
               </Table.DataCell>
             </Table.Row>
@@ -144,7 +148,7 @@ const CodeListTable = ({ tableData, refresh }: TTableCodelistProps) => {
         </Table.Body>
       </Table>
 
-      {showEditModal && selectedCode && (
+      {showEditModal && selectedCode && !isOrganisationList(selectedCode.list) && (
         <UpdateCodeListModal
           title='Rediger kode'
           initialValues={{
@@ -162,7 +166,7 @@ const CodeListTable = ({ tableData, refresh }: TTableCodelistProps) => {
           submit={handleEditCodelist}
         />
       )}
-      {showDeleteModal && selectedCode && (
+      {showDeleteModal && selectedCode && !isOrganisationList(selectedCode.list) && (
         <DeleteCodeListModal
           title='Bekreft sletting'
           initialValues={{

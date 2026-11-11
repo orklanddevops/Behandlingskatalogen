@@ -1,10 +1,14 @@
 'use client'
 
 import { PlusIcon } from '@navikt/aksel-icons'
-import { Button, Heading, Loader, Select } from '@navikt/ds-react'
+import { Alert, Button, Heading, Loader, Select } from '@navikt/ds-react'
 import { useParams } from 'next/navigation'
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
-import { ICode, IMakeIdLabelForAllCodeListsProps } from '@/constants/codelistConstant'
+import {
+  ICode,
+  IMakeIdLabelForAllCodeListsProps,
+  isOrganisationList,
+} from '@/constants/codelistConstant'
 import { CodelistContext } from '@/provider/kodeverkProvider'
 import { IUserContext, UserContext } from '@/provider/userProvider'
 import { TNavigateFunction, useNavigate } from '@/util/router'
@@ -96,7 +100,7 @@ const CodeListPage = () => {
                     </option>
                   ))}
               </Select>
-              {listname && (
+              {listname && !isOrganisationList(listname) && (
                 <div>
                   <Button
                     icon={<PlusIcon aria-hidden />}
@@ -109,12 +113,18 @@ const CodeListPage = () => {
               )}
             </div>
           )}
+          {isOrganisationList(listname) && (
+            <Alert variant='info' className='mt-4'>
+              Enhet, Avdeling og Underavdeling hentes automatisk fra organisasjonskartet i eADM.
+              Oppretting, redigering og sletting gjøres i eADM. Team administreres separat.
+            </Alert>
+          )}
           {!loading && listname && (
             <div className='mt-4'>
               <CodeListTable tableData={currentCodelist || []} refresh={update} />
             </div>
           )}
-          {listname && (
+          {listname && !isOrganisationList(listname) && (
             <CreateCodeListModal
               title='Ny kode'
               list={listname}

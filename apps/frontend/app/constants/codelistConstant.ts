@@ -43,6 +43,8 @@ export interface ICode {
   code: string
   shortName: string
   description: string
+  source?: string
+  parentCode?: string | null
   invalidCode?: boolean
 }
 
@@ -62,3 +64,6 @@ export interface IMakeIdLabelForAllCodeListsProps {
   id: string
   label: string
 }
+
+export const isOrganisationList = (list?: string) =>
+  [EListName.DEPARTMENT, EListName.SEKSJON, EListName.SUB_DEPARTMENT].includes(list as EListName)

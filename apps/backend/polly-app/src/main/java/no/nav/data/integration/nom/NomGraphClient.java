@@ -67,8 +67,13 @@ public class NomGraphClient {
         return StreamUtils.copyToString(new ClassPathResource(path).getInputStream(), StandardCharsets.UTF_8);
     }
 
+    private boolean useLocalOrganisation() {
+        return !nomGraphQlProperties.isEnabled() || CodelistStaticService.getCodelists(ListName.DEPARTMENT)
+                .stream().anyMatch(code -> "EADM".equals(code.getSource()));
+    }
+
     private Map<String, OrgEnhet> getAvdelingCache() {
-        if (!nomGraphQlProperties.isEnabled()) {
+        if (useLocalOrganisation()) {
             return CodelistStaticService.getCodelists(ListName.DEPARTMENT).stream()
                     .map(code -> OrgEnhet.builder().id(code.getCode()).navn(code.getShortName())
                             .organiseringer(List.of()).build())
@@ -115,7 +120,7 @@ public class NomGraphClient {
 
     private Map<String, OrgEnhet> getAvdelingerFromCache() {
         // Local code edits must be visible immediately, without waiting for the NOM cache.
-        return nomGraphQlProperties.isEnabled() ? allAvdelingCache.get("singleton") : getAvdelingCache();
+        return useLocalOrganisation() ? getAvdelingCache() : allAvdelingCache.get("singleton");
     }
 
     public List<OrgEnhet> getAllAvdelinger() {
@@ -127,9 +132,10 @@ public class NomGraphClient {
     }
 
     public List<OrgEnhet> getAllSeksjonForAvdeling(String avdelingId) {
-        if (!nomGraphQlProperties.isEnabled()) {
-            // Local avdelinger are a shared list, independent of the selected enhet.
+        if (useLocalOrganisation()) {
+            // Imported departments follow their enhet; legacy/test codes without a source retain their existing behavior.
             return CodelistStaticService.getCodelists(ListName.SEKSJON).stream()
+                    .filter(code -> !"EADM".equals(code.getSource()) || avdelingId.equals(code.getParentCode()))
                     .map(code -> OrgEnhet.builder().id(code.getCode()).navn(code.getShortName())
                             .organiseringer(List.of()).build()).toList();
         }
@@ -161,7 +167,7 @@ public class NomGraphClient {
 
 
     public List<OrgEnhet> getAllFylker() {
-        if (!nomGraphQlProperties.isEnabled()) {
+        if (useLocalOrganisation()) {
             return List.of();
         }
             if (securityProperties.isDev()) {
@@ -198,7 +204,7 @@ public class NomGraphClient {
 
 
     public List<OrgEnhet> searchNavkontorByTerm(String searchTerm) {
-        if (!nomGraphQlProperties.isEnabled()) {
+        if (useLocalOrganisation()) {
             return List.of();
         }
         if (searchTerm.length() > 2) {
@@ -240,7 +246,7 @@ public class NomGraphClient {
     }
 
     public OrgEnhet getById(String id) {
-        if (!nomGraphQlProperties.isEnabled()) {
+        if (useLocalOrganisation()) {
             var section = CodelistStaticService.getCodelist(ListName.SEKSJON, id);
             if (section != null) {
                 return OrgEnhet.builder().id(id).navn(section.getShortName()).organiseringer(List.of()).build();

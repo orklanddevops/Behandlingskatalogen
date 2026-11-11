@@ -17,7 +17,24 @@ Dette er ikke et delegert Microsoft Graph-kall og krever ingen nye Entra-tillate
 
 Vi lagrer bare avdelingsnummer, foreldreavdelingsnummer, navn og ledernavn samt
 tidspunkt/status for importen. Rå eksport med øvrige kontaktfelter lagres ikke.
-Eksisterende kodeverk og tilknytningene på databehandlinger endres ikke av importen.
+Enhet (DEPARTMENT), Avdeling (SEKSJON) og Underavdeling (SUB_DEPARTMENT) styres fullt
+av organisasjonskartet. Enheter i eADM fyller Enhet, direkte Avdelinger under en Enhet
+fyller Avdeling, og Avdelinger under andre Avdelinger fyller Underavdeling.
+Rammeområder og grupper for personer uten arbeidsforhold vises kun i organisasjonskartet.
+Avdelingsnummer fra eADM brukes som stabil kode; kodebeskrivelsene inneholder ikke ledernavn.
+
+En gyldig import erstatter gamle oppføringer i disse tre kategoriene i samme
+databasetransaksjon som kartet lagres. Eksisterende tilknytninger flyttes automatisk
+når gammelt navn har én entydig match i samme kategori (uavhengig av store/små bokstaver
+og ekstra mellomrom). Tvetydige eller manglende treff gjettes ikke; de gamle kodene
+fjernes som avtalt, men referanser i tidligere registreringer må da korrigeres manuelt.
+Synkroniseringsloggen viser antall gamle koder uten entydig match, uten personopplysninger.
+Tilordninger slettes ikke automatisk fra eksisterende databehandlinger.
+
+Manuell oppretting, redigering og sletting av disse kategoriene er sperret for alle,
+inkludert administratorer, både i grensesnitt og backend. Team er fortsatt separat,
+og administratorer beholder oppretting/redigering/sletting for Team.
+Avdeling filtreres etter valgt Enhet; Underavdeling filtreres etter valgt gren.
 
 ## Drift
 
@@ -34,7 +51,8 @@ Dette bygger og starter appen med de nye innstillingene. Denne endringen deploye
 
 Daglig import kjører klokken 04:00 i Europe/Oslo, også gjennom sommer-/vintertid.
 Ved oppstart importeres kartet hvis det mangler eller er over ett døgn gammelt.
-Ny omstart med fersk kopi krever ikke et nytt eADM-kall.
+Ny omstart med fersk kopi krever ikke et nytt eADM-kall. Kategoriene oppdateres også
+fra en fersk lagret kopi ved oppstart. En eldre kopi uten enhetstyper hentes på nytt.
 Kjør bare én backend med synkronisering aktivert; planen og låsen gjelder per prosess.
 
 Backend trenger utgående HTTPS til api.eadm.no. Bruk eksisterende CA-oppsett for

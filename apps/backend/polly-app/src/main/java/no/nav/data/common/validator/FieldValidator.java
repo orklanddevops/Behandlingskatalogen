@@ -116,8 +116,8 @@ public class FieldValidator {
     }
 
     public void checkIfCodelistIsOfImmutableType(ListName listName) {
-        if (listName.equals(ListName.GDPR_ARTICLE)) {
-            validationErrors.add(new ValidationError(reference, ERROR_TYPE_IMMUTABLE_CODELIST, String.format(ERROR_MESSAGE_IMMUTABLE_CODELIST, listName)));
+        if (listName.equals(ListName.GDPR_ARTICLE) || listName.isOrganisation()) {
+            validationErrors.add(new ValidationError(reference, ERROR_TYPE_IMMUTABLE_CODELIST, listName.isOrganisation() ? "Organisasjonskodeverket vedlikeholdes automatisk fra eADM." : String.format(ERROR_MESSAGE_IMMUTABLE_CODELIST, listName)));
         }
     }
 

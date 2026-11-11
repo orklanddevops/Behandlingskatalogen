@@ -26,6 +26,18 @@ public class CodelistResponse {
     private String shortName;
     private String description;
 
+    @JsonInclude(Include.NON_NULL)
+    private String source;
+    @JsonInclude(Include.NON_NULL)
+    private String parentCode;
+
+    public CodelistResponse(ListName list, String code, String shortName, String description) {
+        this.list = list;
+        this.code = code;
+        this.shortName = shortName;
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return code + " - " + shortName + " - " + description;
@@ -42,6 +54,8 @@ public class CodelistResponse {
                 .code(cl.getCode())
                 .shortName(cl.getShortName())
                 .description(cl.getDescription())
+                .source(cl.getSource())
+                .parentCode(cl.getParentCode())
                 .build();
     }
     

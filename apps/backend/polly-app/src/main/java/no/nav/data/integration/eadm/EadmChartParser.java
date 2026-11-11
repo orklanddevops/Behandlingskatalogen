@@ -36,7 +36,7 @@ public class EadmChartParser {
             String parent = fields.getOrDefault("ParentDepartmentNumber", "");
             if (id.isEmpty() || name.isEmpty()) throw new IllegalArgumentException("Missing eADM department ID or name");
             var unit = new OrganisationUnit(id, parent.isEmpty() || parent.equals("0") ? null : parent,
-                    name, text(row, "managername"));
+                    name, text(row, "managername"), fields.getOrDefault("OrgUnitType", ""));
             if (units.putIfAbsent(id, unit) != null) throw new IllegalArgumentException("Duplicate eADM department ID");
         }
 

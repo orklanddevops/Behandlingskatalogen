@@ -20,6 +20,33 @@ interface IFieldSubDepartmentsProps {
 const FieldSubDepartments = (props: IFieldSubDepartmentsProps) => {
   const { formikBag, codelistUtils } = props
 
+  const selectedDepartment = formikBag.values.affiliation.nomDepartmentId
+  const selectedSections = (formikBag.values.affiliation.seksjoner ?? []).map(
+    (section) => section.nomSeksjonId
+  )
+  const organisationCodes = [
+    ...codelistUtils.getCodes(EListName.DEPARTMENT),
+    ...codelistUtils.getCodes(EListName.SEKSJON),
+    ...codelistUtils.getCodes(EListName.SUB_DEPARTMENT),
+  ]
+  const byId = new Map(organisationCodes.map((code) => [code.code, code]))
+  const subDepartmentOptions = codelistUtils
+    .getCodes(EListName.SUB_DEPARTMENT)
+    .filter((code) => {
+      if (code.source !== 'EADM') return true
+      let parent = code.parentCode
+      let sectionMatches = selectedSections.length === 0
+      const visited = new Set<string>()
+      while (parent && !visited.has(parent)) {
+        visited.add(parent)
+        if (selectedSections.includes(parent)) sectionMatches = true
+        if (parent === selectedDepartment) return sectionMatches
+        parent = byId.get(parent)?.parentCode
+      }
+      return false
+    })
+    .map((code) => ({ id: code.code, label: code.shortName }))
+
   const [alleFylker, setAlleFylker] = useState<TOption[]>([])
 
   useEffect(() => {
@@ -38,8 +65,7 @@ const FieldSubDepartments = (props: IFieldSubDepartmentsProps) => {
               <OrganisationSelect
                 id='affiliation-subDepartments'
                 label='Velg underavdeling'
-                options={codelistUtils
-                  .getParsedOptions(EListName.SUB_DEPARTMENT)
+                options={subDepartmentOptions
                   .filter((code) => !formikBag.values.affiliation.subDepartments.includes(code.id))
                   .map((code) => ({ value: code.id, label: code.label }))}
                 onChange={(option) => {

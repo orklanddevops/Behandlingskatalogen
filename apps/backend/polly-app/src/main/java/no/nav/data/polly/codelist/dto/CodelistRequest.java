@@ -79,7 +79,7 @@ public class CodelistRequest implements RequestElement {
     @Override
     public void validate(FieldValidator validator) {
         validator.checkRequiredEnum(Fields.list, getList(), ListName.class);
-        if (!update) {
+        if (!update || (getListAsListName() != null && getListAsListName().isOrganisation())) {
             validator.checkIfCodelistIsOfImmutableType(getList());
         }
         validator.checkCodelistCode(Fields.code, getCode());

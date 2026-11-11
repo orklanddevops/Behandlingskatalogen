@@ -17,7 +17,7 @@ class OrganisationChartSyncTest {
     private OrganisationChart chart() {
         var chart = new OrganisationChart();
         chart.setRetrievedAt(Instant.now());
-        chart.setUnits(List.of(new OrganisationUnit("1", null, "Saved department", "")));
+        chart.setUnits(List.of(new OrganisationUnit("1", null, "Saved department", "", "Enheter")));
         return chart;
     }
 
@@ -26,7 +26,7 @@ class OrganisationChartSyncTest {
         var properties = new EadmProperties();
         var client = mock(EadmClient.class);
         var store = mock(OrganisationChartStore.class);
-        var sync = new OrganisationChartSync(properties, client, new EadmChartParser(), store);
+        var sync = new OrganisationChartSync(properties, client, new EadmChartParser(), store, event -> {});
         var controller = new OrganisationChartController(properties, store, sync);
         var previous = chart();
         when(store.get()).thenReturn(previous);
@@ -46,10 +46,10 @@ class OrganisationChartSyncTest {
         var previous = chart();
         var row = new GenericStorage(previous);
         when(repository.findByType(StorageType.ORGANISATION_CHART)).thenReturn(Optional.of(row));
-        var store = new OrganisationChartStore(repository);
+        var store = new OrganisationChartStore(repository, mock(no.nav.data.polly.codelist.OrganisationCodelistSync.class));
         var client = mock(EadmClient.class);
         when(client.fetch()).thenThrow(new IllegalStateException("upstream unavailable"));
-        var sync = new OrganisationChartSync(properties, client, new EadmChartParser(), store);
+        var sync = new OrganisationChartSync(properties, client, new EadmChartParser(), store, event -> {});
         assertThat(sync.refresh()).isFalse();
         var saved = row.getDataObject(OrganisationChart.class);
         assertThat(saved.getUnits()).isEqualTo(previous.getUnits());
@@ -70,10 +70,11 @@ class OrganisationChartSyncTest {
         when(client.fetch()).thenReturn(JsonUtils.toJsonNode("""
                 {"returncode":0,"data":[{"syncfields":[
                   {"name":"Department","value":"Fresh department"},
+                  {"name":"OrgUnitType","value":"Enheter"},
                   {"name":"DepartmentNumber","value":"2"},
                   {"name":"ParentDepartmentNumber","value":"0"}]}]}
                 """));
-        var sync = new OrganisationChartSync(properties, client, new EadmChartParser(), store);
+        var sync = new OrganisationChartSync(properties, client, new EadmChartParser(), store, event -> {});
         sync.initialize();
         verifyNoInteractions(client);
         sync.dailyRefresh();
@@ -90,7 +91,7 @@ class OrganisationChartSyncTest {
         when(store.get()).thenReturn(new OrganisationChart());
         var client = mock(EadmClient.class);
         when(client.fetch()).thenThrow(new IllegalStateException("offline"));
-        new OrganisationChartSync(properties, client, new EadmChartParser(), store).initialize();
+        new OrganisationChartSync(properties, client, new EadmChartParser(), store, event -> {}).initialize();
         verify(client).fetch();
         verify(store).recordFailure(any());
     }

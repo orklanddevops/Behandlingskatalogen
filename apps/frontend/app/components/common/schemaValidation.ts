@@ -305,6 +305,8 @@ export const codeListSchema: () => yup.ObjectSchema<ICode> = () =>
       .required(requiredMessage),
     shortName: yup.string().required(requiredMessage),
     description: yup.string().required(requiredMessage),
+    source: yup.string(),
+    parentCode: yup.string().nullable(),
     invalidCode: yup.boolean(),
   })
 

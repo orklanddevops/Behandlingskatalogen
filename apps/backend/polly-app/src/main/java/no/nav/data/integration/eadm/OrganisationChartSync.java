@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class OrganisationChartSync {
     private final EadmClient client;
     private final EadmChartParser parser;
     private final OrganisationChartStore store;
+    private final ApplicationEventPublisher events;
 
     @Scheduled(cron = "${client.eadm.cron:0 0 4 * * *}", zone = "Europe/Oslo")
     public void dailyRefresh() {
@@ -29,8 +31,12 @@ public class OrganisationChartSync {
         if (!properties.isEnabled()) return;
         var chart = store.get();
         // Seed a new installation and catch up after downtime; restarts reuse a recent chart.
-        if (chart.getRetrievedAt() == null || chart.getRetrievedAt().isBefore(Instant.now().minus(Duration.ofDays(1)))) {
+        if (chart.getRetrievedAt() == null || chart.getRetrievedAt().isBefore(Instant.now().minus(Duration.ofDays(1)))
+                || chart.getUnits().stream().anyMatch(u -> u.unitType() == null || u.unitType().isBlank())) {
             refresh();
+        } else {
+            store.synchronizeCodelists();
+            events.publishEvent(new OrganisationChartUpdated());
         }
     }
 
@@ -42,6 +48,7 @@ public class OrganisationChartSync {
             var chart = parser.parse(client.fetch(), properties.getOrganizationNumber(),
                     properties.getMinimumDepartments(), previous.getUnits().size());
             store.save(chart);
+            events.publishEvent(new OrganisationChartUpdated());
             log.info("eADM organisation chart updated: {} departments", chart.getUnits().size());
             return true;
         } catch (Exception e) {

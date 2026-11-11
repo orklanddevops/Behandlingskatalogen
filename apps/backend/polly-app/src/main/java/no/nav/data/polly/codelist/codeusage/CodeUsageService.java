@@ -180,7 +180,8 @@ public class CodeUsageService {
                     });
                 }
                 case SEKSJON -> {
-                    var sectionName = CodelistStaticService.getCodelistResponse(ListName.SEKSJON, newCode).getShortName();
+                    var sectionName = newCodeName != null && !newCodeName.isBlank() ? newCodeName
+                            : CodelistStaticService.getCodelistResponse(ListName.SEKSJON, newCode).getShortName();
                     getProcesses(usage).forEach(p -> nullToEmptyList(p.getData().getAffiliation().getSeksjoner()).stream()
                             .filter(section -> oldCode.equals(section.getNomSeksjonId()))
                             .forEach(section -> {

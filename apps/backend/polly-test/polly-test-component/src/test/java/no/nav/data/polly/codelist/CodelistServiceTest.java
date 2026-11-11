@@ -52,7 +52,7 @@ class CodelistServiceTest {
     
     @BeforeEach
     void init() {
-        service = new CodelistService(repository, crv);
+        service = new CodelistService(repository, org.mockito.Mockito.mock(no.nav.data.integration.eadm.OrganisationChartStore.class), crv);
     }
 
     @Test

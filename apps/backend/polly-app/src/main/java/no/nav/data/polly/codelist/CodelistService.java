@@ -1,6 +1,11 @@
 package no.nav.data.polly.codelist;
 
 import lombok.RequiredArgsConstructor;
+import no.nav.data.integration.eadm.OrganisationChartStore;
+import no.nav.data.integration.eadm.OrganisationChartUpdated;
+import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.CodelistNotFoundException;
 import no.nav.data.polly.codelist.domain.Codelist;
@@ -26,6 +31,7 @@ import java.util.stream.Collectors;
 public class CodelistService implements ApplicationListener<ApplicationReadyEvent> {
 
     private final CodelistRepository codelistRepository;
+    private final OrganisationChartStore organisationChartStore;
     private final CodelistRequestValidator codelistRequestValidator; // TODO: Avhengighet utover
 
     @Scheduled(initialDelayString = "${codelist.refresh.initial-delay:PT1M}", fixedRateString = "${codelist.refresh.rate:PT1M}")
@@ -33,11 +39,13 @@ public class CodelistService implements ApplicationListener<ApplicationReadyEven
     public void refreshCache() {
         log.info("Refreshing codelist cache");
         List<Codelist> allCodelists = codelistRepository.findAll();
+        OrganisationCodelists.addMetadata(allCodelists, organisationChartStore.get());
         CodelistCache.init(cache -> allCodelists.forEach(cache::setCode));
     }
 
     @Transactional
     public List<Codelist> save(List<Codelist> codelists) {
+        codelists.forEach(code -> requireManualCategory(code.getList()));
         List<Codelist> saved = codelistRepository.saveAll(codelists);
         saved.forEach(CodelistCache::set);
         return saved;
@@ -46,6 +54,7 @@ public class CodelistService implements ApplicationListener<ApplicationReadyEven
     // TODO: Snu avhengigheten innover
     @Transactional
     public List<Codelist> update(List<CodelistRequest> requests) {
+        requests.forEach(request -> requireManualCategory(request.getListAsListName()));
         List<Codelist> codelists = requests.stream()
                 .map(this::updateDescriptionInRepository)
                 .collect(Collectors.toList());
@@ -65,6 +74,7 @@ public class CodelistService implements ApplicationListener<ApplicationReadyEven
 
     @Transactional
     public void delete(ListName name, String code) {
+        requireManualCategory(name);
         Optional<Codelist> toDelete = codelistRepository.findByListAndCode(name, code);
         if (toDelete.isEmpty()) {
             log.warn("Cannot find a codelist to delete with code={} and listName={}", code, name);
@@ -74,6 +84,17 @@ public class CodelistService implements ApplicationListener<ApplicationReadyEven
         codelistRequestValidator.validateCodelistIsNotInUse(name, code);
         codelistRepository.delete(toDelete.get());
         CodelistCache.remove(name, code);
+    }
+
+    private void requireManualCategory(ListName list) {
+        if (list != null && list.isOrganisation()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organisasjonskodeverket vedlikeholdes automatisk fra eADM.");
+        }
+    }
+
+    @EventListener(OrganisationChartUpdated.class)
+    public void organisationChartUpdated() {
+        refreshCache();
     }
 
     @Override

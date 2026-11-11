@@ -15,5 +15,9 @@ public enum ListName {
     TEAM,
     SYSTEM,
     TRANSFER_GROUNDS_OUTSIDE_EU,
-    DATA_ACCESS_CLASS
+    DATA_ACCESS_CLASS;
+
+    public boolean isOrganisation() {
+        return this == DEPARTMENT || this == SEKSJON || this == SUB_DEPARTMENT;
+    }
 }
