@@ -1,49 +1,58 @@
 /** @jest-environment jsdom */
 import { act } from 'react'
 import { Root, createRoot } from 'react-dom/client'
-import { getAllCodelists } from '../../api/CodelistApi'
+import {
+  IOrganisationChartStatus,
+  getOrganisationChart,
+  refreshOrganisationChart,
+} from '../../api/OrganisationApi'
 import OrganisationPage from '../../components/mainPages/OrganisationPage'
-import { EListName, IAllCodelists } from '../../constants/codelistConstant'
+import { IUserContext, UserContext } from '../../provider/userProvider'
 
-jest.mock('../../api/CodelistApi', () => ({ getAllCodelists: jest.fn() }))
+jest.mock('../../api/OrganisationApi', () => ({
+  getOrganisationChart: jest.fn(),
+  refreshOrganisationChart: jest.fn(),
+}))
 
-const data: IAllCodelists = {
-  codelist: {
-    DEPARTMENT: [
-      { list: EListName.DEPARTMENT, code: 'HELSE', shortName: 'Helse', description: 'Omsorg' },
-      { list: EListName.DEPARTMENT, code: 'IT', shortName: 'IT', description: 'Digitalisering' },
-      {
-        list: EListName.DEPARTMENT,
-        code: 'OLD',
-        shortName: 'Utgått',
-        description: '',
-        invalidCode: true,
-      },
+const data: IOrganisationChartStatus = {
+  syncEnabled: true,
+  chart: {
+    organizationNumber: 'NO000000000',
+    retrievedAt: '2026-11-11T03:00:00Z',
+    lastAttemptAt: '2026-11-11T03:00:00Z',
+    lastError: null,
+    units: [
+      { id: '1', parentId: null, name: 'Kommunen', managerName: '' },
+      { id: '2', parentId: '1', name: 'Helse', managerName: 'Leder Eksempel' },
+      { id: '3', parentId: '2', name: 'Legevakt', managerName: '' },
+      { id: '4', parentId: '1', name: 'IT', managerName: '' },
     ],
-    SEKSJON: [{ list: EListName.SEKSJON, code: 'HR', shortName: 'Personal', description: '' }],
   },
 }
 
 let container: HTMLDivElement
 let root: Root
-
 beforeEach(() => {
   ;(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
   container = document.createElement('div')
   document.body.appendChild(container)
   root = createRoot(container)
-  jest.mocked(getAllCodelists).mockResolvedValue(data)
+  jest.mocked(getOrganisationChart).mockResolvedValue(data)
+  jest.mocked(refreshOrganisationChart).mockResolvedValue(data)
 })
-
 afterEach(async () => {
   await act(async () => root.unmount())
   container.remove()
 })
-
-async function render() {
-  await act(async () => root.render(<OrganisationPage />))
+async function render(admin = false) {
+  await act(async () =>
+    root.render(
+      <UserContext.Provider value={{ isAdmin: () => admin } as IUserContext}>
+        <OrganisationPage />
+      </UserContext.Provider>
+    )
+  )
 }
-
 async function click(text: string) {
   const button = Array.from(container.querySelectorAll('button')).find((item) =>
     item.textContent?.includes(text)
@@ -51,49 +60,63 @@ async function click(text: string) {
   expect(button).toBeDefined()
   await act(async () => button.click())
 }
-
-test('shows organisation levels with counts, excluding retired codes and without inventing parent relationships', async () => {
-  await render()
-  expect(getAllCodelists).toHaveBeenCalledWith(true)
-  expect(container.textContent).toContain('Enheter (2)')
-  expect(container.textContent).toContain('Avdelinger (1)')
-  expect(container.textContent).not.toContain('Utgått')
-  expect(container.textContent).toContain('separate lister')
-  await click('Avdelinger (1)')
-  expect(container.querySelector('[role="tabpanel"]:not([hidden])')?.textContent).toContain(
-    'Personal'
-  )
-})
-
-test('searches names, codes and descriptions and handles no matches', async () => {
-  await render()
+async function search(value: string) {
   const input = container.querySelector('input')!
-  for (const query of ['helse', 'IT', 'digitalisering', 'finnes ikke']) {
-    await act(async () => {
-      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, query)
-      input.dispatchEvent(new Event('input', { bubbles: true }))
-    })
-    const panel = container.querySelector('[role="tabpanel"]:not([hidden])')!
-    expect(panel.textContent).toContain(query === 'finnes ikke' ? 'Ingen treff' : 'Viser 1 av 2')
-  }
-})
-
-test('keeps the previous overview after a refresh failure and allows retrying', async () => {
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, value)
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+  })
+}
+test('reads the cached chart, expands the hierarchy, and reloads without calling eADM', async () => {
   await render()
-  jest.mocked(getAllCodelists).mockRejectedValueOnce(new Error('Network error'))
-  await click('Oppdater oversikten')
-  expect(container.textContent).toContain('Den sist hentede oversikten vises fortsatt')
-  expect(container.textContent).toContain('Helse')
-  await click('Prøv igjen')
-  expect(getAllCodelists).toHaveBeenCalledTimes(3)
-  expect(container.textContent).not.toContain('Kunne ikke hente')
+  expect(container.textContent).toContain('Sist oppdatert fra eADM')
+  expect(container.textContent).toContain('4 avdelinger')
+  expect(container.textContent).not.toContain('Legevakt')
+  await click('Kommunen')
+  await click('Helse')
+  expect(container.textContent).toContain('Legevakt')
+  await click('Last inn oversikten')
+  expect(getOrganisationChart).toHaveBeenCalledTimes(2)
+  expect(refreshOrganisationChart).not.toHaveBeenCalled()
+  expect(container.textContent).not.toContain('Hent på nytt fra eADM')
 })
-
-test('offers a retry after the initial request fails', async () => {
-  jest.mocked(getAllCodelists).mockRejectedValueOnce(new Error('Network error'))
+test('searches department numbers, names and managers while keeping parents visible', async () => {
+  await render()
+  await search('legevakt')
+  expect(container.textContent).toContain('Kommunen')
+  expect(container.textContent).toContain('Helse')
+  expect(container.textContent).toContain('Legevakt')
+  expect(container.textContent).not.toContain('Avdelingsnummer: 4')
+  await search('Leder Eksempel')
+  expect(container.textContent).toContain('1 treff i 4 avdelinger')
+  await search('4')
+  expect(container.textContent).toContain('Avdelingsnummer: 4')
+  await search('ukjent')
+  expect(container.textContent).toContain('Ingen treff')
+})
+test('retains the cached chart if an administrator refresh fails', async () => {
+  jest.mocked(refreshOrganisationChart).mockRejectedValueOnce(new Error('eADM unavailable'))
+  await render(true)
+  await click('Hent på nytt fra eADM')
+  expect(refreshOrganisationChart).toHaveBeenCalledTimes(1)
+  expect(container.textContent).toContain('sist lagrede organisasjonskartet beholdes')
+  expect(container.textContent).toContain('Kommunen')
+})
+test('allows retrying a failed cached read', async () => {
+  jest.mocked(getOrganisationChart).mockRejectedValueOnce(new Error('Network'))
   await render()
   expect(container.textContent).toContain('Kunne ikke hente')
-  expect(container.querySelector('table')).toBeNull()
   await click('Prøv igjen')
-  expect(container.textContent).toContain('Helse')
+  expect(container.textContent).toContain('Kommunen')
+  expect(refreshOrganisationChart).not.toHaveBeenCalled()
+})
+test('shows an empty state and persisted sync failure', async () => {
+  jest.mocked(getOrganisationChart).mockResolvedValueOnce({
+    syncEnabled: true,
+    chart: { ...data.chart, retrievedAt: null, units: [], lastError: 'Import mislyktes' },
+  })
+  await render()
+  expect(container.textContent).toContain('ikke hentet ennå')
+  expect(container.textContent).toContain('Ingen lagret organisasjonsstruktur')
+  expect(container.textContent).toContain('Import mislyktes')
 })

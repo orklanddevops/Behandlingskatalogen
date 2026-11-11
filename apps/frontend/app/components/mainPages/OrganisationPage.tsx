@@ -1,42 +1,47 @@
 'use client'
 
+import { Alert, BodyLong, BodyShort, Button, Heading, Loader, Search } from '@navikt/ds-react'
+import { isAxiosError } from 'axios'
+import { ReactNode, useContext, useEffect, useState } from 'react'
 import {
-  Alert,
-  BodyLong,
-  BodyShort,
-  Button,
-  Heading,
-  Loader,
-  Search,
-  Table,
-  Tabs,
-} from '@navikt/ds-react'
-import { useEffect, useState } from 'react'
-import { getAllCodelists } from '@/api/CodelistApi'
-import { EListName, IAllCodelists } from '@/constants/codelistConstant'
+  IOrganisationChartStatus,
+  IOrganisationUnit,
+  getOrganisationChart,
+  refreshOrganisationChart,
+} from '@/api/OrganisationApi'
+import { UserContext } from '@/provider/userProvider'
 
-const levels = [
-  { list: EListName.DEPARTMENT, label: 'Enheter' },
-  { list: EListName.SEKSJON, label: 'Avdelinger' },
-  { list: EListName.SUB_DEPARTMENT, label: 'Underavdelinger' },
-  { list: EListName.TEAM, label: 'Team' },
-]
+function formatTime(value: string) {
+  return new Intl.DateTimeFormat('nb-NO', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Europe/Oslo',
+  }).format(new Date(value))
+}
 
 export default function OrganisationPage() {
-  const [data, setData] = useState<IAllCodelists>()
+  const user = useContext(UserContext)
+  const [data, setData] = useState<IOrganisationChartStatus>()
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+  const [error, setError] = useState('')
   const [request, setRequest] = useState(0)
   const [query, setQuery] = useState('')
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     let active = true
-    getAllCodelists(true)
+    getOrganisationChart()
       .then((response) => {
         if (active) setData(response)
       })
-      .catch(() => {
-        if (active) setError(true)
+      .catch((failure: unknown) => {
+        if (active)
+          setError(
+            isAxiosError(failure) && [401, 403].includes(failure.response?.status ?? 0)
+              ? 'Logg inn for å se organisasjonskartet.'
+              : 'Kunne ikke hente organisasjonskartet. Prøv igjen.'
+          )
       })
       .finally(() => {
         if (active) setLoading(false)
@@ -48,14 +53,98 @@ export default function OrganisationPage() {
 
   const reload = () => {
     setLoading(true)
-    setError(false)
+    setError('')
     setRequest((value) => value + 1)
   }
-  const codesFor = (list: EListName) =>
-    (data?.codelist[list] ?? [])
-      .filter((code) => !code.invalidCode)
-      .toSorted((a, b) => a.shortName.localeCompare(b.shortName, 'nb'))
+
+  const synchronize = async () => {
+    setSyncing(true)
+    setError('')
+    try {
+      setData(await refreshOrganisationChart())
+    } catch {
+      setError('Kunne ikke oppdatere fra eADM. Det sist lagrede organisasjonskartet beholdes.')
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  const units = data?.chart.units ?? []
+  const byId = new Map(units.map((unit) => [unit.id, unit]))
+  const children = new Map<string | null, IOrganisationUnit[]>()
+  for (const unit of units) {
+    const siblings = children.get(unit.parentId) ?? []
+    siblings.push(unit)
+    children.set(unit.parentId, siblings)
+  }
+  for (const siblings of children.values())
+    siblings.sort((a, b) => a.name.localeCompare(b.name, 'nb'))
+
+  const branches = units.filter((unit) => children.has(unit.id))
+  const allExpanded = branches.length > 0 && branches.every((unit) => expanded.has(unit.id))
+
   const search = query.trim().toLocaleLowerCase('nb')
+  const matches = units.filter((unit) =>
+    [unit.id, unit.name, unit.managerName].some((value) =>
+      value.toLocaleLowerCase('nb').includes(search)
+    )
+  )
+  const visible = new Set<string>()
+  for (const match of matches) {
+    let current: IOrganisationUnit | undefined = match
+    while (current && !visible.has(current.id)) {
+      visible.add(current.id)
+      current = current.parentId ? byId.get(current.parentId) : undefined
+    }
+  }
+
+  const toggle = (id: string) => {
+    setExpanded((previous) => {
+      const next = new Set(previous)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const renderBranch = (parent: string | null, depth = 0): ReactNode => (
+    <ul className={depth ? 'ml-4 border-l border-[var(--ax-border-neutral-subtle)] pl-4' : ''}>
+      {(children.get(parent) ?? [])
+        .filter((unit) => visible.has(unit.id))
+        .map((unit) => {
+          const nested = (children.get(unit.id) ?? []).some((child) => visible.has(child.id))
+          const open = !!search || expanded.has(unit.id)
+          return (
+            <li key={unit.id} className='my-2'>
+              <div className='rounded-lg border border-[var(--ax-border-neutral-subtle)] p-3'>
+                {nested ? (
+                  <button
+                    type='button'
+                    className='flex w-full items-center gap-2 rounded text-left font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-4'
+                    aria-expanded={open}
+                    aria-controls={'org-children-' + unit.id}
+                    onClick={() => toggle(unit.id)}
+                    disabled={!!search}
+                  >
+                    <span aria-hidden='true'>{open ? '▾' : '▸'}</span>
+                    {unit.name}
+                  </button>
+                ) : (
+                  <BodyShort weight='semibold'>{unit.name}</BodyShort>
+                )}
+                <BodyShort size='small'>Avdelingsnummer: {unit.id}</BodyShort>
+                {unit.managerName && <BodyShort size='small'>Leder: {unit.managerName}</BodyShort>}
+              </div>
+              {nested && (
+                <div id={'org-children-' + unit.id} hidden={!open}>
+                  {open && renderBranch(unit.id, depth + 1)}
+                </div>
+              )}
+            </li>
+          )
+        })}
+    </ul>
+  )
 
   return (
     <div className='w-full' role='main'>
@@ -63,37 +152,62 @@ export default function OrganisationPage() {
         <Heading size='xlarge' level='1'>
           Organisasjonsstruktur
         </Heading>
-        <Button variant='secondary' size='small' onClick={reload} disabled={loading}>
-          Oppdater oversikten
-        </Button>
+        <div className='flex flex-wrap gap-2'>
+          <Button variant='secondary' size='small' onClick={reload} disabled={loading || syncing}>
+            Last inn oversikten
+          </Button>
+          {user.isAdmin() && data?.syncEnabled && (
+            <Button
+              variant='secondary'
+              size='small'
+              onClick={synchronize}
+              loading={syncing}
+              disabled={loading}
+            >
+              Hent på nytt fra eADM
+            </Button>
+          )}
+        </div>
       </div>
       <BodyLong className='mb-4'>
-        Oversikt over enheter, avdelinger, underavdelinger og team som er registrert i
-        Databehandlingskatalogen.
+        Organisasjonskart fra eADM. Oversikten hentes fra Databehandlingskatalogens lagrede kopi.
       </BodyLong>
-      <Alert variant='info' className='mb-6'>
-        Oversikten viser dagens kodeverk. Tilhørighet mellom nivåene er ikke registrert, så enhetene
-        vises som separate lister.
-      </Alert>
+      {data && (
+        <BodyShort className='mb-4'>
+          {data.chart.retrievedAt
+            ? 'Sist oppdatert fra eADM: ' + formatTime(data.chart.retrievedAt) + '. '
+            : 'Organisasjonskartet er ikke hentet ennå. '}
+          {data.syncEnabled
+            ? 'Oppdateres automatisk hver dag.'
+            : 'Automatisk oppdatering er slått av.'}
+        </BodyShort>
+      )}
+      {data?.chart.lastError && (
+        <Alert variant='warning' className='mb-4'>
+          {data.chart.lastError}
+        </Alert>
+      )}
       {error && (
         <Alert variant='error' className='mb-4'>
-          Kunne ikke hente organisasjonsoversikten.
-          {data && ' Den sist hentede oversikten vises fortsatt.'}
-          <Button variant='tertiary' size='small' onClick={reload} disabled={loading}>
+          {error}
+          <Button variant='tertiary' size='small' onClick={reload} disabled={loading || syncing}>
             Prøv igjen
           </Button>
         </Alert>
       )}
       {loading && (
         <div role='status' className='mb-4'>
-          <Loader title='Henter organisasjonsoversikten' />
+          <Loader title='Henter organisasjonskartet' />
         </div>
       )}
-      {data && (
+      {data && !units.length && (
+        <Alert variant='info'>Ingen lagret organisasjonsstruktur er tilgjengelig ennå.</Alert>
+      )}
+      {!!units.length && (
         <>
-          <div className='mb-6 max-w-xl'>
+          <div className='mb-4 max-w-xl'>
             <Search
-              label='Søk i organisasjonsoversikten'
+              label='Søk etter avdeling, avdelingsnummer eller leder'
               hideLabel={false}
               variant='simple'
               value={query}
@@ -101,63 +215,27 @@ export default function OrganisationPage() {
               onClear={() => setQuery('')}
             />
           </div>
-          <Tabs defaultValue={EListName.DEPARTMENT}>
-            <Tabs.List className='flex-wrap'>
-              {levels.map(({ list, label }) => (
-                <Tabs.Tab
-                  key={list}
-                  value={list}
-                  label={label + ' (' + codesFor(list).length + ')'}
-                />
-              ))}
-            </Tabs.List>
-            {levels.map(({ list, label }) => {
-              const codes = codesFor(list)
-              const matches = codes.filter((code) =>
-                [code.shortName, code.code, code.description].some((value) =>
-                  value?.toLocaleLowerCase('nb').includes(search)
-                )
-              )
-              return (
-                <Tabs.Panel key={list} value={list} className='pt-6'>
-                  <Heading size='medium' level='2' className='mb-4'>
-                    {label}
-                  </Heading>
-                  <BodyShort className='mb-3' aria-live='polite'>
-                    Viser {matches.length} av {codes.length}
-                  </BodyShort>
-                  {matches.length ? (
-                    <div className='overflow-x-auto'>
-                      <Table>
-                        <Table.Header>
-                          <Table.Row>
-                            <Table.HeaderCell scope='col'>Navn</Table.HeaderCell>
-                            <Table.HeaderCell scope='col'>Kode</Table.HeaderCell>
-                            <Table.HeaderCell scope='col'>Beskrivelse</Table.HeaderCell>
-                          </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                          {matches.map((code) => (
-                            <Table.Row key={code.code}>
-                              <Table.HeaderCell scope='row'>{code.shortName}</Table.HeaderCell>
-                              <Table.DataCell>{code.code}</Table.DataCell>
-                              <Table.DataCell>{code.description || '–'}</Table.DataCell>
-                            </Table.Row>
-                          ))}
-                        </Table.Body>
-                      </Table>
-                    </div>
-                  ) : (
-                    <BodyLong>
-                      {codes.length
-                        ? 'Ingen treff. Prøv et annet søk.'
-                        : 'Ingen registrerte ' + label.toLocaleLowerCase('nb') + '.'}
-                    </BodyLong>
-                  )}
-                </Tabs.Panel>
-              )
-            })}
-          </Tabs>
+          <div className='mb-4 flex flex-wrap items-center justify-between gap-4'>
+            <BodyShort aria-live='polite'>
+              {search ? matches.length + ' treff i ' : ''}
+              {units.length} avdelinger
+            </BodyShort>
+            <Button
+              variant='tertiary'
+              size='small'
+              disabled={!!search}
+              onClick={() => {
+                setExpanded(allExpanded ? new Set() : new Set(branches.map((unit) => unit.id)))
+              }}
+            >
+              {allExpanded ? 'Lukk alle' : 'Utvid alle'}
+            </Button>
+          </div>
+          {matches.length ? (
+            renderBranch(null)
+          ) : (
+            <BodyLong>Ingen treff. Prøv et annet søk.</BodyLong>
+          )}
         </>
       )}
     </div>

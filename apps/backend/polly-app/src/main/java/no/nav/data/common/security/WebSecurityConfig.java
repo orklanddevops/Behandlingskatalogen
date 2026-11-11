@@ -59,6 +59,11 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/system-information/**")
                 .hasAnyRole(AppRole.WRITE.name(), AppRole.SUPER.name(), AppRole.ADMIN.name()));
 
+        // Organisation charts include manager names; serve the stored chart to signed-in users.
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/organisation", "/organisation/**").permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/organisation", "/organisation/**").authenticated());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/organisation", "/organisation/**").hasRole(AppRole.ADMIN.name()));
+
         allowAll(http,
                 "/error",
                 "/login",

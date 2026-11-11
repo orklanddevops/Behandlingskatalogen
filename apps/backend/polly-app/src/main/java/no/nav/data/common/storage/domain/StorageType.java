@@ -1,6 +1,7 @@
 package no.nav.data.common.storage.domain;
 
 import lombok.Getter;
+import no.nav.data.integration.eadm.OrganisationChart;
 import no.nav.data.common.mail.MailTask;
 import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.polly.alert.domain.AlertEvent;
@@ -13,6 +14,7 @@ import java.util.Map;
 public enum StorageType {
 
     SETTINGS(Settings.class),
+    ORGANISATION_CHART(OrganisationChart.class, false),
     APP_STATE(AppState.class, false),
     ALERT_EVENT(AlertEvent.class, false),
     MAIL_LOG(MailLog.class, false),
