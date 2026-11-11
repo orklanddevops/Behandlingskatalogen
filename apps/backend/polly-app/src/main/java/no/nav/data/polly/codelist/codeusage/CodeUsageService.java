@@ -3,6 +3,8 @@ package no.nav.data.polly.codelist.codeusage;
 import io.prometheus.client.Summary;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.polly.codelist.CodelistStaticService;
+import no.nav.data.polly.codelist.OrganisationAffiliations;
+import no.nav.data.polly.codelist.domain.Codelist;
 import no.nav.data.polly.codelist.domain.ListName;
 import no.nav.data.polly.codelist.dto.CodeUsageRequest;
 import no.nav.data.polly.codelist.dto.CodeUsageResponse;
@@ -79,6 +81,22 @@ public class CodeUsageService {
                 .ageBuckets(6)
                 .register();
         this.requestValidator = requestValidator;
+    }
+
+    public void reclassifyOrganisationUsage(ListName oldList, String id, List<Codelist> imported) {
+        var usage = findCodeUsage(oldList, id);
+        getProcesses(usage).forEach(p -> OrganisationAffiliations.reclassify(p.getData().getAffiliation(), id, imported));
+        getDpProcesses(usage).forEach(p -> OrganisationAffiliations.reclassify(p.getData().getAffiliation(), id, imported));
+        if (oldList == ListName.DEPARTMENT) {
+            var root = OrganisationAffiliations.branch(imported, id).stream()
+                    .filter(c -> c.getList() == ListName.DEPARTMENT).findFirst().orElseThrow();
+            getDisclosures(usage).forEach(d -> {
+                d.getData().setNomDepartmentId(root.getCode());
+                d.getData().setNomDepartmentName(root.getShortName());
+            });
+            systemInformationRepository.findByOrganisationalUnit(id)
+                    .forEach(record -> record.setData(record.getData().withOrganisationalUnit(root.getCode())));
+        }
     }
 
     public void validateListName(String list) {

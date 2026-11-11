@@ -24,12 +24,18 @@ public class OrganisationCodelistSync {
     public void replace(OrganisationChart chart) {
         var imported = OrganisationCodelists.fromChart(chart);
         var previous = repository.findAll().stream().filter(c -> c.getList().isOrganisation()).toList();
+        var byId = imported.stream().collect(Collectors.toMap(Codelist::getCode, Function.identity()));
         var byKey = imported.stream().collect(Collectors.toMap(this::key, Function.identity()));
         var byName = imported.stream().collect(Collectors.groupingBy(c -> c.getList() + ":" + normalize(c.getShortName())));
         List<Codelist> obsolete = new ArrayList<>();
         int unmatched = 0;
         for (var old : previous) {
             if (byKey.containsKey(key(old))) continue;
+            if (byId.containsKey(old.getCode())) {
+                usage.reclassifyOrganisationUsage(old.getList(), old.getCode(), imported);
+                obsolete.add(old);
+                continue;
+            }
             var matches = byName.getOrDefault(old.getList() + ":" + normalize(old.getShortName()), List.of());
             if (matches.size() == 1) {
                 var target = matches.getFirst();

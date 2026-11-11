@@ -32,14 +32,27 @@ class OrganisationCodelistSyncTest {
         return Codelist.builder().list(list).code(id).shortName(name).description("Old").build();
     }
 
+    @Test
+    void reclassifiesExistingStableIdsBeforeRemovingTheirPreviousCategory() {
+        var repository = mock(CodelistRepository.class);
+        var usage = mock(CodeUsageService.class);
+        var previousUnit = code(ListName.DEPARTMENT, "10", "Enhet A");
+        var previousSection = code(ListName.SEKSJON, "11", "Avdeling A");
+        when(repository.findAll()).thenReturn(List.of(previousUnit, previousSection));
+        new OrganisationCodelistSync(repository, usage).replace(chart());
+        var order = inOrder(usage, repository);
+        order.verify(usage).reclassifyOrganisationUsage(eq(ListName.DEPARTMENT), eq("10"), anyList());
+        order.verify(usage).reclassifyOrganisationUsage(eq(ListName.SEKSJON), eq("11"), anyList());
+        order.verify(repository).deleteAll(List.of(previousUnit, previousSection));
+    }
     @AfterEach void clear() { CodelistCache.init(); }
 
     @Test
-    void mapsUnitTypesRatherThanGlobalDepthAndKeepsPublicCodesFreeOfManagerNames() {
+    void mapsChartDepthRatherThanSourceTypesAndKeepsPublicCodesFreeOfManagerNames() {
         var codes = OrganisationCodelists.fromChart(chart());
-        assertThat(codes).filteredOn(c -> c.getList() == ListName.DEPARTMENT).extracting(Codelist::getCode).containsExactly("10", "20");
-        assertThat(codes).filteredOn(c -> c.getList() == ListName.SEKSJON).extracting(Codelist::getCode).containsExactly("11", "21");
-        assertThat(codes).filteredOn(c -> c.getList() == ListName.SUB_DEPARTMENT).extracting(Codelist::getCode).containsExactly("12");
+        assertThat(codes).filteredOn(c -> c.getList() == ListName.DEPARTMENT).extracting(Codelist::getCode).containsExactly("0", "20");
+        assertThat(codes).filteredOn(c -> c.getList() == ListName.SEKSJON).extracting(Codelist::getCode).containsExactly("10", "21");
+        assertThat(codes).filteredOn(c -> c.getList() == ListName.SUB_DEPARTMENT).extracting(Codelist::getCode).containsExactly("11", "12");
         assertThat(codes).allSatisfy(c -> {
             assertThat(c.getSource()).isEqualTo("EADM");
             assertThat(c.getDescription()).doesNotContain("Private Manager");
@@ -52,17 +65,17 @@ class OrganisationCodelistSyncTest {
     void replacesAllObsoleteOrganisationCodesMigratesUniqueNamesAndLeavesTeamsAlone() {
         var repository = mock(CodelistRepository.class);
         var usage = mock(CodeUsageService.class);
-        var oldUnit = code(ListName.DEPARTMENT, "OLD", " enhet a ");
-        var oldSection = code(ListName.SEKSJON, "OLD_SECTION", "Avdeling A");
+        var oldUnit = code(ListName.DEPARTMENT, "OLD", " enhet b ");
+        var oldSection = code(ListName.SEKSJON, "OLD_SECTION", "Enhet A");
         var unknown = code(ListName.SUB_DEPARTMENT, "UNKNOWN", "Old unknown");
         var team = code(ListName.TEAM, "TEAM", "Team");
         when(repository.findAll()).thenReturn(List.of(oldUnit, oldSection, unknown, team));
         new OrganisationCodelistSync(repository, usage).replace(chart());
-        verify(usage).replaceUsage(ListName.DEPARTMENT, "OLD", "10", "Enhet A");
-        verify(usage).replaceUsage(ListName.SEKSJON, "OLD_SECTION", "11", "Avdeling A");
+        verify(usage).replaceUsage(ListName.DEPARTMENT, "OLD", "20", "Enhet B");
+        verify(usage).replaceUsage(ListName.SEKSJON, "OLD_SECTION", "10", "Enhet A");
         verify(usage, never()).replaceUsage(eq(ListName.SUB_DEPARTMENT), any(), any(), any());
         verify(repository).deleteAll(List.of(oldUnit, oldSection, unknown));
-        verify(repository).saveAll(argThat((List<Codelist> saved) -> saved.size() == 5
+        verify(repository).saveAll(argThat((List<Codelist> saved) -> saved.size() == 6
                 && saved.stream().noneMatch(c -> c.getList() == ListName.TEAM)));
     }
 
@@ -95,11 +108,11 @@ class OrganisationCodelistSyncTest {
         var properties = new NomGraphQlProperties();
         properties.setEnabled(false);
         var nom = new NomGraphClient(new SecurityProperties(), mock(TokenProvider.class), properties);
-        assertThat(nom.getAllSeksjonForAvdeling("10")).extracting(no.nav.data.integration.nom.domain.OrgEnhet::getId).containsExactly("11");
+        assertThat(nom.getAllSeksjonForAvdeling("0")).extracting(no.nav.data.integration.nom.domain.OrgEnhet::getId).containsExactly("10");
         assertThat(nom.getAllSeksjonForAvdeling("20")).extracting(no.nav.data.integration.nom.domain.OrgEnhet::getId).containsExactly("21");
         properties.setEnabled(true);
         assertThat(nom.getAllAvdelinger()).hasSize(2);
-        assertThat(nom.getAllSeksjonForAvdeling("10")).extracting(no.nav.data.integration.nom.domain.OrgEnhet::getId).containsExactly("11");
+        assertThat(nom.getAllSeksjonForAvdeling("0")).extracting(no.nav.data.integration.nom.domain.OrgEnhet::getId).containsExactly("10");
         service.refreshCache();
         assertThat(CodelistStaticService.getCodelistResponse(ListName.SUB_DEPARTMENT, "12").getParentCode()).isEqualTo("11");
     }

@@ -18,10 +18,17 @@ Dette er ikke et delegert Microsoft Graph-kall og krever ingen nye Entra-tillate
 Vi lagrer bare avdelingsnummer, foreldreavdelingsnummer, navn og ledernavn samt
 tidspunkt/status for importen. Rå eksport med øvrige kontaktfelter lagres ikke.
 Enhet (DEPARTMENT), Avdeling (SEKSJON) og Underavdeling (SUB_DEPARTMENT) styres fullt
-av organisasjonskartet. Enheter i eADM fyller Enhet, direkte Avdelinger under en Enhet
-fyller Avdeling, og Avdelinger under andre Avdelinger fyller Underavdeling.
-Rammeområder og grupper for personer uten arbeidsforhold vises kun i organisasjonskartet.
+av plasseringen i organisasjonskartet, ikke eADMs typebetegnelser. Rotnoder fyller Enhet,
+direkte barn fyller Avdeling, og alle dypere nivåer fyller Underavdeling.
+Rammeområder som Oppvekst er dermed Enhet; skoler/barnehager er Avdeling;
+HR under Organisasjon og innbyggerkontakt er Underavdeling.
+Grupper for personer uten arbeidsforhold og deres etterkommere vises kun i organisasjonskartet.
 Avdelingsnummer fra eADM brukes som stabil kode; kodebeskrivelsene inneholder ikke ledernavn.
+
+Når en eksisterende eADM-ID flyttes mellom kategorier, flyttes tilknytningene i
+databehandlinger og databehandlerregistreringer til riktig felt, og foreldrene fylles ut.
+Utleveringer og systeminformasjon som bare støtter Enhet knyttes til grenens rot.
+Dette skjer i samme transaksjon som kodeverket oppdateres, også ved oppstart med lagret kart.
 
 En gyldig import erstatter gamle oppføringer i disse tre kategoriene i samme
 databasetransaksjon som kartet lagres. Eksisterende tilknytninger flyttes automatisk

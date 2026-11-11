@@ -16,28 +16,33 @@ public final class OrganisationCodelists {
         var byId = chart.getUnits().stream().collect(Collectors.toMap(OrganisationUnit::id, Function.identity()));
         List<Codelist> result = new ArrayList<>();
         for (var unit : chart.getUnits()) {
-            ListName list;
-            if ("Enheter".equalsIgnoreCase(unit.unitType())) {
-                list = ListName.DEPARTMENT;
-            } else if ("Avdelinger".equalsIgnoreCase(unit.unitType())) {
-                var parent = byId.get(unit.parentId());
-                if (parent == null || !Set.of("Enheter", "Avdelinger").contains(parent.unitType()))
-                    throw new IllegalArgumentException("Department has no typed organisational parent");
-                list = "Enheter".equalsIgnoreCase(parent.unitType()) ? ListName.SEKSJON : ListName.SUB_DEPARTMENT;
-            } else if ("Rammeområde".equalsIgnoreCase(unit.unitType()) || "Personer uten arbeidsforhold".equalsIgnoreCase(unit.unitType())) {
-                // These groups remain in the chart, not in the organisation categories.
-                continue;
-            } else {
-                throw new IllegalArgumentException("Organisation chart has an unknown or missing unit type");
+            int depth = 0;
+            boolean excluded = false;
+            var current = unit;
+            Set<String> visited = new HashSet<>();
+            while (current != null) {
+                if (!visited.add(current.id()) || visited.size() > 100)
+                    throw new IllegalArgumentException("Invalid organisation hierarchy");
+                String type = current.unitType() == null ? "" : current.unitType().strip().toLowerCase(Locale.ROOT);
+                if (type.equals("personer uten arbeidsforhold")) {
+                    excluded = true;
+                    break;
+                }
+                if (!Set.of("enheter", "avdelinger", "rammeområde").contains(type))
+                    throw new IllegalArgumentException("Organisation chart has an unknown or missing unit type");
+                if (current.parentId() == null) break;
+                current = byId.get(current.parentId());
+                if (current == null) throw new IllegalArgumentException("Organisation chart has an unknown parent");
+                depth++;
             }
-            var code = Codelist.builder().list(list).code(unit.id()).shortName(unit.name())
+            if (excluded) continue;
+            ListName list = depth == 0 ? ListName.DEPARTMENT : depth == 1 ? ListName.SEKSJON : ListName.SUB_DEPARTMENT;
+            result.add(Codelist.builder().list(list).code(unit.id()).shortName(unit.name())
                     .description("Hentes automatisk fra eADM.").source("EADM")
-                    .parentCode(list == ListName.DEPARTMENT ? null : unit.parentId()).build();
-            result.add(code);
+                    .parentCode(unit.parentId()).build());
         }
-        if (result.stream().noneMatch(c -> c.getList() == ListName.DEPARTMENT)) {
-            throw new IllegalArgumentException("Organisation chart has no typed units");
-        }
+        if (result.stream().noneMatch(c -> c.getList() == ListName.DEPARTMENT))
+            throw new IllegalArgumentException("Organisation chart has no organisational roots");
         return result;
     }
 
