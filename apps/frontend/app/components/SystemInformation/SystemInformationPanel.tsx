@@ -182,7 +182,7 @@ export default function SystemInformationPanel({
         </Alert>
       )}
       {draft ? (
-        <form onSubmit={save} className='space-y-8'>
+        <form onSubmit={save} className='system-information-form space-y-8'>
           <fieldset disabled={saving} className='m-0 min-w-0 space-y-6 border-0 p-0'>
             <legend className='sr-only'>Rediger {title.toLowerCase()}</legend>
             {section !== 'responsibilities' && (
@@ -198,7 +198,9 @@ export default function SystemInformationPanel({
                     onChange={(contacts) => change('systemOwner', contacts[0] ?? null)}
                   />
                   <div>
-                    <Label htmlFor='responsible-unit'>Ansvarlig enhet</Label>
+                    <Label htmlFor='responsible-unit' className='mb-2 block'>
+                      Ansvarlig enhet
+                    </Label>
                     <OrganisationSelect
                       id='responsible-unit'
                       label='Ansvarlig enhet'
@@ -275,7 +277,7 @@ export default function SystemInformationPanel({
                         label={`Lenke til ${contact.name}`}
                         type='url'
                         maxLength={2000}
-                        description='Bruk en fullstendig adresse, for eksempel https://…'
+                        placeholder='https://'
                         value={draft.data[contact.url] || ''}
                         onChange={(event) => change(contact.url, event.target.value)}
                       />
@@ -291,7 +293,7 @@ export default function SystemInformationPanel({
                 ))}
                 <Textarea
                   label='Merknader'
-                  description='For eksempel avklaringer om ansvarsdeling eller hvem som skal kontaktes.'
+                  placeholder='For eksempel avklaringer om ansvarsdeling eller hvem som skal kontaktes.'
                   maxLength={10000}
                   value={draft.data.notes}
                   onChange={(event) => change('notes', event.target.value)}

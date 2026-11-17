@@ -408,3 +408,12 @@ body {
 .orkland-accordion-header:active {
   background: var(--orkland-accent-pressed);
 }
+
+/* Keep system form controls aligned while allowing notes and multi-person selections to grow. */
+.system-information-form .aksel-text-field__input,
+.system-information-form .aksel-select__input,
+.system-information-form input[type='date'] {
+  box-sizing: border-box;
+  height: 3rem;
+  min-height: 3rem;
+}

@@ -50,12 +50,14 @@ export default function EmployeePicker({
   }
   return (
     <div>
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id} className='mb-2 block'>
+        {label}
+      </Label>
       <AsyncSelect<IEmployeeOption, boolean>
         inputId={id}
         instanceId={id}
         aria-label={label}
-        aria-describedby={`${id}-help`}
+        aria-describedby={error ? `${id}-error` : undefined}
         placeholder='Søk etter navn eller e-post'
         isMulti={multiple}
         isClearable
@@ -78,13 +80,20 @@ export default function EmployeePicker({
               ? 'Kunne ikke søke. Prøv igjen.'
               : 'Ingen ansatte funnet'
         }
-        styles={selectOverrides}
+        styles={{
+          ...selectOverrides,
+          control: (base) => ({
+            ...selectOverrides.control(base),
+            height: 'auto',
+            minHeight: '3rem',
+          }),
+        }}
       />
-      <p id={`${id}-help`} className='mt-1 text-sm'>
-        {error
-          ? 'Ansattoppslaget er utilgjengelig. Prøv igjen senere.'
-          : 'Skriv minst 3 tegn. Du kan søke på navn eller e-post.'}
-      </p>
+      {error && (
+        <p id={`${id}-error`} className='mt-2 text-sm' role='alert'>
+          Ansattoppslaget er utilgjengelig. Prøv igjen senere.
+        </p>
+      )}
     </div>
   )
 }

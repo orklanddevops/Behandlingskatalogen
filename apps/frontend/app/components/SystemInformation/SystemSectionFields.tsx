@@ -182,6 +182,7 @@ export default function SystemSectionFields({
         {editing ? (
           <TextField
             label='Avtale – lenke til avtale'
+            placeholder='https://'
             type='url'
             maxLength={2000}
             value={value.agreementUrl}
