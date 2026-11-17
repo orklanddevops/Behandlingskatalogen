@@ -48,14 +48,24 @@ public class EntraResourceService implements ResourceService {
     @Override
     public RestResponsePage<Resource> search(String name) {
         if (name == null || name.trim().length() < 3) return new RestResponsePage<>(java.util.List.of());
-        String terms = Arrays.stream(name.trim().split("\\s+"))
-                .map(term -> term.replace("'", "''"))
-                .map(term -> "(startswith(displayName,'" + term + "') or startswith(givenName,'" + term
-                        + "') or startswith(surname,'" + term + "') or startswith(mail,'" + term
-                        + "') or startswith(userPrincipalName,'" + term + "'))")
-                .collect(Collectors.joining(" and "));
-        var uri = graph.uri("users", Map.of("$select", SELECT, "$top", "25", "$count", "true",
-                "$filter", "accountEnabled eq true and userType eq 'Member' and " + terms));
+        var query = new LinkedHashMap<String, String>();
+        query.put("$select", SELECT);
+        query.put("$top", "25");
+        query.put("$count", "true");
+        query.put("$filter", "accountEnabled eq true and userType eq 'Member'");
+        if (name.contains("@")) {
+            String email = name.trim().replace("'", "''");
+            query.put("$filter", query.get("$filter") + " and (startswith(mail,'" + email
+                    + "') or startswith(userPrincipalName,'" + email + "'))");
+        } else {
+            // Graph tokenizes displayName, so middle names match even when omitted from email.
+            String terms = Arrays.stream(name.trim().split("\\s+"))
+                    .map(term -> term.replace("\\", "\\\\").replace("\"", "\\\""))
+                    .map(term -> "\"displayName:" + term + "\"")
+                    .collect(Collectors.joining(" AND "));
+            query.put("$search", terms);
+        }
+        var uri = graph.uri("users", query);
         return new RestResponsePage<>(graph.list(uri, false).stream().filter(EntraResourceService::isEmployee)
                 .map(EntraResourceService::convert).toList());
     }

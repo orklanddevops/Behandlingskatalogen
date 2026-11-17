@@ -57,7 +57,11 @@ class SystemInformationPersistenceTest {
         entity.setCreatedBy("Test employee");
         entity.setCreatedDate(LocalDateTime.now());
         entity.setData(new SystemInformationData(new SystemInformationData.Contact("person", "Ada Hansen", "ada@example.org"),
-                List.of(), List.of(), new SystemInformationData.TeamReference("team", "IT"), "IT", "", "", "Original", null, null));
+                List.of(), List.of(), new SystemInformationData.TeamReference("team", "IT"), "IT", "", "", "Original", null, null, "", "", "", "",
+                new SystemInformationData.Contact("it", "IT contact", "it@example.org"),
+                new SystemInformationData.Technical(new SystemInformationData.Contact("operator", "Operator", "operator@example.org"), 0, "HIGH"),
+                new SystemInformationData.Economy(java.math.BigDecimal.ZERO, new java.math.BigDecimal("12345.67"), "https://example.org/agreement", java.time.LocalDate.of(2026, 11, 17), "Three months"),
+                new SystemInformationData.Accessibility("RELEVANT", "web", java.util.Map.of("1.1.1", "YES"), java.util.Map.of("1.1.1", "NO"))));
         try (var session = factory.openSession()) {
             var transaction = session.beginTransaction();
             session.persist(entity);
@@ -75,6 +79,13 @@ class SystemInformationPersistenceTest {
             assertThat(loaded.getData().systemOwner().name()).isEqualTo("Ada Hansen");
             assertThat(loaded.getData().responsibleTeam().name()).isEqualTo("IT");
             assertThat(loaded.getData().administrators()).isEmpty();
+            assertThat(loaded.getData().itResponsible().name()).isEqualTo("IT contact");
+            assertThat(loaded.getData().technical().technicalOperator().name()).isEqualTo("Operator");
+            assertThat(loaded.getData().technical().userCount()).isZero();
+            assertThat(loaded.getData().economy().annualCost()).isEqualByComparingTo(java.math.BigDecimal.ZERO);
+            assertThat(loaded.getData().economy().purchaseDate()).isEqualTo(java.time.LocalDate.of(2026, 11, 17));
+            assertThat(loaded.getData().accessibility().webAnswers()).containsEntry("1.1.1", "YES");
+            assertThat(loaded.getData().accessibility().appAnswers()).containsEntry("1.1.1", "NO");
         }
         verify(auditRepository, atLeastOnce()).save(argThat(audit -> audit.getTable().equals("SYSTEM_INFORMATION")
                 && audit.getTableId().equals(original.getId().toString())));

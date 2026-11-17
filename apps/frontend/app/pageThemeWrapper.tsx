@@ -4,6 +4,7 @@ import { Theme } from '@navikt/ds-react'
 import { Fragment, FunctionComponent, ReactNode, useEffect, useState } from 'react'
 import Header from './components/Header'
 import SideBar from './components/SideBar/SideBar'
+import AccessFeedback from './components/common/AccessFeedback'
 import { TThemeMode, persistThemeMode, useStoredThemeMode } from './util/themeMode'
 
 type TProps = {
@@ -45,7 +46,10 @@ const PageThemeWrapper: FunctionComponent<TProps> = ({ children, origin }) => {
               <SideBar themeMode={themeMode} />
             </div>
 
-            <div className='mb-48 w-full min-w-0 px-7 py-7'>{children}</div>
+            <div className='mb-48 w-full min-w-0 px-7 py-7'>
+              <AccessFeedback />
+              {children}
+            </div>
           </div>
         </div>
       </Theme>

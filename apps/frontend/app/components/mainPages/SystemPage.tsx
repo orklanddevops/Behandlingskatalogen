@@ -8,6 +8,7 @@ import { EListName } from '@/constants/codelistConstant'
 import { InfoTypeTable } from '../InformationType/InfoTypeTableSimple'
 import ProcessList from '../Process/ProcessList'
 import SystemInformationPanel from '../SystemInformation/SystemInformationPanel'
+import { TSystemSection, sectionTitles } from '../SystemInformation/SystemSectionFields'
 import { PageHeader } from '../common/PageHeader'
 import { ESection } from './ProcessPage'
 
@@ -25,7 +26,9 @@ export const SystemPage = () => {
             <Tabs.List>
               <Tabs.Tab value='behandlinger' label='Databehandlinger' />
               <Tabs.Tab value='opplysningstyper' label='Opplysningstyper' />
-              <Tabs.Tab value='systeminformasjon' label='Systeminformasjon' />
+              {(Object.keys(sectionTitles) as TSystemSection[]).map((section) => (
+                <Tabs.Tab key={section} value={section} label={sectionTitles[section]} />
+              ))}
             </Tabs.List>
             <Tabs.Panel value='behandlinger'>
               <ProcessList
@@ -43,9 +46,17 @@ export const SystemPage = () => {
                 }
               />
             </Tabs.Panel>
-            <Tabs.Panel value='systeminformasjon'>
-              <SystemInformationPanel key={systemCode} systemCode={systemCode} />
-            </Tabs.Panel>
+            {(Object.keys(sectionTitles) as TSystemSection[]).map((section) => (
+              <Tabs.Panel key={section} value={section}>
+                {activeTab === section && (
+                  <SystemInformationPanel
+                    key={`${systemCode}-${section}`}
+                    systemCode={systemCode}
+                    section={section}
+                  />
+                )}
+              </Tabs.Panel>
+            ))}
           </Tabs>
         </>
       )}

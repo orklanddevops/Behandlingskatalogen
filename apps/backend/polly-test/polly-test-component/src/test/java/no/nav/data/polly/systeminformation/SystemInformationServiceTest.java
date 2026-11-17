@@ -156,4 +156,79 @@ class SystemInformationServiceTest {
         }
         verify(repository, never()).saveAndFlush(any());
     }
+    private SystemInformationRequest extended(Long version, String it, SystemInformationRequest.TechnicalRequest technical,
+            SystemInformationData.Economy economy, SystemInformationData.Accessibility accessibility) {
+        var base = request(version, null, List.of(), List.of(), "", "", false);
+        return new SystemInformationRequest(base.version(), base.systemOwnerId(), base.administratorIds(),
+                base.superUserIds(), base.organisationalUnit(), base.supportEmail(), base.supportUrl(),
+                base.notes(), false, base.supportPhone(), base.emergencyEmail(), base.emergencyUrl(),
+                base.emergencyPhone(), it, technical, economy, accessibility);
+    }
+
+    @Test
+    void newTabsRoundTripAndRetainResolvedPeopleAndChecklistAnswersDuringDirectoryOutages() {
+        when(employees.getResource("person")).thenReturn(Optional.of(Resource.builder()
+                .navIdent("person").fullName("Ada Hansen").email("ada@example.org").build()));
+        var economy = new SystemInformationData.Economy(java.math.BigDecimal.ZERO, new java.math.BigDecimal("12345.67"),
+                "https://example.org/agreement", LocalDate.of(2026, 11, 17), "Tre måneders oppsigelse");
+        var accessibility = new SystemInformationData.Accessibility("RELEVANT", "web",
+                java.util.Map.of("1.1.1", "YES", "4.1.3", "NO"), java.util.Map.of("1.1.1", "NO_CONTENT"));
+        var result = service.save("SIGNINAPP", extended(null, "person",
+                new SystemInformationRequest.TechnicalRequest("person", 0, "HIGH"), economy, accessibility));
+        assertThat(result.data().itResponsible().name()).isEqualTo("Ada Hansen");
+        assertThat(result.data().technical().technicalOperator()).isEqualTo(result.data().itResponsible());
+        assertThat(result.data().technical().userCount()).isZero();
+        assertThat(result.data().economy()).isEqualTo(economy);
+        assertThat(result.data().accessibility()).isEqualTo(accessibility);
+        var entity = new SystemInformation();
+        entity.setId(SystemInformationService.idFor("SIGNINAPP"));
+        entity.setSystemCode("SIGNINAPP");
+        entity.setVersion(result.version());
+        entity.setData(result.data());
+        when(repository.findById(any())).thenReturn(Optional.of(entity));
+        clearInvocations(employees);
+        var skipped = new SystemInformationData.Accessibility("NOT_RELEVANT", "app", accessibility.webAnswers(), accessibility.appAnswers());
+        var saved = service.save("SIGNINAPP", extended(result.version(), "person",
+                new SystemInformationRequest.TechnicalRequest("person", 0, "HIGH"), economy, skipped));
+        assertThat(saved.data().accessibility().webAnswers()).containsEntry("4.1.3", "NO");
+        assertThat(saved.data().accessibility().appAnswers()).containsEntry("1.1.1", "NO_CONTENT");
+        assertThat(saved.data().withOrganisationalUnit("NEW").economy()).isEqualTo(economy);
+        assertThat(saved.data().withOrganisationalUnit("NEW").itResponsible()).isEqualTo(saved.data().itResponsible());
+        verifyNoInteractions(employees);
+    }
+
+    @Test
+    void invalidAgreementLinksAndChecklistAnswersCannotBeSaved() {
+        var badEconomy = new SystemInformationData.Economy(null, null, "javascript:alert(1)", null, "");
+        assertThatThrownBy(() -> service.save("SIGNINAPP", extended(null, null, null, badEconomy, null)))
+                .isInstanceOf(ValidationException.class);
+        for (var invalid : List.of(
+                new SystemInformationData.Accessibility("RELEVANT", "UNSET", java.util.Map.of(), java.util.Map.of()),
+                new SystemInformationData.Accessibility("RELEVANT", "app", java.util.Map.of(), java.util.Map.of("2.4.1", "YES")),
+                new SystemInformationData.Accessibility("RELEVANT", "web", java.util.Map.of("1.1.1", "invalid"), java.util.Map.of()))) {
+            assertThatThrownBy(() -> service.save("SIGNINAPP", extended(null, null, null, null, invalid)))
+                    .isInstanceOf(ValidationException.class);
+        }
+        verify(repository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void nestedRequestValidationRejectsNegativeAmountsCountsAndUnknownCriticality() {
+        try (var factory = jakarta.validation.Validation.buildDefaultValidatorFactory()) {
+            var invalid = extended(null, null, new SystemInformationRequest.TechnicalRequest(null, -1, "UNKNOWN"),
+                    new SystemInformationData.Economy(new java.math.BigDecimal("-1"), new java.math.BigDecimal("1.234"), "", null, ""), null);
+            assertThat(factory.getValidator().validate(invalid)).hasSize(4);
+        }
+    }
+
+    @Test
+    void oldJsonRecordsRemainReadableWithEmptyNewSections() throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules();
+        var old = mapper.readValue("{\"systemOwner\":null,\"administrators\":[],\"superUsers\":[],\"notes\":\"Existing\"}", SystemInformationData.class);
+        assertThat(old.notes()).isEqualTo("Existing");
+        assertThat(old.itResponsible()).isNull();
+        assertThat(old.economy()).isNull();
+        assertThat(old.accessibility()).isNull();
+    }
+
 }

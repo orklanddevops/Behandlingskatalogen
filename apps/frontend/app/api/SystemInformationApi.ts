@@ -7,7 +7,29 @@ export interface ISystemContact {
   email: string
 }
 
+export interface ISystemEconomy {
+  annualCost: string | number | null
+  purchaseCost: string | number | null
+  agreementUrl: string
+  purchaseDate: string | null
+  terminationTerms: string
+}
+export type TChecklistAnswer = 'YES' | 'NO' | 'NO_CONTENT' | 'NOT_CHECKED'
+export interface ISystemAccessibility {
+  relevance: 'UNSET' | 'RELEVANT' | 'NOT_RELEVANT'
+  solutionType: 'UNSET' | 'web' | 'app'
+  webAnswers: Record<string, TChecklistAnswer>
+  appAnswers: Record<string, TChecklistAnswer>
+}
 export interface ISystemInformationData {
+  itResponsible?: ISystemContact | null
+  technical?: {
+    technicalOperator: ISystemContact | null
+    userCount: number | null
+    criticality: string
+  } | null
+  economy?: ISystemEconomy | null
+  accessibility?: ISystemAccessibility | null
   systemOwner: ISystemContact | null
   administrators: ISystemContact[]
   superUsers: ISystemContact[]
@@ -58,6 +80,16 @@ export const saveSystemInformation = async (
         emergencyUrl: info.data.emergencyUrl || '',
         emergencyPhone: info.data.emergencyPhone || '',
         notes: info.data.notes,
+        itResponsibleId: info.data.itResponsible?.id ?? '',
+        technical: info.data.technical
+          ? {
+              technicalOperatorId: info.data.technical.technicalOperator?.id ?? '',
+              userCount: info.data.technical.userCount,
+              criticality: info.data.technical.criticality,
+            }
+          : null,
+        economy: info.data.economy ?? null,
+        accessibility: info.data.accessibility ?? null,
         markVerified,
       }
     )

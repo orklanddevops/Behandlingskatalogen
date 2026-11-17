@@ -63,6 +63,13 @@ public class SystemInformationService {
                 && codelists.findByListAndCode(ListName.DEPARTMENT, unit).isEmpty()) {
             throw new ValidationException("Den valgte enheten finnes ikke i kodeverket. Velg enhet på nytt.");
         }
+        var itResponsible = request.itResponsibleId() == null ? old.itResponsible() : resolveContact(request.itResponsibleId(), known);
+        var technical = request.technical() == null ? old.technical() : new SystemInformationData.Technical(
+                resolveContact(request.technical().technicalOperatorId(), known), request.technical().userCount(), text(request.technical().criticality()));
+        var economy = request.economy() == null ? old.economy() : request.economy();
+        if (economy != null) validateUrl(text(economy.agreementUrl()), "avtale");
+        var accessibility = request.accessibility() == null ? old.accessibility() : request.accessibility();
+        validateAccessibility(accessibility);
         var record = stored.orElseGet(() -> {
             var created = new SystemInformation();
             created.setId(idFor(code));
@@ -75,8 +82,32 @@ public class SystemInformationService {
                 unit, text(request.supportEmail()), supportUrl, text(request.notes()),
                 request.markVerified() ? LocalDate.now(ZoneId.of("Europe/Oslo")) : old.lastVerifiedDate(),
                 request.markVerified() ? reviewer : old.lastVerifiedBy(),
-                text(request.supportPhone()), text(request.emergencyEmail()), emergencyUrl, text(request.emergencyPhone())));
+                text(request.supportPhone()), text(request.emergencyEmail()), emergencyUrl, text(request.emergencyPhone()), itResponsible, technical, economy, accessibility));
         return response(repository.saveAndFlush(record));
+    }
+
+    private void validateAccessibility(SystemInformationData.Accessibility value) {
+        if (value == null) return;
+        if ("RELEVANT".equals(value.relevance()) && !List.of("web", "app").contains(text(value.solutionType()))) {
+            throw new ValidationException("Velg nettløsning eller app.");
+        }
+        validateAnswers(value.webAnswers(), "web");
+        validateAnswers(value.appAnswers(), "app");
+    }
+
+    private void validateAnswers(Map<String, String> answers, String type) {
+        if (answers == null) return;
+        try (var stream = getClass().getResourceAsStream("/wcag-checklists.json")) {
+            var ids = new com.fasterxml.jackson.databind.ObjectMapper().readTree(stream).path(type);
+            var allowed = new java.util.HashSet<String>();
+            ids.forEach(id -> allowed.add(id.asText()));
+            if (answers.entrySet().stream().anyMatch(entry -> !allowed.contains(entry.getKey())
+                    || !List.of("YES", "NO", "NO_CONTENT", "NOT_CHECKED").contains(text(entry.getValue())))) {
+                throw new ValidationException("Sjekklisten inneholder et ugyldig krav eller svar.");
+            }
+        } catch (java.io.IOException e) {
+            throw new IllegalStateException("Kunne ikke laste WCAG-sjekklisten", e);
+        }
     }
 
     private void requireSystem(String code) {
@@ -88,6 +119,11 @@ public class SystemInformationService {
     private Map<String, Contact> knownContacts(SystemInformationData old) {
         var contacts = new LinkedHashMap<String, Contact>();
         if (old.systemOwner() != null) contacts.put(old.systemOwner().id(), old.systemOwner());
+        if (old.itResponsible() != null) contacts.put(old.itResponsible().id(), old.itResponsible());
+        if (old.technical() != null && old.technical().technicalOperator() != null) {
+            var operator = old.technical().technicalOperator();
+            contacts.put(operator.id(), operator);
+        }
         old.administrators().forEach(contact -> contacts.put(contact.id(), contact));
         old.superUsers().forEach(contact -> contacts.put(contact.id(), contact));
         return contacts;

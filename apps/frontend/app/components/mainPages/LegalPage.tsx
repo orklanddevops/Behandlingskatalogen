@@ -1,6 +1,6 @@
 'use client'
 
-import { BodyLong, Heading, Select } from '@navikt/ds-react'
+import { Alert, BodyLong, Heading, Loader, Select } from '@navikt/ds-react'
 import queryString from 'query-string'
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { getProcessesFor } from '@/api/ProcessApi'
@@ -12,7 +12,11 @@ import { useLocation, useNavigate } from '@/util/router'
 import { SimpleProcessTable } from '../Process/SimpleProcessTable'
 
 export const LegalPage = () => {
-  const [processes, setProcesses] = useState<IProcess[]>([])
+  const [result, setResult] = useState<{
+    key: string
+    processes: IProcess[]
+    error: string
+  } | null>(null)
   const gdprArticle = useQueryParam('gdprArticle')
   const nationalLaw = useQueryParam('nationalLaw')
   const navigate = useNavigate()
@@ -20,16 +24,31 @@ export const LegalPage = () => {
 
   const { utils: codelistUtils } = useContext(CodelistContext)
 
+  const queryKey = JSON.stringify([gdprArticle, nationalLaw])
+  const hasFilter = !!(gdprArticle || nationalLaw)
+  const loading = hasFilter && result?.key !== queryKey
+  const processes = hasFilter && result?.key === queryKey ? result.processes : []
+  const error = hasFilter && result?.key === queryKey ? result.error : ''
+
   useEffect(() => {
-    ;(async () => {
-      if (!gdprArticle && !nationalLaw) {
-        return setProcesses([])
-      }
-      getProcessesFor({ gdprArticle, nationalLaw }).then((result: IPageResponse<IProcess>) =>
-        setProcesses(result.content)
-      )
-    })()
-  }, [gdprArticle, nationalLaw])
+    let active = true
+    if (!gdprArticle && !nationalLaw) return
+    getProcessesFor({ gdprArticle, nationalLaw })
+      .then((response: IPageResponse<IProcess>) => {
+        if (active) setResult({ key: queryKey, processes: response.content, error: '' })
+      })
+      .catch(() => {
+        if (active)
+          setResult({
+            key: queryKey,
+            processes: [],
+            error: 'Kunne ikke hente databehandlinger. Kontroller innloggingen og prøv igjen.',
+          })
+      })
+    return () => {
+      active = false
+    }
+  }, [gdprArticle, nationalLaw, queryKey])
 
   const gdprOptions = codelistUtils.getCodes(EListName.GDPR_ARTICLE)
   const lawOptions = codelistUtils.getCodes(EListName.NATIONAL_LAW)
@@ -86,7 +105,16 @@ export const LegalPage = () => {
           </Select>
         </div>
       </div>
-      {processes && <ProcessTable processes={processes} />}
+      {error && (
+        <Alert variant='error' role='alert' className='mt-4'>
+          {error}
+        </Alert>
+      )}
+      {loading ? (
+        <Loader title='Søker etter databehandlinger' className='mt-4' />
+      ) : (
+        !error && <ProcessTable processes={processes} />
+      )}
     </div>
   )
 }

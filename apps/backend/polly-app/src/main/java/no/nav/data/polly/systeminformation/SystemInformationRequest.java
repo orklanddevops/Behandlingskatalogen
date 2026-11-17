@@ -18,4 +18,21 @@ public record SystemInformationRequest(
         @Size(max = 50) String supportPhone,
         @Email @Size(max = 254) String emergencyEmail,
         @Size(max = 2000) String emergencyUrl,
-        @Size(max = 50) String emergencyPhone) {}
+        @Size(max = 50) String emergencyPhone,
+        @Size(max = 100) String itResponsibleId,
+        @jakarta.validation.Valid TechnicalRequest technical,
+        @jakarta.validation.Valid SystemInformationData.Economy economy,
+        @jakarta.validation.Valid SystemInformationData.Accessibility accessibility) {
+    public record TechnicalRequest(@Size(max = 100) String technicalOperatorId,
+            @PositiveOrZero Integer userCount,
+            @jakarta.validation.constraints.Pattern(regexp = "|LOW|MEDIUM|HIGH|CRITICAL") String criticality) {}
+
+    public SystemInformationRequest(Long version, String systemOwnerId, List<String> administratorIds,
+            List<String> superUserIds, String organisationalUnit, String supportEmail, String supportUrl,
+            String notes, boolean markVerified, String supportPhone, String emergencyEmail,
+            String emergencyUrl, String emergencyPhone) {
+        this(version, systemOwnerId, administratorIds, superUserIds, organisationalUnit, supportEmail,
+                supportUrl, notes, markVerified, supportPhone, emergencyEmail, emergencyUrl, emergencyPhone,
+                null, null, null, null);
+    }
+}

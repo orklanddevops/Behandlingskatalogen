@@ -1,0 +1,734 @@
+{
+  "app": {
+    "updated": "2026-01-30",
+    "source": "Mal – WCAG-sjekkliste for utfylling av tilgjengelighetserklæring for app.xlsx",
+    "criteria": [
+      {
+        "id": "1.1.1",
+        "title": "1.1.1 Ikke-tekstlig innhold",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.1 Tekstalternativer",
+        "description": "Gi tekstalternativer til alt ikke-tekstlig innhold, slik at det kan konverteres til formater som brukerne har behov for, for eksempel stor skrift, blindeskrift, tale, symboler eller enklere språk.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/111-ikke-tekstlig-innhold-niva/87"
+      },
+      {
+        "id": "1.2.1",
+        "title": "1.2.1 Bare lyd og video (forhåndsinnspilt)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.2 Tidsbaserte medier (lyd og video)",
+        "description": "Gi alternativer til tidsbaserte medier.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/121-bare-lyd-og-bare-video-forhandsinnspilt-niva/88"
+      },
+      {
+        "id": "1.2.2",
+        "title": "1.2.2 Teksting (forhåndsinnspilt)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.2 Tidsbaserte medier (lyd og video)",
+        "description": "Gi alternativer til tidsbaserte medier.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/122-teksting-forhandsinnspilt-niva/89"
+      },
+      {
+        "id": "1.2.5",
+        "title": "1.2.5 Synstolking (forhåndsinnspilt)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.2 Tidsbaserte medier (lyd og video)",
+        "description": "Gi alternativer til tidsbaserte medier.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/125-synstolking-forhandsinnpilt-niva-aa/842"
+      },
+      {
+        "id": "1.3.1",
+        "title": "1.3.1 Informasjon og relasjoner",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/131-informasjon-og-relasjoner-niva/90"
+      },
+      {
+        "id": "1.3.2",
+        "title": "1.3.2 Meningsfylt rekkefølge",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/132-meningsfylt-rekkefolge-niva/91"
+      },
+      {
+        "id": "1.3.3",
+        "title": "1.3.3 Sensoriske egenskaper",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/133-sensoriske-egenskaper-niva/92"
+      },
+      {
+        "id": "1.3.4",
+        "title": "1.3.4 Visningsretning",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/134-visningsretning-niva-aa/141"
+      },
+      {
+        "id": "1.3.5",
+        "title": "1.3.5 Identifiser formål med inndata",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/135-identifiser-formal-med-inndata-niva-aa/142"
+      },
+      {
+        "id": "1.4.1",
+        "title": "1.4.1 Bruk av farge",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/141-bruk-av-farge-niva/93"
+      },
+      {
+        "id": "1.4.2",
+        "title": "1.4.2. Styring av lyd",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/142-styring-av-lyd-niva/94"
+      },
+      {
+        "id": "1.4.3",
+        "title": "1.4.3 Kontrast (minimum)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/143-kontrast-minimum-niva-aa/95"
+      },
+      {
+        "id": "1.4.4",
+        "title": "1.4.4 Endring av tekststørrelse",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/144-endring-av-tekststorrelse-niva-aa/96"
+      },
+      {
+        "id": "1.4.5",
+        "title": "1.4.5 Bilder av tekst",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/145-bilder-av-tekst-niva-aa/97"
+      },
+      {
+        "id": "1.4.10",
+        "title": "1.4.10 Dynamisk tilpasning (Reflow)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1410-dynamisk-tilpasning-reflow-niva-aa/144"
+      },
+      {
+        "id": "1.4.11",
+        "title": "1.4.11 Kontrast for ikke-tekstlig innhold",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1411-kontrast-ikke-tekstlig-innhold-niva-aa/145"
+      },
+      {
+        "id": "1.4.12",
+        "title": "1.4.12 Tekstavstand",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1412-tekstavstand-niva-aa/146"
+      },
+      {
+        "id": "1.4.13",
+        "title": "1.4.13 Pekerfølsomt innhold eller innhold ved tastaturfokus",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1413-pekerfolsomt-innhold-eller-innhold-ved-tastaturfokus-niva-aa/147"
+      },
+      {
+        "id": "2.1.1",
+        "title": "2.1.1 Tastatur",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.1 Tilgjengelig med tastatur",
+        "description": "Gjør all funksjonaliteten tilgjengelig med sveiping.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/211-tastatur-niva/98"
+      },
+      {
+        "id": "2.1.2",
+        "title": "2.1.2 Ingen tastaturfelle",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.1 Tilgjengelig med tastatur",
+        "description": "Gjør all funksjonaliteten tilgjengelig med sveiping.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/212-ingen-tastaturfelle-niva/99"
+      },
+      {
+        "id": "2.1.4",
+        "title": "2.1.4 Hurtigtaster som består av ett tegn",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.1 Tilgjengelig med tastatur",
+        "description": "Gjør all funksjonaliteten tilgjengelig med sveiping.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/214-hurtigtaster-som-bestar-av-ett-tegn-niva/782"
+      },
+      {
+        "id": "2.2.1",
+        "title": "2.2.1 Justerbar hastighet",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.2 Nok tid",
+        "description": "Gi brukerne nok tid til å lese og bruke innhold.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/221-justerbar-hastighet-niva/100"
+      },
+      {
+        "id": "2.2.2",
+        "title": "2.2.2 Pause, stopp, skjul",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.2 Nok tid",
+        "description": "Gi brukerne nok tid til å lese og bruke innhold.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/222-pause-stopp-skjul-niva/101"
+      },
+      {
+        "id": "2.3.1",
+        "title": "2.3.1 Terskelverdi på maksimalt tre glimt",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.3 Anfall og andre fysiske reaksjoner",
+        "description": "Ikke utform innhold på en måte som er kjent for å forårsake anfall.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/231-terskelverdi-pa-maksimalt-tre-glimt-niva/102"
+      },
+      {
+        "id": "2.4.3",
+        "title": "2.4.3 Fokusrekkefølge",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/243-fokusrekkefolge-niva/105"
+      },
+      {
+        "id": "2.4.4",
+        "title": "2.4.4 Formål med lenke (i kontekst)",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/244-formal-med-lenke-i-kontekst-niva/106"
+      },
+      {
+        "id": "2.4.6",
+        "title": "2.4.6 Overskrifter og ledetekster",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/246-overskrifter-og-ledetekster-niva-aa/108"
+      },
+      {
+        "id": "2.4.7",
+        "title": "2.4.7 Synlig fokus",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/247-synlig-fokus-niva-aa/109"
+      },
+      {
+        "id": "2.5.1",
+        "title": "2.5.1 Pekerbevegelse",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder ",
+        "url": "https://www.uutilsynet.no/wcag-standarden/251-pekerbevegelser-niva/148"
+      },
+      {
+        "id": "2.5.2",
+        "title": "2.5.2 Pekeravbrytelse",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder ",
+        "url": "https://www.uutilsynet.no/wcag-standarden/252-pekeravbrytelse-niva/149"
+      },
+      {
+        "id": "2.5.3",
+        "title": "2.5.3 Ledetekst i navn",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder ",
+        "url": "https://www.uutilsynet.no/wcag-standarden/253-ledetekst-i-navn-niva/150"
+      },
+      {
+        "id": "2.5.4",
+        "title": "2.5.4 Bevegelsesaktivering",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder ",
+        "url": "https://www.uutilsynet.no/wcag-standarden/254-bevegelsesaktivering-niva/151"
+      },
+      {
+        "id": "3.1.1",
+        "title": "3.1.1 Språk på siden",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.1 Leselig",
+        "description": "Det må være mulig å forstå informasjon og betjening av brukergrensesnitt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/311-sprak-pa-siden-niva/110"
+      },
+      {
+        "id": "3.2.1",
+        "title": "3.2.1 Fokus",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.2 Forutsigbar",
+        "description": "Sørg for at apper presenteres og fungerer på forutsigbare måter.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/321-fokus-niva/112"
+      },
+      {
+        "id": "3.2.2",
+        "title": "3.2.2 Inndata",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.2 Forutsigbar",
+        "description": "Sørg for at apper presenteres og fungerer på forutsigbare måter.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/322-inndata-niva/114"
+      },
+      {
+        "id": "3.3.1",
+        "title": "3.3.1 Identifikasjon av feil",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/331-identifikasjon-av-feil-niva/116"
+      },
+      {
+        "id": "3.3.2",
+        "title": "3.3.2 Ledetekster eller instruksjoner",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/332-ledetekster-eller-instruksjoner-niva/117"
+      },
+      {
+        "id": "3.3.3",
+        "title": "3.3.3 Forslag ved feil",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/333-forslag-ved-feil-niva-aa/118"
+      },
+      {
+        "id": "3.3.4",
+        "title": "3.3.4 Forhindring av feil (juridiske feil, økonomiske feil, datafeil)",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/334-forhindring-av-feil-juridiske-feil-okonomiske-feil-datafeil-niva-aa/119"
+      },
+      {
+        "id": "4.1.1",
+        "title": "4.1.1 Parsing (oppdeling)",
+        "principle": "Prinsipp 4: Robust",
+        "guideline": "4.1 Kompatibel",
+        "description": "Sørg for best mulig kompatibilitet med aktuelle og fremtidige brukeragenter, inkludert kompenserende teknologi.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/411-parsing-oppdeling-niva/120"
+      },
+      {
+        "id": "4.1.2",
+        "title": "4.1.2 Navn, rolle, verdi",
+        "principle": "Prinsipp 4: Robust",
+        "guideline": "4.1 Kompatibel",
+        "description": "Sørg for best mulig kompatibilitet med aktuelle og fremtidige brukeragenter, inkludert kompenserende teknologi.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/412-navn-rolle-verdi-niva/121"
+      },
+      {
+        "id": "4.1.3",
+        "title": "4.1.3 Statusbeskjeder",
+        "principle": "Prinsipp 4: Robust",
+        "guideline": "4.1 Kompatibel",
+        "description": "Sørg for best mulig kompatibilitet med aktuelle og fremtidige brukeragenter, inkludert kompenserende teknologi.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/413-statusbeskjeder-niva-aa/152"
+      }
+    ]
+  },
+  "web": {
+    "updated": "2026-01-30",
+    "source": "Mal – WCAG-sjekkliste for utfylling av tilgjengelighetserklæring for nettløsning.xlsx",
+    "criteria": [
+      {
+        "id": "1.1.1",
+        "title": "1.1.1 Ikke-tekstlig innhold",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.1 Tekstalternativer",
+        "description": "Gi tekstalternativer til alt ikke-tekstlig innhold, slik at det kan konverteres til formater som brukerne har behov for, for eksempel stor skrift, blindeskrift, tale, symboler eller enklere språk.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/111-ikke-tekstlig-innhold-niva/87"
+      },
+      {
+        "id": "1.2.1",
+        "title": "1.2.1 Bare lyd og video (forhåndsinnspilt)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.2 Tidsbaserte medier (lyd og video)",
+        "description": "Gi alternativer til tidsbaserte medier.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/121-bare-lyd-og-bare-video-forhandsinnspilt-niva/88"
+      },
+      {
+        "id": "1.2.2",
+        "title": "1.2.2 Teksting (forhåndsinnspilt)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.2 Tidsbaserte medier (lyd og video)",
+        "description": "Gi alternativer til tidsbaserte medier.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/122-teksting-forhandsinnspilt-niva/89"
+      },
+      {
+        "id": "1.2.5",
+        "title": "1.2.5 Synstolking (forhåndsinnspilt)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.2 Tidsbaserte medier (lyd og video)",
+        "description": "Gi alternativer til tidsbaserte medier.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/125-synstolking-forhandsinnpilt-niva-aa/842"
+      },
+      {
+        "id": "1.3.1",
+        "title": "1.3.1 Informasjon og relasjoner",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/131-informasjon-og-relasjoner-niva/90"
+      },
+      {
+        "id": "1.3.2",
+        "title": "1.3.2 Meningsfylt rekkefølge",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/132-meningsfylt-rekkefolge-niva/91"
+      },
+      {
+        "id": "1.3.3",
+        "title": "1.3.3 Sensoriske egenskaper",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/133-sensoriske-egenskaper-niva/92"
+      },
+      {
+        "id": "1.3.4",
+        "title": "1.3.4 Visningsretning",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/134-visningsretning-niva-aa/141"
+      },
+      {
+        "id": "1.3.5",
+        "title": "1.3.5 Identifiser formål med inndata",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.3 Mulig å tilpasse",
+        "description": "Lag innhold som kan presenteres på forskjellige måter uten at informasjon eller struktur går tapt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/135-identifiser-formal-med-inndata-niva-aa/142"
+      },
+      {
+        "id": "1.4.1",
+        "title": "1.4.1 Bruk av farge",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/141-bruk-av-farge-niva/93"
+      },
+      {
+        "id": "1.4.2",
+        "title": "1.4.2. Styring av lyd",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/142-styring-av-lyd-niva/94"
+      },
+      {
+        "id": "1.4.3",
+        "title": "1.4.3 Kontrast (minimum)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/143-kontrast-minimum-niva-aa/95"
+      },
+      {
+        "id": "1.4.4",
+        "title": "1.4.4 Endring av tekststørrelse",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/144-endring-av-tekststorrelse-niva-aa/96"
+      },
+      {
+        "id": "1.4.5",
+        "title": "1.4.5 Bilder av tekst",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/145-bilder-av-tekst-niva-aa/97"
+      },
+      {
+        "id": "1.4.10",
+        "title": "1.4.10 Dynamisk tilpasning (Reflow)",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1410-dynamisk-tilpasning-reflow-niva-aa/144"
+      },
+      {
+        "id": "1.4.11",
+        "title": "1.4.11 Kontrast for ikke-tekstlig innhold",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1411-kontrast-ikke-tekstlig-innhold-niva-aa/145"
+      },
+      {
+        "id": "1.4.12",
+        "title": "1.4.12 Tekstavstand",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1412-tekstavstand-niva-aa/146"
+      },
+      {
+        "id": "1.4.13",
+        "title": "1.4.13 Pekerfølsomt innhold eller innhold ved tastaturfokus",
+        "principle": "Prinsipp 1: Mulig å oppfatte",
+        "guideline": "1.4 Mulig å skille fra hverandre",
+        "description": "Gjør det enklere for brukerne å se og høre innhold, blant annet ved å skille forgrunnen fra bakgrunnen.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/1413-pekerfolsomt-innhold-eller-innhold-ved-tastaturfokus-niva-aa/147"
+      },
+      {
+        "id": "2.1.1",
+        "title": "2.1.1 Tastatur",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.1 Tilgjengelig med tastatur",
+        "description": "Gjør all funksjonaliteten tilgjengelig med tastatur.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/211-tastatur-niva/98"
+      },
+      {
+        "id": "2.1.2",
+        "title": "2.1.2 Ingen tastaturfelle",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.1 Tilgjengelig med tastatur",
+        "description": "Gjør all funksjonaliteten tilgjengelig med tastatur.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/212-ingen-tastaturfelle-niva/99"
+      },
+      {
+        "id": "2.1.4",
+        "title": "2.1.4 Hurtigtaster som består av ett tegn",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.1 Tilgjengelig med tastatur",
+        "description": "Gjør all funksjonaliteten tilgjengelig med tastatur.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/214-hurtigtaster-som-bestar-av-ett-tegn-niva/782"
+      },
+      {
+        "id": "2.2.1",
+        "title": "2.2.1 Justerbar hastighet",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.2 Nok tid",
+        "description": "Gi brukerne nok tid til å lese og bruke innhold.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/221-justerbar-hastighet-niva/100"
+      },
+      {
+        "id": "2.2.2",
+        "title": "2.2.2 Pause, stopp, skjul",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.2 Nok tid",
+        "description": "Gi brukerne nok tid til å lese og bruke innhold.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/222-pause-stopp-skjul-niva/101"
+      },
+      {
+        "id": "2.3.1",
+        "title": "2.3.1 Terskelverdi på maksimalt tre glimt",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.3 Anfall og andre fysiske reaksjoner",
+        "description": "Ikke utform innhold på en måte som er kjent for å forårsake anfall.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/231-terskelverdi-pa-maksimalt-tre-glimt-niva/102"
+      },
+      {
+        "id": "2.4.1",
+        "title": "2.4.1 Hoppe over blokker",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/241-hoppe-over-blokker-niva/103"
+      },
+      {
+        "id": "2.4.2",
+        "title": "2.4.2 Sidetitler",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/242-sidetitler-niva/104"
+      },
+      {
+        "id": "2.4.3",
+        "title": "2.4.3 Fokusrekkefølge",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/243-fokusrekkefolge-niva/105"
+      },
+      {
+        "id": "2.4.4",
+        "title": "2.4.4 Formål med lenke (i kontekst)",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/244-formal-med-lenke-i-kontekst-niva/106"
+      },
+      {
+        "id": "2.4.5",
+        "title": "2.4.5 Flere måter",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/245-flere-mater-niva-aa/107"
+      },
+      {
+        "id": "2.4.6",
+        "title": "2.4.6 Overskrifter og ledetekster",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/246-overskrifter-og-ledetekster-niva-aa/108"
+      },
+      {
+        "id": "2.4.7",
+        "title": "2.4.7 Synlig fokus",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.4 Navigerbar",
+        "description": "Gjør det mulig for brukerne å navigere, finne innhold og vite hvor de befinner seg.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/247-synlig-fokus-niva-aa/109"
+      },
+      {
+        "id": "2.5.1",
+        "title": "2.5.1 Pekerbevegelse",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder enn bare tastatur.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/251-pekerbevegelser-niva/148"
+      },
+      {
+        "id": "2.5.2",
+        "title": "2.5.2 Pekeravbrytelse",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder enn bare tastatur.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/252-pekeravbrytelse-niva/149"
+      },
+      {
+        "id": "2.5.3",
+        "title": "2.5.3 Ledetekst i navn",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder enn bare tastatur.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/253-ledetekst-i-navn-niva/150"
+      },
+      {
+        "id": "2.5.4",
+        "title": "2.5.4 Bevegelsesaktivering",
+        "principle": "Prinsipp 2:  Mulig å betjene",
+        "guideline": "2.5 Inndatametoder",
+        "description": "Gjør det enklere for brukerne å betjene funksjonalitet med andre inputmetoder enn bare tastatur.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/254-bevegelsesaktivering-niva/151"
+      },
+      {
+        "id": "3.1.1",
+        "title": "3.1.1 Språk på siden",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.1 Leselig",
+        "description": "Det må være mulig å forstå informasjon og betjening av brukergrensesnitt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/311-sprak-pa-siden-niva/110"
+      },
+      {
+        "id": "3.1.2",
+        "title": "3.1.2 Språk på deler av innhold",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.1 Leselig",
+        "description": "Det må være mulig å forstå informasjon og betjening av brukergrensesnitt.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/312-sprak-pa-deler-av-innhold-niva-aa/111"
+      },
+      {
+        "id": "3.2.1",
+        "title": "3.2.1 Fokus",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.2 Forutsigbar",
+        "description": "Sørg for at websider presenteres og fungerer på forutsigbare måter.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/321-fokus-niva/112"
+      },
+      {
+        "id": "3.2.2",
+        "title": "3.2.2 Inndata",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.2 Forutsigbar",
+        "description": "Sørg for at websider presenteres og fungerer på forutsigbare måter.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/322-inndata-niva/114"
+      },
+      {
+        "id": "3.2.3",
+        "title": "3.2.3 Konsekvent navigering",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.2 Forutsigbar",
+        "description": "Sørg for at websider presenteres og fungerer på forutsigbare måter.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/323-konsekvent-navigering-niva-aa/113"
+      },
+      {
+        "id": "3.2.4",
+        "title": "3.2.4 Konsekvent identifikasjon",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.2 Forutsigbar",
+        "description": "Sørg for at websider presenteres og fungerer på forutsigbare måter.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/324-konsekvent-identifikasjon-niva-aa/115"
+      },
+      {
+        "id": "3.3.1",
+        "title": "3.3.1 Identifikasjon av feil",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/331-identifikasjon-av-feil-niva/116"
+      },
+      {
+        "id": "3.3.2",
+        "title": "3.3.2 Ledetekster eller instruksjoner",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/332-ledetekster-eller-instruksjoner-niva/117"
+      },
+      {
+        "id": "3.3.3",
+        "title": "3.3.3 Forslag ved feil",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/333-forslag-ved-feil-niva-aa/118"
+      },
+      {
+        "id": "3.3.4",
+        "title": "3.3.4 Forhindring av feil (juridiske feil, økonomiske feil, datafeil)",
+        "principle": "Prinsipp 3: Forståelig",
+        "guideline": "3.3 Inndatahjelp",
+        "description": "Hjelp brukere med å unngå feil og å rette opp feil.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/334-forhindring-av-feil-juridiske-feil-okonomiske-feil-datafeil-niva-aa/119"
+      },
+      {
+        "id": "4.1.1",
+        "title": "4.1.1 Parsing (oppdeling)",
+        "principle": "Prinsipp 4: Robust",
+        "guideline": "4.1 Kompatibel",
+        "description": "Sørg for best mulig kompatibilitet med aktuelle og fremtidige brukeragenter, inkludert kompenserende teknologi.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/411-parsing-oppdeling-niva/120"
+      },
+      {
+        "id": "4.1.2",
+        "title": "4.1.2 Navn, rolle, verdi",
+        "principle": "Prinsipp 4: Robust",
+        "guideline": "4.1 Kompatibel",
+        "description": "Sørg for best mulig kompatibilitet med aktuelle og fremtidige brukeragenter, inkludert kompenserende teknologi.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/412-navn-rolle-verdi-niva/121"
+      },
+      {
+        "id": "4.1.3",
+        "title": "4.1.3 Statusbeskjeder",
+        "principle": "Prinsipp 4: Robust",
+        "guideline": "4.1 Kompatibel",
+        "description": "Sørg for best mulig kompatibilitet med aktuelle og fremtidige brukeragenter, inkludert kompenserende teknologi.",
+        "url": "https://www.uutilsynet.no/wcag-standarden/413-statusbeskjeder-niva-aa/152"
+      }
+    ]
+  }
+}

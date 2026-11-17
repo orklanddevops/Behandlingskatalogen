@@ -54,7 +54,7 @@ class EntraDirectoryTest {
     void searchEscapesODataAndEncodesUnicodeAndSpecialCharacters() {
         server.expect(request -> {
             String query = URLDecoder.decode(request.getURI().getRawQuery(), StandardCharsets.UTF_8);
-            assertThat(query).contains("O''Dø+&", "accountEnabled eq true", "userType eq 'Member'", "$top=25");
+            assertThat(query).contains("displayName:O'Dø+&", "accountEnabled eq true", "userType eq 'Member'", "$top=25");
         }).andExpect(header("Authorization", "Bearer application-token"))
                 .andExpect(header("ConsistencyLevel", "eventual"))
                 .andRespond(withSuccess("{\"value\":[" + EMPLOYEE + "]}", MediaType.APPLICATION_JSON));
@@ -69,10 +69,33 @@ class EntraDirectoryTest {
     void fullNameSearchCombinesWordsAndExcludesGuestsAndDisabledUsers() {
         server.expect(request -> {
             String query = URLDecoder.decode(request.getURI().getRawQuery(), StandardCharsets.UTF_8);
-            assertThat(query).contains("startswith(givenName,'Ada')", "startswith(surname,'Hansen')", ") and (");
+            assertThat(query).contains("\"displayName:Ada\" AND \"displayName:Hansen\"");
         }).andRespond(withSuccess("{\"value\":[" + EMPLOYEE + ","
                 + EMPLOYEE.replace("Member", "Guest") + "," + EMPLOYEE.replace("true", "false") + "]}", MediaType.APPLICATION_JSON));
         assertThat(resources.search("  Ada   Hansen  ").getContent()).hasSize(1);
+        server.verify();
+    }
+
+    @Test
+    void middleNamesAreSearchedInTheFullNameRatherThanEmailOrFieldPrefixes() {
+        server.expect(request -> {
+            String query = URLDecoder.decode(request.getURI().getRawQuery(), StandardCharsets.UTF_8);
+            assertThat(query).contains("$search=\"displayName:Jan\" AND \"displayName:Ove\"")
+                    .doesNotContain("startswith(givenName", "startswith(mail");
+        }).andRespond(withSuccess("{\"value\":[" + EMPLOYEE.replace("Ada Hansen", "Jan Ove Rønning")
+                .replace("Ada", "Jan Ove").replace("Hansen", "Rønning").replace("ada@example.org", "jan.rønning@example.org")
+                + "]}", MediaType.APPLICATION_JSON));
+        assertThat(resources.search("Jan Ove").getContent().getFirst().getFullName()).isEqualTo("Jan Ove Rønning");
+        server.verify();
+    }
+
+    @Test
+    void emailSearchStillUsesLiteralEscapedPrefixes() {
+        server.expect(request -> {
+            String query = URLDecoder.decode(request.getURI().getRawQuery(), StandardCharsets.UTF_8);
+            assertThat(query).contains("startswith(mail,'o''neil@example.org')").doesNotContain("$search");
+        }).andRespond(withSuccess("{\"value\":[]}", MediaType.APPLICATION_JSON));
+        resources.search("o'neil@example.org");
         server.verify();
     }
 

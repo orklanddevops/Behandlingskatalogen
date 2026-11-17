@@ -30,13 +30,13 @@ const Main: FunctionComponent<TProps> = async ({ children }) => {
         />
       </head>
       <body>
-        <UserProvider>
-          <CodelistProvider>
-            <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Laster…</div>}>
+          <UserProvider>
+            <CodelistProvider>
               <PageThemeWrapper origin={origin}>{children}</PageThemeWrapper>
-            </Suspense>
-          </CodelistProvider>
-        </UserProvider>
+            </CodelistProvider>
+          </UserProvider>
+        </Suspense>
       </body>
     </html>
   )

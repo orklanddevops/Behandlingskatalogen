@@ -1,10 +1,11 @@
 import { FilterIcon, MagnifyingGlassIcon } from '@navikt/aksel-icons'
-import { Tag } from '@navikt/ds-react'
+import { Alert, Tag } from '@navikt/ds-react'
 import { useContext, useState } from 'react'
 import { CSSObjectWithLabel, DropdownIndicatorProps, OptionProps, components } from 'react-select'
 import AsyncSelect from 'react-select/async'
 import { EListName, ICode } from '@/constants/codelistConstant'
 import { CodelistContext, ICodelistProps } from '@/provider/kodeverkProvider'
+import { UserContext } from '@/provider/userProvider'
 import { useNavigate } from '@/util/router'
 import { searchDpProcess } from '../../api/DpProcessApi'
 import {
@@ -155,11 +156,13 @@ const DropdownIndicator = (props: DropdownIndicatorProps<TSearchItem>) => (
 const MainSearch = () => {
   const { utils: codelistUtils } = useContext(CodelistContext)
 
+  const user = useContext(UserContext)
+  const [searchError, setSearchError] = useState('')
   const [filter, setFilter] = useState(false)
   const [type, setType] = useState<TSearchType>('all')
   const navigate = useNavigate()
 
-  const useMainSearchOption = async (searchParam: string) => {
+  const loadSearchOptions = async (searchParam: string) => {
     if (searchParam && searchParam.length > 2) {
       if (type === 'purpose') {
         return getCodelistByListnameAndType(searchParam, EListName.PURPOSE, 'Formål', codelistUtils)
@@ -404,15 +407,36 @@ const MainSearch = () => {
 
   return (
     <div className='w-full min-w-0'>
+      {searchError && (
+        <Alert variant='warning' size='small' role='alert'>
+          {searchError}
+        </Alert>
+      )}
       <div className='flex items-center w-full max-w-182.5 min-w-0'>
         <AsyncSelect
+          instanceId='main-search'
+          inputId='main-search-input'
           classNamePrefix='polly-mainsearch'
           className='w-full'
           aria-label='Søk'
           placeholder='Søk'
-          loadOptions={useMainSearchOption}
+          key={`${type}-${user.isLoggedIn()}`}
+          loadOptions={async (input) => {
+            setSearchError('')
+            if (!user.isLoaded()) return []
+            if (!user.isLoggedIn()) {
+              setSearchError('Logg inn for å søke i Databehandlingskatalogen.')
+              return []
+            }
+            try {
+              return await loadSearchOptions(input)
+            } catch {
+              setSearchError('Søket kunne ikke fullføres. Kontroller innloggingen og prøv igjen.')
+              return []
+            }
+          }}
           components={{ Option, DropdownIndicator }}
-          noOptionsMessage={({ inputValue }) => noOptionMessage(inputValue)}
+          noOptionsMessage={({ inputValue }) => searchError || noOptionMessage(inputValue)}
           tabSelectsValue={false}
           controlShouldRenderValue={false}
           loadingMessage={() => 'Søker...'}

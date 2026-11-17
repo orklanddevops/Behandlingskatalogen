@@ -1,6 +1,6 @@
 'use client'
 
-import { FileWordIcon, PlusCircleIcon } from '@navikt/aksel-icons'
+import { FileWordIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@navikt/aksel-icons'
 import { BodyShort, Button, Heading, LocalAlert, Modal } from '@navikt/ds-react'
 import { env } from 'process'
 import { useContext, useState } from 'react'
@@ -114,7 +114,16 @@ export const PurposeListPage = () => {
             <BodyShort>Velg overordnet databehandling</BodyShort>
           </div>
 
-          <div className='mt-auto flex items-center'>
+          <div className='mt-auto flex flex-wrap items-center gap-y-3'>
+            <Button
+              as='a'
+              href='/process/legal'
+              className='mr-4'
+              variant='secondary'
+              icon={<MagnifyingGlassIcon aria-hidden />}
+            >
+              Søk behandlingsgrunnlag
+            </Button>
             {hasAccess() && (
               <Button
                 className='mr-4'

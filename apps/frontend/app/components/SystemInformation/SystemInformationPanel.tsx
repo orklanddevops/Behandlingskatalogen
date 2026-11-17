@@ -28,6 +28,7 @@ import { CodelistContext } from '@/provider/kodeverkProvider'
 import { UserContext } from '@/provider/userProvider'
 import OrganisationSelect from '../common/OrganisationSelect'
 import EmployeePicker from './EmployeePicker'
+import SystemSectionFields, { TSystemSection, sectionTitles } from './SystemSectionFields'
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat('nb-NO', { dateStyle: 'long' }).format(
@@ -48,7 +49,14 @@ function Contacts({ contacts }: { contacts: ISystemContact[] }) {
   )
 }
 
-export default function SystemInformationPanel({ systemCode }: { systemCode: string }) {
+export default function SystemInformationPanel({
+  systemCode,
+  section = 'responsibilities',
+}: {
+  systemCode: string
+  section?: TSystemSection
+}) {
+  const title = sectionTitles[section]
   const user = useContext(UserContext)
   const { utils: codelistUtils } = useContext(CodelistContext)
   const unitOptions = codelistUtils
@@ -72,7 +80,10 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
         if (active) setInfo(data)
       })
       .catch(() => {
-        if (active) setError('Kunne ikke hente systeminformasjonen. Prøv å laste siden på nytt.')
+        if (active)
+          setError(
+            'Kunne ikke hente systeminformasjonen. Kontroller innloggingen og prøv å laste siden på nytt.'
+          )
       })
       .finally(() => {
         if (active) setLoading(false)
@@ -101,6 +112,14 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!draft || saving) return
+    if (
+      section === 'accessibility' &&
+      draft.data.accessibility?.relevance === 'RELEVANT' &&
+      !['web', 'app'].includes(draft.data.accessibility.solutionType)
+    ) {
+      setError('Velg nettløsning eller app før du lagrer.')
+      return
+    }
     setSaving(true)
     setError('')
     try {
@@ -138,13 +157,17 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
       <div className='mb-6 flex flex-wrap items-start justify-between gap-4'>
         <div>
           <Heading level='2' size='medium' id='system-information-heading'>
-            Ansvar og kontakt
+            {title}
           </Heading>
-          <BodyShort className='mt-2'>Hvem har ansvar for systemet, og hvem kan hjelpe?</BodyShort>
+          {section === 'responsibilities' && (
+            <BodyShort className='mt-2'>
+              Hvem har ansvar for systemet, og hvem kan hjelpe?
+            </BodyShort>
+          )}
         </div>
         {!draft && info && user.canWrite() && (
           <Button variant='secondary' icon={<PencilIcon aria-hidden />} onClick={edit}>
-            Rediger systeminformasjon
+            Rediger {title.toLowerCase()}
           </Button>
         )}
       </div>
@@ -161,111 +184,126 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
       {draft ? (
         <form onSubmit={save} className='space-y-8'>
           <fieldset disabled={saving} className='m-0 min-w-0 space-y-6 border-0 p-0'>
-            <legend className='sr-only'>Rediger ansvar og kontaktpersoner</legend>
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-              <EmployeePicker
-                id='system-owner'
-                label='Systemeier'
-                value={draft.data.systemOwner ? [draft.data.systemOwner] : []}
-                onChange={(contacts) => change('systemOwner', contacts[0] ?? null)}
-              />
-              <div>
-                <Label htmlFor='responsible-unit'>Ansvarlig enhet</Label>
-                <OrganisationSelect
-                  id='responsible-unit'
-                  label='Ansvarlig enhet'
-                  options={
-                    draft.data.organisationalUnit &&
-                    !unitOptions.some((unit) => unit.value === draft.data.organisationalUnit)
-                      ? [
-                          ...unitOptions,
-                          {
-                            value: draft.data.organisationalUnit,
-                            label: draft.data.organisationalUnit,
-                          },
-                        ]
-                      : unitOptions
-                  }
-                  value={draft.data.organisationalUnit || ''}
-                  onChange={(unit) => change('organisationalUnit', unit ? String(unit.value) : '')}
-                />
-              </div>
-            </div>
-            <EmployeePicker
-              id='system-administrators'
-              label='Systemadministratorer'
-              multiple
-              value={draft.data.administrators}
-              onChange={(contacts) => change('administrators', contacts)}
-            />
-            <EmployeePicker
-              id='system-superusers'
-              label='Superbrukere'
-              multiple
-              value={draft.data.superUsers}
-              onChange={(contacts) => change('superUsers', contacts)}
-            />
-            {(
-              [
-                {
-                  title: 'Brukerstøtte',
-                  email: 'supportEmail',
-                  url: 'supportUrl',
-                  phone: 'supportPhone',
-                  name: 'brukerstøtte',
-                },
-                {
-                  title: 'Nødkontakt',
-                  email: 'emergencyEmail',
-                  url: 'emergencyUrl',
-                  phone: 'emergencyPhone',
-                  name: 'nødkontakt',
-                },
-              ] as const
-            ).map((contact) => (
-              <div key={contact.title}>
-                <Heading level='3' size='small' className='mb-4'>
-                  {contact.title}
-                </Heading>
+            <legend className='sr-only'>Rediger {title.toLowerCase()}</legend>
+            {section !== 'responsibilities' && (
+              <SystemSectionFields section={section} data={draft.data} onChange={change} />
+            )}
+            {section === 'responsibilities' && (
+              <>
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                  <TextField
-                    label={`E-post til ${contact.name}`}
-                    type='email'
-                    maxLength={254}
-                    value={draft.data[contact.email] || ''}
-                    onChange={(event) => change(contact.email, event.target.value)}
+                  <EmployeePicker
+                    id='system-owner'
+                    label='Systemeier'
+                    value={draft.data.systemOwner ? [draft.data.systemOwner] : []}
+                    onChange={(contacts) => change('systemOwner', contacts[0] ?? null)}
                   />
-                  <TextField
-                    label={`Lenke til ${contact.name}`}
-                    type='url'
-                    maxLength={2000}
-                    description='Bruk en fullstendig adresse, for eksempel https://…'
-                    value={draft.data[contact.url] || ''}
-                    onChange={(event) => change(contact.url, event.target.value)}
-                  />
-                  <TextField
-                    label={`Telefonnummer til ${contact.name}`}
-                    type='tel'
-                    maxLength={50}
-                    value={draft.data[contact.phone] || ''}
-                    onChange={(event) => change(contact.phone, event.target.value)}
-                  />
+                  <div>
+                    <Label htmlFor='responsible-unit'>Ansvarlig enhet</Label>
+                    <OrganisationSelect
+                      id='responsible-unit'
+                      label='Ansvarlig enhet'
+                      options={
+                        draft.data.organisationalUnit &&
+                        !unitOptions.some((unit) => unit.value === draft.data.organisationalUnit)
+                          ? [
+                              ...unitOptions,
+                              {
+                                value: draft.data.organisationalUnit,
+                                label: draft.data.organisationalUnit,
+                              },
+                            ]
+                          : unitOptions
+                      }
+                      value={draft.data.organisationalUnit || ''}
+                      onChange={(unit) =>
+                        change('organisationalUnit', unit ? String(unit.value) : '')
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-            <Textarea
-              label='Merknader'
-              description='For eksempel avklaringer om ansvarsdeling eller hvem som skal kontaktes.'
-              maxLength={10000}
-              value={draft.data.notes}
-              onChange={(event) => change('notes', event.target.value)}
-            />
-            <Checkbox
-              checked={markVerified}
-              onChange={(event) => setMarkVerified(event.target.checked)}
-            >
-              Jeg har kontrollert at informasjonen er oppdatert
-            </Checkbox>
+                <EmployeePicker
+                  id='it-responsible'
+                  label='Ansvarlig på IT'
+                  value={draft.data.itResponsible ? [draft.data.itResponsible] : []}
+                  onChange={(contacts) => change('itResponsible', contacts[0] ?? null)}
+                />
+                <EmployeePicker
+                  id='system-administrators'
+                  label='Systemadministratorer'
+                  multiple
+                  value={draft.data.administrators}
+                  onChange={(contacts) => change('administrators', contacts)}
+                />
+                <EmployeePicker
+                  id='system-superusers'
+                  label='Superbrukere'
+                  multiple
+                  value={draft.data.superUsers}
+                  onChange={(contacts) => change('superUsers', contacts)}
+                />
+                {(
+                  [
+                    {
+                      title: 'Brukerstøtte',
+                      email: 'supportEmail',
+                      url: 'supportUrl',
+                      phone: 'supportPhone',
+                      name: 'brukerstøtte',
+                    },
+                    {
+                      title: 'Nødkontakt',
+                      email: 'emergencyEmail',
+                      url: 'emergencyUrl',
+                      phone: 'emergencyPhone',
+                      name: 'nødkontakt',
+                    },
+                  ] as const
+                ).map((contact) => (
+                  <div key={contact.title}>
+                    <Heading level='3' size='small' className='mb-4'>
+                      {contact.title}
+                    </Heading>
+                    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                      <TextField
+                        label={`E-post til ${contact.name}`}
+                        type='email'
+                        maxLength={254}
+                        value={draft.data[contact.email] || ''}
+                        onChange={(event) => change(contact.email, event.target.value)}
+                      />
+                      <TextField
+                        label={`Lenke til ${contact.name}`}
+                        type='url'
+                        maxLength={2000}
+                        description='Bruk en fullstendig adresse, for eksempel https://…'
+                        value={draft.data[contact.url] || ''}
+                        onChange={(event) => change(contact.url, event.target.value)}
+                      />
+                      <TextField
+                        label={`Telefonnummer til ${contact.name}`}
+                        type='tel'
+                        maxLength={50}
+                        value={draft.data[contact.phone] || ''}
+                        onChange={(event) => change(contact.phone, event.target.value)}
+                      />
+                    </div>
+                  </div>
+                ))}
+                <Textarea
+                  label='Merknader'
+                  description='For eksempel avklaringer om ansvarsdeling eller hvem som skal kontaktes.'
+                  maxLength={10000}
+                  value={draft.data.notes}
+                  onChange={(event) => change('notes', event.target.value)}
+                />
+                <Checkbox
+                  checked={markVerified}
+                  onChange={(event) => setMarkVerified(event.target.checked)}
+                >
+                  Jeg har kontrollert at informasjonen er oppdatert
+                </Checkbox>
+              </>
+            )}
           </fieldset>
           <div className='flex flex-wrap gap-3'>
             <Button type='submit' loading={saving}>
@@ -288,111 +326,126 @@ export default function SystemInformationPanel({ systemCode }: { systemCode: str
         info && (
           <Alert variant='info'>
             Systeminformasjon er ikke registrert ennå.
-            {user.canWrite()
-              ? ' Velg «Rediger systeminformasjon» for å legge til ansvar og kontaktpersoner.'
-              : ''}
+            {user.canWrite() ? ' Velg «Rediger» for å legge til informasjon.' : ''}
           </Alert>
         )
       ) : (
         <div className='space-y-8'>
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-            {[
-              {
-                title: 'Systemeier',
-                contacts: info.data.systemOwner ? [info.data.systemOwner] : [],
-              },
-              { title: 'Systemadministratorer', contacts: info.data.administrators },
-              { title: 'Superbrukere', contacts: info.data.superUsers },
-            ].map((group) => (
+          {section !== 'responsibilities' && (
+            <SystemSectionFields section={section} data={info.data} />
+          )}
+          {section === 'responsibilities' && (
+            <>
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                {[
+                  {
+                    title: 'Systemeier',
+                    contacts: info.data.systemOwner ? [info.data.systemOwner] : [],
+                  },
+                  {
+                    title: 'Ansvarlig på IT',
+                    contacts: info.data.itResponsible ? [info.data.itResponsible] : [],
+                  },
+                  { title: 'Systemadministratorer', contacts: info.data.administrators },
+                  { title: 'Superbrukere', contacts: info.data.superUsers },
+                ].map((group) => (
+                  <div
+                    key={group.title}
+                    className='rounded-lg border p-5'
+                    style={{ borderColor: 'var(--ax-border-neutral-subtle)' }}
+                  >
+                    <Heading level='3' size='small' className='mb-3'>
+                      {group.title}
+                    </Heading>
+                    <Contacts contacts={group.contacts} />
+                  </div>
+                ))}
+                <div
+                  className='rounded-lg border p-5'
+                  style={{ borderColor: 'var(--ax-border-neutral-subtle)' }}
+                >
+                  <Heading level='3' size='small' className='mb-3'>
+                    Organisering
+                  </Heading>
+                  <BodyShort weight='semibold'>Ansvarlig enhet</BodyShort>
+                  <BodyShort>
+                    {unitOptions.find((unit) => unit.value === info.data.organisationalUnit)
+                      ?.label ||
+                      info.data.organisationalUnit ||
+                      'Ikke registrert'}
+                  </BodyShort>
+                </div>
+              </div>
+              {[
+                {
+                  title: 'Brukerstøtte',
+                  email: info.data.supportEmail,
+                  url: info.data.supportUrl,
+                  phone: info.data.supportPhone,
+                  name: 'brukerstøtte',
+                },
+                {
+                  title: 'Nødkontakt',
+                  email: info.data.emergencyEmail,
+                  url: info.data.emergencyUrl,
+                  phone: info.data.emergencyPhone,
+                  name: 'nødkontakt',
+                },
+              ].map((contact) => (
+                <div key={contact.title}>
+                  <Heading level='3' size='small' className='mb-3'>
+                    {contact.title}
+                  </Heading>
+                  {!contact.email && !contact.url && !contact.phone && (
+                    <BodyShort>Ikke registrert</BodyShort>
+                  )}
+                  {contact.email && (
+                    <div>
+                      <Link href={`mailto:${contact.email}`}>{contact.email}</Link>
+                    </div>
+                  )}
+                  {contact.url && (
+                    <div className='mt-2'>
+                      <Link href={contact.url} target='_blank' rel='noopener noreferrer'>
+                        Åpne {contact.name}
+                      </Link>
+                    </div>
+                  )}
+                  {contact.phone && (
+                    <div className='mt-2'>
+                      <Link href={`tel:${contact.phone.replace(/[^+0-9]/g, '')}`}>
+                        {contact.phone}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {info.data.notes && (
+                <div>
+                  <Heading level='3' size='small' className='mb-3'>
+                    Merknader
+                  </Heading>
+                  <BodyShort className='whitespace-pre-wrap'>{info.data.notes}</BodyShort>
+                </div>
+              )}
               <div
-                key={group.title}
-                className='rounded-lg border p-5'
+                className='border-t pt-4'
                 style={{ borderColor: 'var(--ax-border-neutral-subtle)' }}
               >
-                <Heading level='3' size='small' className='mb-3'>
-                  {group.title}
-                </Heading>
-                <Contacts contacts={group.contacts} />
+                <BodyShort>
+                  {info.data.lastVerifiedDate
+                    ? `Sist kontrollert ${formatDate(info.data.lastVerifiedDate)}${info.data.lastVerifiedBy ? ` av ${info.data.lastVerifiedBy}` : ''}`
+                    : 'Informasjonen er ikke bekreftet kontrollert.'}
+                </BodyShort>
+                {info.updatedAt && (
+                  <Detail className='mt-2'>
+                    Sist endret {formatDate(info.updatedAt)}
+                    {info.updatedBy ? ` av ${info.updatedBy}` : ''}
+                  </Detail>
+                )}
               </div>
-            ))}
-            <div
-              className='rounded-lg border p-5'
-              style={{ borderColor: 'var(--ax-border-neutral-subtle)' }}
-            >
-              <Heading level='3' size='small' className='mb-3'>
-                Organisering
-              </Heading>
-              <BodyShort weight='semibold'>Ansvarlig enhet</BodyShort>
-              <BodyShort>
-                {unitOptions.find((unit) => unit.value === info.data.organisationalUnit)?.label ||
-                  info.data.organisationalUnit ||
-                  'Ikke registrert'}
-              </BodyShort>
-            </div>
-          </div>
-          {[
-            {
-              title: 'Brukerstøtte',
-              email: info.data.supportEmail,
-              url: info.data.supportUrl,
-              phone: info.data.supportPhone,
-              name: 'brukerstøtte',
-            },
-            {
-              title: 'Nødkontakt',
-              email: info.data.emergencyEmail,
-              url: info.data.emergencyUrl,
-              phone: info.data.emergencyPhone,
-              name: 'nødkontakt',
-            },
-          ].map((contact) => (
-            <div key={contact.title}>
-              <Heading level='3' size='small' className='mb-3'>
-                {contact.title}
-              </Heading>
-              {!contact.email && !contact.url && !contact.phone && (
-                <BodyShort>Ikke registrert</BodyShort>
-              )}
-              {contact.email && (
-                <div>
-                  <Link href={`mailto:${contact.email}`}>{contact.email}</Link>
-                </div>
-              )}
-              {contact.url && (
-                <div className='mt-2'>
-                  <Link href={contact.url} target='_blank' rel='noopener noreferrer'>
-                    Åpne {contact.name}
-                  </Link>
-                </div>
-              )}
-              {contact.phone && (
-                <div className='mt-2'>
-                  <Link href={`tel:${contact.phone.replace(/[^+0-9]/g, '')}`}>{contact.phone}</Link>
-                </div>
-              )}
-            </div>
-          ))}
-          {info.data.notes && (
-            <div>
-              <Heading level='3' size='small' className='mb-3'>
-                Merknader
-              </Heading>
-              <BodyShort className='whitespace-pre-wrap'>{info.data.notes}</BodyShort>
-            </div>
+            </>
           )}
-          <div className='border-t pt-4' style={{ borderColor: 'var(--ax-border-neutral-subtle)' }}>
-            <BodyShort>
-              {info.data.lastVerifiedDate
-                ? `Sist kontrollert ${formatDate(info.data.lastVerifiedDate)}${info.data.lastVerifiedBy ? ` av ${info.data.lastVerifiedBy}` : ''}`
-                : 'Informasjonen er ikke bekreftet kontrollert.'}
-            </BodyShort>
-            {info.updatedAt && (
-              <Detail className='mt-2'>
-                Sist endret {formatDate(info.updatedAt)}
-                {info.updatedBy ? ` av ${info.updatedBy}` : ''}
-              </Detail>
-            )}
-          </div>
         </div>
       )}
     </section>

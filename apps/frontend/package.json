@@ -27,10 +27,10 @@
     "*.{js,jsx,ts,tsx,mjs,mts}": [
       "prettier --list-different --write",
       "eslint --cache --max-warnings 0",
-      "bash -c 'yarn run type-check'",
-      "bash -c 'yarn run jest'",
-      "bash -c 'yarn knip --max-show-issues 5'",
-      "bash -c 'yarn knip --cache --max-issues=0'"
+      "bash -c 'node .yarn/releases/yarn-4.16.0.cjs run type-check'",
+      "bash -c 'node .yarn/releases/yarn-4.16.0.cjs run jest'",
+      "bash -c 'node .yarn/releases/yarn-4.16.0.cjs knip --max-show-issues 5'",
+      "bash -c 'node .yarn/releases/yarn-4.16.0.cjs knip --cache --max-issues=0'"
     ]
   },
   "browserslist": {
