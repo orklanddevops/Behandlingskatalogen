@@ -21,15 +21,20 @@ const FieldCountries = (props: IProps) => {
         <div className='w-full mt-4'>
           <Select
             id='countries'
+            value=''
             label='I hvilke(t) land lagrer databehandleren personopplysninger i?'
             onChange={(event) => {
-              arrayHelpers.form.setFieldValue('countries', [...countries, event.target.value])
+              const country = event.target.value
+              if (country && !countries.includes(country)) {
+                arrayHelpers.push(country)
+              }
             }}
           >
-            <option value=''></option>
+            <option value=''>Velg land</option>
             {codelistUtils
               .getCountryCodesOutsideEu()
               .filter((land) => !countries.includes(land.code))
+              .sort((left, right) => left.description.localeCompare(right.description, 'nb'))
               .map((land) => (
                 <option value={land.code} key={land.code}>
                   {land.description}

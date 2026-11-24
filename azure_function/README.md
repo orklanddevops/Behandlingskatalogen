@@ -52,5 +52,7 @@ The `codelist/*` routes expose the mapped app-facing shape:
 ]
 ```
 
-The initial data intentionally contains only Norway. Keep `NOR` in both `Landkoder` and `EEAFreg`; that makes `/api/codelist/countriesoutsideeea` return an empty list until additional non-EEA countries are added.
+The bundled data contains 249 ISO 3166-1 countries and territories in `Landkoder` and the 30 EU/EEA member countries in `EEAFreg`. The outside-EEA endpoint subtracts the latter from the former. Country identifiers come from the system `iso-codes` ISO 3166-1 dataset (https://salsa.debian.org/iso-codes-team/iso-codes); Norwegian display names were generated using Node.js `Intl.DisplayNames(['nb'], { type: 'region' })`. The date fields preserve the existing compatibility defaults; they are not membership or country establishment dates.
+
+EEA membership was checked on 24 November 2026 against the [European Council's EEA overview](https://www.consilium.europa.eu/en/policies/eu-eea-relations/). Keep both lists up to date together when countries, codes or membership change. Restart the country service and backend after replacing the data to clear cached lists. VM deployments serve the same files through the codelists container.
 

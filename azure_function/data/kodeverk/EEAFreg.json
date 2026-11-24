@@ -1,5 +1,281 @@
 {
   "betydninger": {
+    "AUT": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Østerrike",
+            "tekst": "Østerrike"
+          }
+        }
+      }
+    ],
+    "BEL": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Belgia",
+            "tekst": "Belgia"
+          }
+        }
+      }
+    ],
+    "BGR": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Bulgaria",
+            "tekst": "Bulgaria"
+          }
+        }
+      }
+    ],
+    "CYP": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Kypros",
+            "tekst": "Kypros"
+          }
+        }
+      }
+    ],
+    "CZE": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Tsjekkia",
+            "tekst": "Tsjekkia"
+          }
+        }
+      }
+    ],
+    "DEU": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Tyskland",
+            "tekst": "Tyskland"
+          }
+        }
+      }
+    ],
+    "DNK": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Danmark",
+            "tekst": "Danmark"
+          }
+        }
+      }
+    ],
+    "ESP": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Spania",
+            "tekst": "Spania"
+          }
+        }
+      }
+    ],
+    "EST": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Estland",
+            "tekst": "Estland"
+          }
+        }
+      }
+    ],
+    "FIN": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Finland",
+            "tekst": "Finland"
+          }
+        }
+      }
+    ],
+    "FRA": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Frankrike",
+            "tekst": "Frankrike"
+          }
+        }
+      }
+    ],
+    "GRC": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Hellas",
+            "tekst": "Hellas"
+          }
+        }
+      }
+    ],
+    "HRV": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Kroatia",
+            "tekst": "Kroatia"
+          }
+        }
+      }
+    ],
+    "HUN": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Ungarn",
+            "tekst": "Ungarn"
+          }
+        }
+      }
+    ],
+    "IRL": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Irland",
+            "tekst": "Irland"
+          }
+        }
+      }
+    ],
+    "ISL": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Island",
+            "tekst": "Island"
+          }
+        }
+      }
+    ],
+    "ITA": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Italia",
+            "tekst": "Italia"
+          }
+        }
+      }
+    ],
+    "LIE": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Liechtenstein",
+            "tekst": "Liechtenstein"
+          }
+        }
+      }
+    ],
+    "LTU": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Litauen",
+            "tekst": "Litauen"
+          }
+        }
+      }
+    ],
+    "LUX": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Luxemburg",
+            "tekst": "Luxemburg"
+          }
+        }
+      }
+    ],
+    "LVA": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Latvia",
+            "tekst": "Latvia"
+          }
+        }
+      }
+    ],
+    "MLT": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Malta",
+            "tekst": "Malta"
+          }
+        }
+      }
+    ],
+    "NLD": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Nederland",
+            "tekst": "Nederland"
+          }
+        }
+      }
+    ],
     "NOR": [
       {
         "gyldigFra": "1900-01-01",
@@ -8,6 +284,78 @@
           "nb": {
             "term": "Norge",
             "tekst": "Norge"
+          }
+        }
+      }
+    ],
+    "POL": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Polen",
+            "tekst": "Polen"
+          }
+        }
+      }
+    ],
+    "PRT": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Portugal",
+            "tekst": "Portugal"
+          }
+        }
+      }
+    ],
+    "ROU": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Romania",
+            "tekst": "Romania"
+          }
+        }
+      }
+    ],
+    "SVK": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Slovakia",
+            "tekst": "Slovakia"
+          }
+        }
+      }
+    ],
+    "SVN": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Slovenia",
+            "tekst": "Slovenia"
+          }
+        }
+      }
+    ],
+    "SWE": [
+      {
+        "gyldigFra": "1900-01-01",
+        "gyldigTil": "9999-12-31",
+        "beskrivelser": {
+          "nb": {
+            "term": "Sverige",
+            "tekst": "Sverige"
           }
         }
       }

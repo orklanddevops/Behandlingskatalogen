@@ -33,11 +33,13 @@ afterEach(async () => {
   await act(async () => root.unmount())
   container.remove()
 })
-async function render(list: EListName) {
+async function render(list: string) {
   jest.mocked(useParams).mockReturnValue({ listname: list })
   const lists: IAllCodelists = {
     codelist: {
-      [list]: [{ list, code: '1', shortName: 'Example', description: 'Example' }],
+      [list]: [
+        { list: list as EListName, code: '1', shortName: 'Example', description: 'Example' },
+      ],
     },
   }
   const utils = {
@@ -73,4 +75,11 @@ test('team category retains creation, editing and deletion', async () => {
   expect(
     Array.from(container.querySelectorAll('svg title')).map((title) => title.textContent)
   ).toEqual(expect.arrayContaining(['Slett', 'Redigér']))
+})
+
+test('obsolete processor code category points to processor management without offering creation', async () => {
+  await render('DATA_PROCESSOR')
+  expect(container.textContent).not.toContain('Opprett ny kode')
+  expect(container.querySelector('a[href="/processor"]')?.textContent).toBe('Databehandlere')
+  expect(container.textContent).not.toContain('Example')
 })

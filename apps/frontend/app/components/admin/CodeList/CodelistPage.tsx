@@ -2,9 +2,11 @@
 
 import { PlusIcon } from '@navikt/aksel-icons'
 import { Alert, Button, Heading, Loader, Select } from '@navikt/ds-react'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import {
+  EListName,
   ICode,
   IMakeIdLabelForAllCodeListsProps,
   isOrganisationList,
@@ -31,6 +33,7 @@ const CodeListPage = () => {
   const [listname, setListname] = useState(params.listname)
   const [createCodeListModal, setCreateCodeListModal] = useState(false)
   const [errorOnResponse, setErrorOnResponse] = useState(null)
+  const isSupportedList = Object.values(EListName).includes(listname as EListName)
 
   const currentCodelist: ICode[] | undefined =
     codelist.lists && listname ? codelist.lists?.codelist[listname] : undefined
@@ -100,7 +103,7 @@ const CodeListPage = () => {
                     </option>
                   ))}
               </Select>
-              {listname && !isOrganisationList(listname) && (
+              {isSupportedList && !isOrganisationList(listname) && (
                 <div>
                   <Button
                     icon={<PlusIcon aria-hidden />}
@@ -113,18 +116,29 @@ const CodeListPage = () => {
               )}
             </div>
           )}
+          {listname && !isSupportedList && (
+            <Alert variant='info' className='mt-4'>
+              {listname === 'DATA_PROCESSOR' ? (
+                <>
+                  Databehandlere administreres under <Link href='/processor'>Databehandlere</Link>.
+                </>
+              ) : (
+                'Ukjent kodeverk. Velg et kodeverk fra listen.'
+              )}
+            </Alert>
+          )}
           {isOrganisationList(listname) && (
             <Alert variant='info' className='mt-4'>
               Enhet, Avdeling og Underavdeling hentes automatisk fra organisasjonskartet i eADM.
               Oppretting, redigering og sletting gjøres i eADM. Team administreres separat.
             </Alert>
           )}
-          {!loading && listname && (
+          {!loading && isSupportedList && (
             <div className='mt-4'>
               <CodeListTable tableData={currentCodelist || []} refresh={update} />
             </div>
           )}
-          {listname && !isOrganisationList(listname) && (
+          {listname && isSupportedList && !isOrganisationList(listname) && (
             <CreateCodeListModal
               title='Ny kode'
               list={listname}
