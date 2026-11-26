@@ -331,7 +331,6 @@ test('technical information supports several suppliers and system documents', as
   expect(container.querySelector('a[href="/processor/supplier-1"]')?.textContent).toBe(
     'Leverandør en'
   )
-  await click('Legg til')
   const options = Array.from(container.querySelectorAll('select')[1].options).map(
     (option) => option.value
   )

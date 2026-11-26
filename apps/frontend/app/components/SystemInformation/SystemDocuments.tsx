@@ -17,12 +17,10 @@ const SystemDocuments = ({
   documents: TQualitySystemDocument[]
   onChange?: (documents: TQualitySystemDocument[]) => void
 }) => {
-  const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState(emptyDocument)
   const [attempted, setAttempted] = useState(false)
   const options = Object.entries(labels).map(([id, label]) => ({ id, label }))
   const reset = () => {
-    setOpen(false)
     setDraft(emptyDocument)
     setAttempted(false)
   }
@@ -56,81 +54,69 @@ const SystemDocuments = ({
         </div>
       ))}
       {documents.length === 0 && <p>Ingen dokumenter registrert</p>}
-      {onChange &&
-        (!open ? (
-          <Button
-            type='button'
-            variant='secondary'
-            size='small'
-            className='self-start'
-            onClick={() => setOpen(true)}
-            aria-expanded={false}
+      {onChange && (
+        <div className='flex flex-wrap items-start gap-3'>
+          <Select
+            id='system-document-type'
+            label='Type'
+            className='min-w-40 flex-1'
+            value={draft.type}
+            onChange={(event) => setDraft({ ...draft, type: event.target.value })}
+            error={attempted && !draft.type ? 'Velg type' : undefined}
           >
-            Legg til
-          </Button>
-        ) : (
-          <div className='flex flex-wrap items-start gap-3'>
-            <Select
-              id='system-document-type'
-              label='Type'
-              className='min-w-40 flex-1'
-              value={draft.type}
-              onChange={(event) => setDraft({ ...draft, type: event.target.value })}
-              error={attempted && !draft.type ? 'Velg type' : undefined}
+            <option value=''>Velg type</option>
+            {options.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+          <TextField
+            label='Dokumentnavn'
+            maxLength={500}
+            placeholder='Dokumentnavn'
+            className='min-w-40 flex-1'
+            value={draft.name}
+            onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+            error={attempted && !draft.name.trim() ? 'Skriv inn dokumentnavn' : undefined}
+          />
+          <TextField
+            label='Lenke'
+            maxLength={2000}
+            type='url'
+            placeholder='Lenke til dokument'
+            className='min-w-40 flex-1'
+            value={draft.url}
+            onChange={(event) => setDraft({ ...draft, url: event.target.value })}
+            error={
+              attempted && !isQualitySystemUrl(draft.url.trim())
+                ? 'Skriv inn en gyldig lenke som starter med https:// eller http://'
+                : undefined
+            }
+          />
+          <div className='flex flex-col gap-2 pt-7'>
+            <Button type='button' variant='secondary' size='small' onClick={reset}>
+              Avbryt
+            </Button>
+            <Button
+              type='button'
+              size='small'
+              onClick={() => {
+                setAttempted(true)
+                if (!draft.type || !draft.name.trim() || !isQualitySystemUrl(draft.url.trim()))
+                  return
+                updateDocuments([
+                  ...documents,
+                  { ...draft, name: draft.name.trim(), url: draft.url.trim() },
+                ])
+                reset()
+              }}
             >
-              <option value=''>Velg type</option>
-              {options.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-            <TextField
-              label='Dokumentnavn'
-              maxLength={500}
-              placeholder='Dokumentnavn'
-              className='min-w-40 flex-1'
-              value={draft.name}
-              onChange={(event) => setDraft({ ...draft, name: event.target.value })}
-              error={attempted && !draft.name.trim() ? 'Skriv inn dokumentnavn' : undefined}
-            />
-            <TextField
-              label='Lenke'
-              maxLength={2000}
-              type='url'
-              placeholder='Lenke til dokument'
-              className='min-w-40 flex-1'
-              value={draft.url}
-              onChange={(event) => setDraft({ ...draft, url: event.target.value })}
-              error={
-                attempted && !isQualitySystemUrl(draft.url.trim())
-                  ? 'Skriv inn en gyldig lenke som starter med https:// eller http://'
-                  : undefined
-              }
-            />
-            <div className='flex flex-col gap-2 pt-7'>
-              <Button type='button' variant='secondary' size='small' onClick={reset}>
-                Avbryt
-              </Button>
-              <Button
-                type='button'
-                size='small'
-                onClick={() => {
-                  setAttempted(true)
-                  if (!draft.type || !draft.name.trim() || !isQualitySystemUrl(draft.url.trim()))
-                    return
-                  updateDocuments([
-                    ...documents,
-                    { ...draft, name: draft.name.trim(), url: draft.url.trim() },
-                  ])
-                  reset()
-                }}
-              >
-                Legg til
-              </Button>
-            </div>
+              Legg til
+            </Button>
           </div>
-        ))}
+        </div>
+      )}
     </div>
   )
 }
