@@ -1,9 +1,11 @@
 'use client'
 
-import { Alert, BodyShort, Button, Heading, Link, Loader, Select } from '@navikt/ds-react'
+import { Alert, BodyShort, Button, Heading, Label, Link, Loader } from '@navikt/ds-react'
 import { useEffect, useState } from 'react'
+import Select from 'react-select'
 import { getAllProcessors } from '@/api/ProcessorApi'
 import { IProcessor } from '@/constants'
+import { selectOverrides } from '../common/AsyncSelectComponents'
 
 export default function SystemSuppliers({
   value,
@@ -44,24 +46,28 @@ export default function SystemSuppliers({
         </Alert>
       )}
       {onChange && !loading && !error && (
-        <Select
-          id='system-suppliers'
-          label='Legg til leverandør'
-          description='Velg fra databehandlere og leverandører. Du kan legge til flere.'
-          value=''
-          onChange={(event) => {
-            if (event.target.value) onChange([...value, event.target.value])
-          }}
-        >
-          <option value=''>Velg leverandør</option>
-          {suppliers
-            .filter((supplier) => !value.includes(supplier.id))
-            .map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>
-                {supplier.name}
-              </option>
-            ))}
-        </Select>
+        <div>
+          <Label htmlFor='system-suppliers'>Legg til leverandør</Label>
+          <BodyShort id='system-suppliers-description' className='mb-2'>
+            Søk i databehandlere og leverandører. Du kan legge til flere.
+          </BodyShort>
+          <Select
+            inputId='system-suppliers'
+            instanceId='system-suppliers'
+            aria-describedby='system-suppliers-description'
+            placeholder='Søk etter leverandør'
+            isSearchable
+            value={null}
+            options={suppliers
+              .filter((supplier) => !value.includes(supplier.id))
+              .map((supplier) => ({ value: supplier.id, label: supplier.name }))}
+            onChange={(option) => {
+              if (option) onChange([...value, option.value])
+            }}
+            noOptionsMessage={() => 'Ingen leverandører funnet'}
+            styles={selectOverrides}
+          />
+        </div>
       )}
       {value.length === 0 && <BodyShort>Ingen leverandører registrert</BodyShort>}
       {value.length > 0 && (

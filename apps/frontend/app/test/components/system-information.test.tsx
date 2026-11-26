@@ -324,16 +324,21 @@ test('checklists follow solution type and retain independent answers when switch
 test('technical information supports several suppliers and system documents', async () => {
   await render(true, 'technical')
   await click('Rediger systeminformasjon')
-  for (const id of ['supplier-1', 'supplier-2']) {
-    await changeValue('#system-suppliers', id)
+  for (const name of ['Leverandør en', 'Leverandør to']) {
+    await changeValue('#system-suppliers', name)
+    const choices = Array.from(container.querySelectorAll('[role="option"]'))
+    expect(choices.map((choice) => choice.textContent)).toEqual([name])
+    await act(async () => choices[0].dispatchEvent(new MouseEvent('click', { bubbles: true })))
   }
-  expect(container.querySelector('option[value="supplier-1"]')).toBeNull()
+  await changeValue('#system-suppliers', 'Leverandør')
+  expect(container.querySelectorAll('[role="option"]')).toHaveLength(0)
+  expect(container.textContent).toContain('Ingen leverandører funnet')
   expect(container.querySelector('a[href="/processor/supplier-1"]')?.textContent).toBe(
     'Leverandør en'
   )
-  const options = Array.from(container.querySelectorAll('select')[1].options).map(
-    (option) => option.value
-  )
+  const options = Array.from(
+    container.querySelector<HTMLSelectElement>('#system-document-type')!.options
+  ).map((option) => option.value)
   expect(options).toEqual(['', 'HOVEDAVTALE', 'ANNEN_AVTALE', 'ROS'])
   await changeValue('#system-document-type', 'HOVEDAVTALE')
   await changeValue('input[placeholder="Dokumentnavn"]', 'Hovedavtale for systemet')
