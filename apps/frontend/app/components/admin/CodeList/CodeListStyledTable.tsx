@@ -2,6 +2,7 @@
 
 import { DocPencilIcon, GlassesIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Button, SortState, Table, Tooltip } from '@navikt/ds-react'
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { ICode, isOrganisationList } from '@/constants/codelistConstant'
 import { deleteCodelist, getCodelistUsage, updateCodelist } from '../../../api/GetAllApi'
@@ -22,7 +23,7 @@ const CodeListTable = ({ tableData, refresh }: TTableCodelistProps) => {
   const [showUsage, setShowUsage] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [errorOnResponse, setErrorOnResponse] = useState(null)
+  const [errorOnResponse, setErrorOnResponse] = useState<string | null>(null)
   const [usage, setUsage] = useState<ICodeUsage>()
   const [sort, setSort] = useState<SortState>()
 
@@ -58,7 +59,11 @@ const CodeListTable = ({ tableData, refresh }: TTableCodelistProps) => {
       setShowDeleteModal(false)
     } catch (error: any) {
       setShowDeleteModal(true)
-      setErrorOnResponse(error.message)
+      setErrorOnResponse(
+        axios.isAxiosError(error) && error.response?.status === 409
+          ? 'Koden er i bruk og kan ikke slettes. Velg «Avbryt» og deretter «Vis bruk» for å se hvor den brukes. Fjern eller endre referansene før du prøver igjen.'
+          : 'Kunne ikke slette koden. Prøv igjen senere.'
+      )
     }
   }
 

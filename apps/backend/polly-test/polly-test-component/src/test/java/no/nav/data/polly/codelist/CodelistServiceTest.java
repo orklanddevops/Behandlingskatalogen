@@ -173,4 +173,18 @@ class CodelistServiceTest {
     private void saveCodelist(Codelist codelist) {
         CodelistCache.set(codelist);
     }
+    @Test
+    void unusedDataAccessClassCanBeDeletedButDocumentReferencesPreventDeletion() {
+        var code = createCodelist(ListName.DATA_ACCESS_CLASS, "TEST");
+        when(repository.findByListAndCode(ListName.DATA_ACCESS_CLASS, "TEST")).thenReturn(Optional.of(code));
+        var usage = new CodeUsageResponse(ListName.DATA_ACCESS_CLASS, "TEST");
+        when(codeUsageService.findCodeUsage(ListName.DATA_ACCESS_CLASS, "TEST")).thenReturn(usage);
+        usage.setDocuments(List.of(new UsedInInstance(UUID.randomUUID().toString(), "Document")));
+        assertThrows(CodelistNotErasableException.class, () -> service.delete(ListName.DATA_ACCESS_CLASS, "TEST"));
+        verify(repository, never()).delete(any());
+        usage.setDocuments(List.of());
+        service.delete(ListName.DATA_ACCESS_CLASS, "TEST");
+        verify(repository).delete(code);
+    }
+
 }

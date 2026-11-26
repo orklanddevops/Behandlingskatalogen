@@ -23,7 +23,9 @@ const QualitySystemDocuments = ({
   const [draft, setDraft] = useState(emptyDocument)
   const [attempted, setAttempted] = useState(false)
   const documents = getQualitySystemDocuments(formikBag.values.qualitySystemLinks)
-  const options = codelistUtils.getParsedOptions(EListName.INFORMASJONSIKKERHET_CATEGORY)
+  const options = codelistUtils
+    .getParsedOptions(EListName.INFORMASJONSIKKERHET_CATEGORY)
+    .filter((option) => option.id !== 'HOVEDAVTALE')
   const reset = () => {
     setOpen(false)
     setDraft(emptyDocument)

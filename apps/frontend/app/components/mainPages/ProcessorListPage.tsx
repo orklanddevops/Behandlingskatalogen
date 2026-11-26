@@ -58,7 +58,7 @@ const ProcessorListPage = () => {
       )}
       {!isLoading && (
         <>
-          <Heading size='large'>Databehandlere</Heading>
+          <Heading size='large'>Databehandlere og leverandører</Heading>
           <div className='flex w-full justify-end'>
             <div className='mt-auto'>
               {hasAccess() && (

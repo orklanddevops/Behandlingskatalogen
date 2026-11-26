@@ -67,7 +67,7 @@ const ProcessorModal = (props: TModalProcessorProps) => {
                     <TextField
                       type='url'
                       className='w-full mt-4'
-                      label='Referanse til databehandleravtalen, gjerne lenke(URL) i Public 360 e.l.'
+                      label='Referanse til overordnet databehandleravtale, gjerne lenke(URL) i Public 360 e.l.'
                       {...field}
                     />
                   )}

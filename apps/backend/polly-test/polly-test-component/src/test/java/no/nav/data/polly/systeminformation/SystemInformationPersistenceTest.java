@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 // Use an isolated PostgreSQL database, never the application's database.
 @EnabledIfEnvironmentVariable(named = "BK_SYSTEM_INFORMATION_TEST_DB", matches = ".+")
 class SystemInformationPersistenceTest {
+    private static final UUID SUPPLIER_ID = UUID.fromString("b340c9b4-3b1b-4b79-894a-d54cbdc87177");
     private static SessionFactory factory;
     private static AuditVersionRepository previousAuditRepository;
     private static AuditVersionRepository auditRepository;
@@ -61,7 +62,8 @@ class SystemInformationPersistenceTest {
                 new SystemInformationData.Contact("it", "IT contact", "it@example.org"),
                 new SystemInformationData.Technical(new SystemInformationData.Contact("operator", "Operator", "operator@example.org"), 0, "HIGH"),
                 new SystemInformationData.Economy(java.math.BigDecimal.ZERO, new java.math.BigDecimal("12345.67"), "https://example.org/agreement", java.time.LocalDate.of(2026, 11, 17), "Three months"),
-                new SystemInformationData.Accessibility("RELEVANT", "web", java.util.Map.of("1.1.1", "YES"), java.util.Map.of("1.1.1", "NO"))));
+                new SystemInformationData.Accessibility("RELEVANT", "web", java.util.Map.of("1.1.1", "YES"), java.util.Map.of("1.1.1", "NO")), List.of(SUPPLIER_ID),
+                List.of(new SystemInformationData.SystemDocument("ROS", "Risk", "https://example.org/risk"))));
         try (var session = factory.openSession()) {
             var transaction = session.beginTransaction();
             session.persist(entity);
@@ -79,6 +81,9 @@ class SystemInformationPersistenceTest {
             assertThat(loaded.getData().systemOwner().name()).isEqualTo("Ada Hansen");
             assertThat(loaded.getData().responsibleTeam().name()).isEqualTo("IT");
             assertThat(loaded.getData().administrators()).isEmpty();
+            assertThat(loaded.getData().supplierIds()).containsExactly(SUPPLIER_ID);
+            assertThat(loaded.getData().documents()).containsExactly(
+                    new SystemInformationData.SystemDocument("ROS", "Risk", "https://example.org/risk"));
             assertThat(loaded.getData().itResponsible().name()).isEqualTo("IT contact");
             assertThat(loaded.getData().technical().technicalOperator().name()).isEqualTo("Operator");
             assertThat(loaded.getData().technical().userCount()).isZero();
@@ -112,6 +117,17 @@ class SystemInformationPersistenceTest {
                 assertThat(entity.getData()).isEqualTo(original.getData().withOrganisationalUnit("NEW_UNIT"));
             });
             assertThat(repository.findByOrganisationalUnit("IT")).noneMatch(entity -> entity.getId().equals(original.getId()));
+        }
+    }
+
+    @Test
+    void supplierUsageQueryFindsTheSavedUuidReferences() {
+        var original = create("SUPPLIER_REFERENCE");
+        try (var session = factory.openSession()) {
+            var repository = new org.springframework.data.jpa.repository.support.JpaRepositoryFactory(session)
+                    .getRepository(SystemInformationRepository.class);
+            assertThat(repository.findBySupplierId(SUPPLIER_ID)).anyMatch(record -> record.getId().equals(original.getId()));
+            assertThat(repository.findBySupplierId(UUID.randomUUID())).isEmpty();
         }
     }
 

@@ -8,7 +8,22 @@ public record SystemInformationData(
         Contact systemOwner, List<Contact> administrators, List<Contact> superUsers,
         TeamReference responsibleTeam, String organisationalUnit, String supportEmail,
         String supportUrl, String notes, LocalDate lastVerifiedDate, String lastVerifiedBy,
-        String supportPhone, String emergencyEmail, String emergencyUrl, String emergencyPhone, Contact itResponsible, Technical technical, Economy economy, Accessibility accessibility) implements Serializable {
+        String supportPhone, String emergencyEmail, String emergencyUrl, String emergencyPhone, Contact itResponsible, Technical technical, Economy economy, Accessibility accessibility, List<java.util.UUID> supplierIds, List<SystemDocument> documents) implements Serializable {
+    public record SystemDocument(
+            @jakarta.validation.constraints.NotBlank @jakarta.validation.constraints.Pattern(regexp = "HOVEDAVTALE|ANNEN_AVTALE|ROS") String type,
+            @jakarta.validation.constraints.NotBlank @jakarta.validation.constraints.Size(max = 500) String name,
+            @jakarta.validation.constraints.NotBlank @jakarta.validation.constraints.Size(max = 2000) String url) implements Serializable {}
+
+    public SystemInformationData(Contact systemOwner, List<Contact> administrators, List<Contact> superUsers,
+            TeamReference responsibleTeam, String organisationalUnit, String supportEmail, String supportUrl,
+            String notes, LocalDate lastVerifiedDate, String lastVerifiedBy, String supportPhone,
+            String emergencyEmail, String emergencyUrl, String emergencyPhone, Contact itResponsible,
+            Technical technical, Economy economy, Accessibility accessibility) {
+        this(systemOwner, administrators, superUsers, responsibleTeam, organisationalUnit, supportEmail,
+                supportUrl, notes, lastVerifiedDate, lastVerifiedBy, supportPhone, emergencyEmail,
+                emergencyUrl, emergencyPhone, itResponsible, technical, economy, accessibility, List.of(), List.of());
+    }
+
     public record Technical(Contact technicalOperator, Integer userCount, String criticality) implements Serializable {}
     public record Economy(
             @jakarta.validation.constraints.PositiveOrZero @jakarta.validation.constraints.Digits(integer = 12, fraction = 2) java.math.BigDecimal annualCost,
@@ -43,7 +58,7 @@ public record SystemInformationData(
     public SystemInformationData withOrganisationalUnit(String unit) {
         return new SystemInformationData(systemOwner, administrators, superUsers, responsibleTeam, unit,
                 supportEmail, supportUrl, notes, lastVerifiedDate, lastVerifiedBy,
-                supportPhone, emergencyEmail, emergencyUrl, emergencyPhone, itResponsible, technical, economy, accessibility);
+                supportPhone, emergencyEmail, emergencyUrl, emergencyPhone, itResponsible, technical, economy, accessibility, supplierIds, documents);
     }
 
     public static SystemInformationData empty() {

@@ -25,6 +25,15 @@ export const getProcessorsByPageAndPageSize = async (pageNumber: number, pageSiz
   ).data
 }
 
+export const getAllProcessors = async (): Promise<IProcessor[]> => {
+  const first = await getProcessorsByPageAndPageSize(0, 100)
+  const suppliers = [...first.content]
+  for (let page = 1; page < first.pages; page++) {
+    suppliers.push(...(await getProcessorsByPageAndPageSize(page, 100)).content)
+  }
+  return suppliers
+}
+
 export const createProcessor = async (processor: IProcessorFormValues) => {
   const body = convertFormValuesToProcessor(processor)
   return (await axios.post<IProcessor>(`${env.pollyBaseUrl}/processor`, body)).data

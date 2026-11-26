@@ -17,6 +17,7 @@ public class ProcessorService {
 
     private final ProcessorRepository repository;
     private final ProcessRepository processRepository;
+    private final no.nav.data.polly.systeminformation.SystemInformationRepository systemInformationRepository;
 
     @Transactional
     public Processor save(Processor processor) {
@@ -35,6 +36,9 @@ public class ProcessorService {
         var processes = processRepository.findByProcessor(uuid);
         if (!processes.isEmpty()) {
             throw new ValidationException("Processor in use by " + processes.size() + " processes");
+        }
+        if (!systemInformationRepository.findBySupplierId(uuid).isEmpty()) {
+            throw new ValidationException("Leverandøren er i bruk i systeminformasjon og kan ikke slettes.");
         }
         repository.deleteById(uuid);
     }

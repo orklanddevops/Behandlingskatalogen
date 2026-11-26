@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { TQualitySystemDocument } from '@/constants/qualitySystemLinks'
 import { env } from '../util/env'
 
 export interface ISystemContact {
@@ -22,6 +23,8 @@ export interface ISystemAccessibility {
   appAnswers: Record<string, TChecklistAnswer>
 }
 export interface ISystemInformationData {
+  supplierIds?: string[] | null
+  documents?: TQualitySystemDocument[] | null
   itResponsible?: ISystemContact | null
   technical?: {
     technicalOperator: ISystemContact | null
@@ -90,6 +93,8 @@ export const saveSystemInformation = async (
           : null,
         economy: info.data.economy ?? null,
         accessibility: info.data.accessibility ?? null,
+        supplierIds: info.data.supplierIds ?? [],
+        documents: info.data.documents ?? [],
         markVerified,
       }
     )

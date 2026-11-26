@@ -19,6 +19,8 @@ import {
 } from '@/api/SystemInformationApi'
 import checklists from '@/data/wcag-checklists.json'
 import EmployeePicker from './EmployeePicker'
+import SystemDocuments from './SystemDocuments'
+import SystemSuppliers from './SystemSuppliers'
 
 export type TSystemSection = 'responsibilities' | 'technical' | 'economy' | 'accessibility'
 export const sectionTitles: Record<TSystemSection, string> = {
@@ -64,6 +66,19 @@ export default function SystemSectionFields({
     const value = data.technical ?? { technicalOperator: null, userCount: null, criticality: '' }
     return (
       <div className='space-y-6'>
+        <SystemSuppliers
+          value={data.supplierIds ?? []}
+          onChange={onChange ? (ids) => onChange('supplierIds', ids) : undefined}
+        />
+        <div className='space-y-3'>
+          <Heading size='small' level='3'>
+            Avtaler og ROS for systemet
+          </Heading>
+          <SystemDocuments
+            documents={data.documents ?? []}
+            onChange={onChange ? (documents) => onChange('documents', documents) : undefined}
+          />
+        </div>
         {editing ? (
           <EmployeePicker
             id='technical-operator'
@@ -111,6 +126,7 @@ export default function SystemSectionFields({
         )}
         {editing ? (
           <Select
+            id='system-criticality'
             label='Kritikalitet'
             value={value.criticality}
             onChange={(event) =>

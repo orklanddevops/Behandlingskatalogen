@@ -10,7 +10,12 @@ import { ICodelistProps } from '@/provider/kodeverkProvider'
 let container: HTMLDivElement
 let root: Root
 const utils = {
-  getParsedOptions: jest.fn(() => [{ id: 'LOCAL', label: 'Lokal vurdering' }]),
+  getParsedOptions: jest.fn(() => [
+    { id: 'LOCAL', label: 'Lokal vurdering' },
+    { id: 'HOVEDAVTALE', label: 'Hovedavtale' },
+    { id: 'ANNEN_AVTALE', label: 'Annen avtale' },
+    { id: 'ROS', label: 'ROS' },
+  ]),
   getShortname: (_list: EListName, code: string) => (code === 'LOCAL' ? 'Lokal vurdering' : code),
 } as unknown as ICodelistProps
 
@@ -65,6 +70,9 @@ test('starts with an add button and uses configured types when expanded', async 
   expect(container.querySelector('select')).toBeNull()
   await click('Legg til')
   expect(container.textContent).toContain('Dokumentnavn')
+  expect(container.querySelector('option[value=HOVEDAVTALE]')).toBeNull()
+  expect(container.querySelector('option[value=ANNEN_AVTALE]')).not.toBeNull()
+  expect(container.querySelector('option[value=ROS]')).not.toBeNull()
   expect(container.querySelector('select')!.textContent).toContain('Lokal vurdering')
   expect(utils.getParsedOptions).toHaveBeenCalledWith(EListName.INFORMASJONSIKKERHET_CATEGORY)
   await click('Avbryt')

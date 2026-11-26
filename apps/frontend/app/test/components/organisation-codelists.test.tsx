@@ -80,6 +80,8 @@ test('team category retains creation, editing and deletion', async () => {
 test('obsolete processor code category points to processor management without offering creation', async () => {
   await render('DATA_PROCESSOR')
   expect(container.textContent).not.toContain('Opprett ny kode')
-  expect(container.querySelector('a[href="/processor"]')?.textContent).toBe('Databehandlere')
+  expect(container.querySelector('a[href="/processor"]')?.textContent).toBe(
+    'Databehandlere og leverandører'
+  )
   expect(container.textContent).not.toContain('Example')
 })

@@ -24,7 +24,8 @@ class SystemInformationServiceTest {
     private final SystemInformationRepository repository = mock(SystemInformationRepository.class);
     private final CodelistRepository codelists = mock(CodelistRepository.class);
     private final ResourceService employees = mock(ResourceService.class);
-    private final SystemInformationService service = new SystemInformationService(repository, codelists, employees);
+    private final no.nav.data.polly.processor.domain.repo.ProcessorRepository processors = mock(no.nav.data.polly.processor.domain.repo.ProcessorRepository.class);
+    private final SystemInformationService service = new SystemInformationService(repository, codelists, employees, processors);
 
     @BeforeEach
     void setup() {
@@ -229,6 +230,61 @@ class SystemInformationServiceTest {
         assertThat(old.itResponsible()).isNull();
         assertThat(old.economy()).isNull();
         assertThat(old.accessibility()).isNull();
+    }
+
+    private SystemInformationRequest documentsRequest(List<java.util.UUID> suppliers, List<SystemInformationData.SystemDocument> documents) {
+        return new SystemInformationRequest(null, null, List.of(), List.of(), "", "", "", "", false,
+                "", "", "", "", null, null, null, null, suppliers, documents);
+    }
+
+    @Test
+    void multipleSuppliersAndDocumentsRoundTripAndSurviveOrganisationChanges() {
+        var first = java.util.UUID.randomUUID();
+        var second = java.util.UUID.randomUUID();
+        when(processors.existsById(any())).thenReturn(true);
+        var documents = List.of(new SystemInformationData.SystemDocument("HOVEDAVTALE", " Main ", " https://example.org/main "),
+                new SystemInformationData.SystemDocument("ANNEN_AVTALE", "Other", "https://example.org/other"),
+                new SystemInformationData.SystemDocument("ROS", "Risk", "https://example.org/risk"));
+        var saved = service.save("SIGNINAPP", documentsRequest(List.of(first, second, first), documents));
+        assertThat(saved.data().supplierIds()).containsExactly(first, second);
+        assertThat(saved.data().documents()).hasSize(3);
+        assertThat(saved.data().documents().getFirst().name()).isEqualTo("Main");
+        assertThat(saved.data().documents().getFirst().url()).isEqualTo("https://example.org/main");
+        assertThat(saved.data().withOrganisationalUnit("NEW").documents()).isEqualTo(saved.data().documents());
+        assertThat(saved.data().withOrganisationalUnit("NEW").supplierIds()).containsExactly(first, second);
+    }
+
+    @Test
+    void rejectsUnknownSuppliersUnsafeDocumentsAndUnsupportedDocumentTypes() {
+        assertThatThrownBy(() -> service.save("SIGNINAPP", documentsRequest(List.of(java.util.UUID.randomUUID()), List.of())))
+                .isInstanceOf(ValidationException.class);
+        for (var document : List.of(new SystemInformationData.SystemDocument("DPIA", "DPIA", "https://example.org"),
+                new SystemInformationData.SystemDocument("ROS", "Risk", "javascript:alert(1)"),
+                new SystemInformationData.SystemDocument("ROS", " ", "https://example.org"))) {
+            assertThatThrownBy(() -> service.save("SIGNINAPP", documentsRequest(List.of(), List.of(document))))
+                    .isInstanceOf(ValidationException.class);
+        }
+        verify(repository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void omittedNewFieldsArePreservedWhileExplicitEmptyListsClearThem() {
+        var supplier = java.util.UUID.randomUUID();
+        when(processors.existsById(supplier)).thenReturn(true);
+        var saved = service.save("SIGNINAPP", documentsRequest(List.of(supplier),
+                List.of(new SystemInformationData.SystemDocument("ROS", "Risk", "https://example.org"))));
+        var entity = new SystemInformation();
+        entity.setSystemCode("SIGNINAPP");
+        entity.setVersion(null);
+        entity.setData(saved.data());
+        when(repository.findById(any())).thenReturn(Optional.of(entity));
+        var retained = service.save("SIGNINAPP", documentsRequest(null, null));
+        assertThat(retained.data().supplierIds()).containsExactly(supplier);
+        assertThat(retained.data().documents()).hasSize(1);
+        entity.setVersion(null);
+        var cleared = service.save("SIGNINAPP", documentsRequest(List.of(), List.of()));
+        assertThat(cleared.data().supplierIds()).isEmpty();
+        assertThat(cleared.data().documents()).isEmpty();
     }
 
 }

@@ -120,7 +120,8 @@ const CodeListPage = () => {
             <Alert variant='info' className='mt-4'>
               {listname === 'DATA_PROCESSOR' ? (
                 <>
-                  Databehandlere administreres under <Link href='/processor'>Databehandlere</Link>.
+                  Databehandlere og leverandører administreres under{' '}
+                  <Link href='/processor'>Databehandlere og leverandører</Link>.
                 </>
               ) : (
                 'Ukjent kodeverk. Velg et kodeverk fra listen.'

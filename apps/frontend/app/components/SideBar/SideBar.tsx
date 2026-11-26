@@ -37,7 +37,7 @@ const SideBar = ({ themeMode }: { themeMode: TThemeMode }) => (
           text='Systemer'
           tooltip='Applikasjoner og fagsystemer som brukes i kommunens tjenester.'
         />
-        <NavItem to='/processor' text='Databehandlere' />
+        <NavItem to='/processor' text='Databehandlere og leverandører' />
         <NavItem
           to='/dashboard'
           text='Dashboard'

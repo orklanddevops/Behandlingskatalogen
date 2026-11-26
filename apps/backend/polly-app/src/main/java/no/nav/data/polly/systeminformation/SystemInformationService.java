@@ -33,6 +33,7 @@ public class SystemInformationService {
     private final SystemInformationRepository repository;
     private final CodelistRepository codelists;
     private final ResourceService employees;
+    private final no.nav.data.polly.processor.domain.repo.ProcessorRepository processors;
 
     @Transactional(readOnly = true)
     public SystemInformationResponse get(String code) {
@@ -70,6 +71,18 @@ public class SystemInformationService {
         if (economy != null) validateUrl(text(economy.agreementUrl()), "avtale");
         var accessibility = request.accessibility() == null ? old.accessibility() : request.accessibility();
         validateAccessibility(accessibility);
+        var supplierIds = request.supplierIds() == null ? old.supplierIds() : request.supplierIds().stream().distinct().toList();
+        if (supplierIds != null && supplierIds.stream().anyMatch(id -> !processors.existsById(id))) {
+            throw new ValidationException("En valgt leverandør finnes ikke. Velg leverandør på nytt.");
+        }
+        var documents = request.documents() == null ? old.documents() : request.documents().stream().map(document -> {
+            if (document == null || !List.of("HOVEDAVTALE", "ANNEN_AVTALE", "ROS").contains(text(document.type()))
+                    || text(document.name()).isBlank() || text(document.url()).isBlank()) {
+                throw new ValidationException("Velg dokumenttype og fyll inn dokumentnavn og lenke.");
+            }
+            validateUrl(text(document.url()), "dokument");
+            return new SystemInformationData.SystemDocument(text(document.type()), text(document.name()), text(document.url()));
+        }).toList();
         var record = stored.orElseGet(() -> {
             var created = new SystemInformation();
             created.setId(idFor(code));
@@ -82,7 +95,7 @@ public class SystemInformationService {
                 unit, text(request.supportEmail()), supportUrl, text(request.notes()),
                 request.markVerified() ? LocalDate.now(ZoneId.of("Europe/Oslo")) : old.lastVerifiedDate(),
                 request.markVerified() ? reviewer : old.lastVerifiedBy(),
-                text(request.supportPhone()), text(request.emergencyEmail()), emergencyUrl, text(request.emergencyPhone()), itResponsible, technical, economy, accessibility));
+                text(request.supportPhone()), text(request.emergencyEmail()), emergencyUrl, text(request.emergencyPhone()), itResponsible, technical, economy, accessibility, supplierIds, documents));
         return response(repository.saveAndFlush(record));
     }
 

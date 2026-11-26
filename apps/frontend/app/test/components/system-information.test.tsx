@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import { act } from 'react'
 import { Root, createRoot } from 'react-dom/client'
+import { getAllProcessors } from '../../api/ProcessorApi'
 import {
   ISystemInformation,
   getSystemInformation,
@@ -14,6 +15,7 @@ import { CodelistContext, ICodelistProps } from '../../provider/kodeverkProvider
 import { IUserContext, UserContext } from '../../provider/userProvider'
 
 jest.mock('../../api/SystemInformationApi')
+jest.mock('../../api/ProcessorApi')
 jest.mock('../../api/TeamApi', () => ({ getAllTeams: jest.fn(), searchResourceByName: jest.fn() }))
 
 const initial: ISystemInformation = {
@@ -45,6 +47,10 @@ beforeEach(() => {
   document.body.appendChild(container)
   root = createRoot(container)
   jest.mocked(getSystemInformation).mockResolvedValue(JSON.parse(JSON.stringify(initial)))
+  jest.mocked(getAllProcessors).mockResolvedValue([
+    { id: 'supplier-1', name: 'Leverandør en' },
+    { id: 'supplier-2', name: 'Leverandør to' },
+  ] as any)
   jest.mocked(getAllTeams).mockResolvedValue([{ id: 'it', name: 'IT' } as any])
   jest.mocked(searchResourceByName).mockResolvedValue({
     content: [{ navIdent: 'new-owner', fullName: 'Kari Olsen', email: 'kari@example.org' }],
@@ -242,7 +248,7 @@ test('technical information saves zero users and the selected criticality withou
   await click('Rediger systeminformasjon')
   expect(container.querySelector('input[aria-label="Teknisk drifter"]')).not.toBeNull()
   await changeValue('input[type="number"]', '0')
-  await changeValue('select', 'HIGH')
+  await changeValue('#system-criticality', 'HIGH')
   await submit()
   expect(saveSystemInformation).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -313,4 +319,41 @@ test('checklists follow solution type and retain independent answers when switch
     }),
     false
   )
+})
+
+test('technical information supports several suppliers and system documents', async () => {
+  await render(true, 'technical')
+  await click('Rediger systeminformasjon')
+  for (const id of ['supplier-1', 'supplier-2']) {
+    await changeValue('#system-suppliers', id)
+  }
+  expect(container.querySelector('option[value="supplier-1"]')).toBeNull()
+  expect(container.querySelector('a[href="/processor/supplier-1"]')?.textContent).toBe(
+    'Leverandør en'
+  )
+  await click('Legg til')
+  const options = Array.from(container.querySelectorAll('select')[1].options).map(
+    (option) => option.value
+  )
+  expect(options).toEqual(['', 'HOVEDAVTALE', 'ANNEN_AVTALE', 'ROS'])
+  await changeValue('#system-document-type', 'HOVEDAVTALE')
+  await changeValue('input[placeholder="Dokumentnavn"]', 'Hovedavtale for systemet')
+  await changeValue('input[placeholder="Lenke til dokument"]', 'https://example.org/agreement')
+  await click('Legg til')
+  jest.mocked(saveSystemInformation).mockImplementation(async (info) => info)
+  await act(async () =>
+    container
+      .querySelector('form')!
+      .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+  )
+  expect(jest.mocked(saveSystemInformation).mock.calls[0][0].data).toMatchObject({
+    supplierIds: ['supplier-1', 'supplier-2'],
+    documents: [
+      {
+        type: 'HOVEDAVTALE',
+        name: 'Hovedavtale for systemet',
+        url: 'https://example.org/agreement',
+      },
+    ],
+  })
 })
